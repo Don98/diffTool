@@ -17,3 +17,18 @@ A diffTool for annotated data set
 - 3、要能够显示出两个文件的差异
 - 4、能够点击结果文件然后跳转到对应的源码文件
 - 5、能够通过点击就完成标注结果的录入。
+
+
+
+
+
+突发奇想，想记录在实现这一个软件过程中给我帮助，解决一些问题的网页：
+
+- 1. https://blog.csdn.net/JNingWei/article/details/78298771
+  2. https://www.delftstack.com/zh/howto/python-tkinter/how-to-pass-arguments-to-tkinter-button-command/
+  3. https://www.pynote.net/archives/1004
+  4. https://www.delftstack.com/zh/howto/python-tkinter/how-to-close-a-tkinter-window-with-a-button/
+  5. https://www.runoob.com/python/python-tk-frame.html
+  6. https://blog.csdn.net/qq_41555580/article/details/118607123
+  7. https://groups.google.com/g/python-cn/c/GN2LfwLoJ98/m/DnjNoNtZWIwJ?pli=1
+  8. 
