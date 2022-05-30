@@ -31,4 +31,9 @@ A diffTool for annotated data set
   5. https://www.runoob.com/python/python-tk-frame.html
   6. https://blog.csdn.net/qq_41555580/article/details/118607123
   7. https://groups.google.com/g/python-cn/c/GN2LfwLoJ98/m/DnjNoNtZWIwJ?pli=1
-  8. 
+  8. https://www.delftstack.com/zh/howto/python-tkinter/how-to-create-a-new-window-with-a-button-in-tkinter/
+  9. https://www.delftstack.com/zh/howto/python-tkinter/how-to-change-tkinter-button-color/
+  10. https://blog.csdn.net/qq_21238607/article/details/108824662
+  11. https://blog.csdn.net/qq_28123095/article/details/79331756
+  12. https://www.runoob.com/python/python-tk-canvas.html
+  13. 
