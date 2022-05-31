@@ -92,6 +92,7 @@ class TagData():
         for i in range(len(paths)):
             if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt")):
                 self.tags.append(i)
+        # self.tags = []
         return paths
             
     def build_main(self):   

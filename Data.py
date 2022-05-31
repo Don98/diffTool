@@ -121,7 +121,7 @@ class Data():
                 self.data[the_pos][j][p] = self.data[the_pos][j][p].split(",")
     def create_buttonvar(self):
         self.buttons_var = []
-        if(not self.exist):
+        if(not self.exist or len(self.data[self.the_pos]) <= 1):
             for i in range(len(self.tokens)):
                 buton_var = [tk.IntVar()]
                 buton_var[-1].set(1)
@@ -140,7 +140,7 @@ class Data():
                     buton_var[-1].set(int(j[3]))
                 self.buttons_var.append(buton_var)
         
-        # self.print_button()
+        self.print_button()
         
         return self.buttons_var
         

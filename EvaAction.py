@@ -26,11 +26,12 @@ class EvaAction():
         self.Data = Data(self.file_name,self.method)
         self.Data.set_pos(self.the_index[self.method])
         
+        self.selected_indices = -1
         self.checkbuttons = []
         self.buttons_var = []
+        self.actionList =[]
         self.set_size()
         self.build()
-        self.selected_indices = -1
         
     def set_size(self):
         self.w = 720 ; self.h = 650
@@ -91,6 +92,7 @@ class EvaAction():
         all_tokens = [self.actionList[index][0]] + self.actionList[index][1]
         nums = 0
         for i in all_tokens:
+            # print(i,len(self.buttons_var))
             self.checkbuttons.append(tk.Checkbutton(self.Window, text = i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = 90,bg="white"))
             self.checkbuttons[-1].place(x = 40, y = 320 + 20 * nums)
             self.checkbuttons[-1].config(anchor = "w")
@@ -134,13 +136,15 @@ class EvaAction():
         pass
     def set_button(self):
         # self.button0 = tk.Button(self.Window,width=10, height=1, text='修改', bg='skyblue', command=self.reset).place(x = 630, y = 120)
-        self.button1 = tk.Button(self.Window,width=10, height=1, text='保存并退出', bg='skyblue', command=self.confirm).place(x = 80, y = 600)
+        self.button1 = tk.Button(self.Window,width=10, height=1, text='保存并退出', bg='skyblue', command=self.confirm).place(x = 80, y = 620)
     
     def read_file(self):
         self.stmts, self.tokens, self.actionList = self.Data.read_file()
         self.Data.create_read_resultfile()
         self.Data.split_data()
         self.buttons_var = self.Data.create_buttonvar()
+        # print(len(self.stmts))
+        # print(len(self.buttons_var))
             
     
     def build(self):

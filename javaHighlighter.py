@@ -81,12 +81,12 @@ class JavaSyntaxHighlighter:
     def translate(self, data=""):
         res = []
         nums = 1
-        for i in data:
+        for i in data:    
+            self.text.insert("end",str(nums).ljust(self.blank," "),"[None]")
             i = self.split_classify(i)
             for j in i:
                 self.text.insert("end",j[1],j[0])            
-            # self.text.insert("end",i[-1][1].strip() + "\n","[None]")            
-            self.text.insert("end",str(nums).ljust(self.blank," "),"[None]")
+            # self.text.insert("end",i[-1][1].strip() + "\n","[None]")        
             nums += 1
         for i in range(nums):
             if(self.text.get(i + 0.0 ,i + 0.1) == " "):

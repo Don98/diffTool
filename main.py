@@ -10,7 +10,8 @@ class mainBG():
     def __init__(self):
         self.root = tk.Tk()
         self.root.title('数据标注工具V1.0')
-        self.file = "../data/"
+        self.file = "../first_try/"
+        # self.file = "../data/"
         # self.base = BaseBG(self.root,w,h,self.file)
         # self.root.resizable(width=False, height=False)
         self.root.resizable(width=True, height=True)
