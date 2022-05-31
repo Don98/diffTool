@@ -41,4 +41,10 @@ A diffTool for annotated data set
   15. https://www.thinbug.com/q/38594978
   16. https://blog.csdn.net/w15977858408/article/details/104173780
   17. https://wenku.baidu.com/view/528ab4080366f5335a8102d276a20029bd646328.html
-  18. 
+  18. https://blog.csdn.net/weixin_43794311/article/details/124682879
+  19. https://blog.csdn.net/wujuxKkoolerter/article/details/123750144
+  20. https://www.runoob.com/python/python-tk-checkbutton.html
+  21. https://blog.csdn.net/weixin_45774074/article/details/123293411
+  22. https://blog.csdn.net/chaodaibing/article/details/108749234
+  23. 
+

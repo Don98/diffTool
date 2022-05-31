@@ -7,6 +7,7 @@ from tkinter import *
 from tkinter import scrolledtext
 from threading import Thread, RLock
 from javaHighlighter import JavaSyntaxHighlighter
+from EvaAction import EvaAction
 
 class Eva():
     def __init__(self,root,file_name):
@@ -18,7 +19,7 @@ class Eva():
         self.build()
         
     def set_size(self):
-        self.w = self.root.winfo_screenwidth() * 3 / 4; self.h = self.root.winfo_screenheight() * 3 / 4
+        self.w = self.root.winfo_screenwidth() * 3 / 4; self.h = self.root.winfo_screenheight() * 3 / 4 + 20
         self.ws = self.root.winfo_screenwidth()
         self.hs = self.root.winfo_screenheight()
         x = (self.ws/2) - (self.w/2)
@@ -51,7 +52,7 @@ class Eva():
         self.text = tk.Text(self.Window,width = 95,height = 53,font = 10)   
         self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text)
         self.text.pack()
-        self.text.place(x=5,y=10)
+        self.text.place(x=5,y=30)
         self.text["state"] = "disabled"
         # nums = 50 * 100
         # self.text.yview_scroll(nums, "units")
@@ -60,74 +61,24 @@ class Eva():
         self.text0 = tk.Text(self.Window,width = 95,height = 53,font = 10)
         self.text0 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text0)
         self.text0.pack()
-        self.text0.place(x=970,y=10)
+        self.text0.place(x=970,y=30)
         self.text0["state"] = "disabled"
             
+
+    def to_eva(self,method):
+        self.evaAction = EvaAction(self.Window,self.file_name, self.text, self.text0, method)
         
-    def draw_layout123(self):
-        self.edit_frame = Canvas(self.Window, height=200, width=400,
-                                 bg="white", highlightthickness=0)
-        self.edit_frame.pack()
-        self.line_text = Text(self.edit_frame, width=7, height=200, spacing3=5,
-                              bg="#DCDCDC", bd=0, font=("等线等线 (Light)", 14), takefocus=0, state="disabled",
-                              cursor="arrow")
-        self.line_text.pack(side="left", expand="no")
-        self.update()
-        self.edit_text = scrolledtext.ScrolledText(self.edit_frame, height=1, wrap="none", spacing3=5,
-                                                   width=self.winfo_width() - self.line_text.winfo_width(), bg="white",
-                                                   bd=0, font=("等线等线 (Light)", 14), undo=True, insertwidth=1)
-        self.edit_text.vbar.configure(command=self.scroll)
-        self.edit_text.pack(side="left", fill="both")
-        self.line_text.bind("<MouseWheel>", self.wheel)
-        self.edit_text.bind("<MouseWheel>", self.wheel)
-        self.edit_text.bind("<Control-v>", lambda e: self.get_txt_thread())
-        self.edit_text.bind("<Control-V>", lambda e: self.get_txt_thread())
-        self.edit_text.bind("<Key>", lambda e: self.get_txt_thread())
-        self.show_line()
-
-    def wheel(self, event):
-        self.line_text.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        self.edit_text.yview_scroll(int(-1 * (event.delta / 120)), "units")
-        return "break"
-
-    def scroll(self, *xy):
-        self.line_text.yview(*xy)
-        self.edit_text.yview(*xy)
-
-    def get_txt_thread(self):
-        Thread(target=self.get_txt).start()
-
-    def get_txt(self):
-        self.thread_lock.acquire()
-        if self.txt != self.edit_text.get("1.0", "end")[:-1]:
-            self.txt = self.edit_text.get("1.0", "end")[:-1]
-            self.show_line()
-        else:
-            self.thread_lock.release()
-
-    def show_line(self):
-        sb_pos = self.edit_text.vbar.get()
-        self.line_text.configure(state="normal")
-        self.line_text.delete("1.0", "end")
-        txt_arr = self.txt.split("\n")
-        if len(txt_arr) == 1:
-            self.line_text.insert("1.1", " 1")
-        else:
-            for i in range(1, len(txt_arr) + 1):
-                self.line_text.insert("end", " " + str(i))
-                if i != len(txt_arr):
-                    self.line_text.insert("end", "\n")
-        if len(sb_pos) == 4:
-            self.line_text.yview_moveto(0.0)
-        elif len(sb_pos) == 2:
-            self.line_text.yview_moveto(sb_pos[0])
-            self.edit_text.yview_moveto(sb_pos[0])
-        self.line_text.configure(state="disabled")
-        try:
-            self.thread_lock.release()
-        except RuntimeError:
-            pass
         
-
+    def set_button(self):
+        self.button0 = tk.Button(self.Window,width=10, height=1, text='SE-Mapping', bg='skyblue', command=partial(self.to_eva,"Se_actionList")).place(x = 100, y = 2)
+        self.button1 = tk.Button(self.Window,width=10, height=1, text='GT', bg='skyblue', command = partial(self.to_eva,"GT_actionList")).place(x = 320, y = 2)
+        self.button2 = tk.Button(self.Window,width=10, height=1, text='MTD', bg='skyblue', command = partial(self.to_eva,"MTD_actionList")).place(x = 540, y = 2)
+        self.button3 = tk.Button(self.Window,width=10, height=1, text='IJM', bg='skyblue', command = partial(self.to_eva,"IJM_actionList")).place(x = 760, y = 2)
+        self.button4 = tk.Button(self.Window,width=10, height=1, text='退出', bg='skyblue', command = self.destroy).place(x = 980, y = 2)
+    
+    def destroy(self):
+        self.Window.destroy();
+    
     def build(self):
+        self.set_button()
         self.draw_layout()
