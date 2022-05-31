@@ -1,3 +1,4 @@
+# coding:utf-8
 import difflib
 import tkinter as tk
 import tkinter.filedialog
@@ -8,12 +9,15 @@ from tkinter import scrolledtext
 from threading import Thread, RLock
 from javaHighlighter import JavaSyntaxHighlighter
 from EvaAction import EvaAction
+from tkinter import messagebox
 
 class Eva():
     def __init__(self,root,file_name):
         self.file_name = file_name
         self.root = root
+        self.methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         self.Window = tk.Toplevel(self.root)
+        self.count = 0
         
         self.set_size()
         self.build()
@@ -66,17 +70,26 @@ class Eva():
             
 
     def to_eva(self,method):
-        self.evaAction = EvaAction(self.Window,self.file_name, self.text, self.text0, method)
-        
+        self.evaAction = EvaAction(self.Window,self.file_name, self.text, self.text0, method, self.buttons)
         
     def set_button(self):
-        self.button0 = tk.Button(self.Window,width=10, height=1, text='SE-Mapping', bg='skyblue', command=partial(self.to_eva,"Se_actionList")).place(x = 100, y = 2)
-        self.button1 = tk.Button(self.Window,width=10, height=1, text='GT', bg='skyblue', command = partial(self.to_eva,"GT_actionList")).place(x = 320, y = 2)
-        self.button2 = tk.Button(self.Window,width=10, height=1, text='MTD', bg='skyblue', command = partial(self.to_eva,"MTD_actionList")).place(x = 540, y = 2)
-        self.button3 = tk.Button(self.Window,width=10, height=1, text='IJM', bg='skyblue', command = partial(self.to_eva,"IJM_actionList")).place(x = 760, y = 2)
+        self.buttons = []
+        self.button0 = tk.Button(self.Window,width=10, height=1, text='SE-Mapping', bg='skyblue', command=partial(self.to_eva,"Se_actionList"))
+        self.button0.place(x = 100, y = 2)
+        self.button1 = tk.Button(self.Window,width=10, height=1, text='GT', bg='skyblue', command = partial(self.to_eva,"GT_actionList"))
+        self.button1.place(x = 320, y = 2)
+        self.button2 = tk.Button(self.Window,width=10, height=1, text='MTD', bg='skyblue', command = partial(self.to_eva,"MTD_actionList"))
+        self.button2.place(x = 540, y = 2)
+        self.button3 = tk.Button(self.Window,width=10, height=1, text='IJM', bg='skyblue', command = partial(self.to_eva,"IJM_actionList"))
+        self.button3.place(x = 760, y = 2)
         self.button4 = tk.Button(self.Window,width=10, height=1, text='退出', bg='skyblue', command = self.destroy).place(x = 980, y = 2)
+        self.buttons.append(self.button0)
+        self.buttons.append(self.button1)
+        self.buttons.append(self.button2)
+        self.buttons.append(self.button3)
     
     def destroy(self):
+        # messagebox.showinfo(title="提示", message="你还有"+ str(4 - self.count) + "份还未标注")
         self.Window.destroy();
     
     def build(self):

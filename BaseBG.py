@@ -87,7 +87,12 @@ class TagData():
     
     def get_tag_files(self):
     #需要增加判断是否已经标注过的方法
-        return os.listdir(self.file)
+        paths = os.listdir(self.file)
+        self.tags = []
+        for i in range(len(paths)):
+            if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt")):
+                self.tags.append(i)
+        return paths
             
     def build_main(self):   
         
@@ -97,7 +102,7 @@ class TagData():
         
         self.files = self.get_tag_files()
         
-        self.label = tk.Label(self.window, text='你还需要标注数据数量为：' + str(len(self.files)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=30, y=30)
+        self.label = tk.Label(self.window, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=30, y=30)
         
         self.set_all_files()
         
@@ -126,22 +131,23 @@ class TagData():
         self.display_files.place(x = 0, y = 0)
         
         self.canvas.create_window((240,750), window = self.display_files)  #create_window
-        
-    # def event1(self,event):    
-        # number = int(-event.delta / 120)
-        # self.canvas.yview_scroll(number, 'units')
+
         
     def set_button(self):
         self.button0 = tk.Button(self.window,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 100, y = 320)
         self.button1 = tk.Button(self.window,width=10, height=1, text='保存退出', bg='skyblue', command=self.save_quit).place(x = 320, y = 320)
         self.button2 = tk.Button(self.window,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 540, y = 320)
+        # self.text_update = tk.Text(self.window,width=10, height=1).place(x = 540, y = 20)
+        # self.button3 = tk.Button(self.window,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 40, y = 20)
         
     def set_file_button(self):
         self.files_button = []
         for i in range(len(self.files)):
             self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i])))
             self.files_button[-1].place(x = 0, y = 28 * i)
-        self.files_button[0]["state"] = tk.DISABLED
+        # self.files_button[0]["state"] = tk.DISABLED
+        for i in self.tags:
+            self.files_button[i]["state"] = tk.DISABLED
         
         
     def open_windows(self,name):

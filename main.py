@@ -1,3 +1,4 @@
+# coding:utf-8
 import difflib
 import tkinter as tk
 import tkinter.filedialog

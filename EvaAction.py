@@ -4,25 +4,33 @@ import tkinter.filedialog
 from functools import partial
 from tkinter.messagebox import showinfo
 from ComBoPicker import Combopicker
+from Data import Data
 import os
 
 class EvaAction():
-    def __init__(self,root,file_name,text,text0,method):
+    def __init__(self,root,file_name,text,text0,method,buttons):
         self.file_name = file_name
+        self.buttons = buttons
         self.root = root
         self.Window = tk.Toplevel(self.root)
+        self.Window.title(method)
         self.text = text
         self.text0= text0
         self.method = method
+        self.win = 0
         self.pos = 0
         self.pos0= 0
+        
+        self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
+        
+        self.Data = Data(self.file_name,self.method)
+        self.Data.set_pos(self.the_index[self.method])
         
         self.checkbuttons = []
         self.buttons_var = []
         self.set_size()
         self.build()
         self.selected_indices = -1
-        self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         
     def set_size(self):
         self.w = 720 ; self.h = 650
@@ -60,11 +68,12 @@ class EvaAction():
 
     def select_all(self):
         if(self.buttons_var[self.selected_indices][0].get() == 0):
-            for i in self.buttons_var[self.selected_indices][1:]:
-                i.set(0)
+            for i in range(len(self.buttons_var[self.selected_indices][1:])):
+                self.buttons_var[self.selected_indices][1 + i].set(0)
         if(self.buttons_var[self.selected_indices][0].get() == 1):
-            for i in self.buttons_var[self.selected_indices][1:]:
-                i.set(1)
+            for i in range(len(self.buttons_var[self.selected_indices][1:])):
+                self.buttons_var[self.selected_indices][1 + i].set(1)
+        self.Data.updated_buttonvar(self.buttons_var)
 
     def draw_tokens(self,index):
         for i in self.checkbuttons:
@@ -77,6 +86,7 @@ class EvaAction():
                 self.actionList[self.selected_indices].append(tmp)
             else:
                 self.actionList[self.selected_indices][2] = tmp
+            self.Data.updated_buttonvar(self.buttons_var)
         self.checkbuttons = []
         all_tokens = [self.actionList[index][0]] + self.actionList[index][1]
         nums = 0
@@ -100,142 +110,37 @@ class EvaAction():
 
     def to_eva(self,method):
         pass
-        
-    def update_record(self,data):
-        data[0] = data[0][0]
-        for i in range(1,len(data)):
-            for j in range(len(data[i])):
-                if(j == 0):
-                    data[i][j][1] = str(self.buttons_var[i-1][0].get())
-                    if(len(self.buttons_var[i-1]) > 1):
-                        data[i][j][3] = str(self.buttons_var[i-1][1].get())
-                    else:
-                        data[i][j][3] = ""
-                else:
-                    data[i][j][3] = str(self.buttons_var[i-1][j+1].get())
-        return data
-    
-    def first_write(self):
-        records = []
-        for i in range(len(self.stmts)):
-            record = []
-            tmp = []
-            if(len(self.tokens[i]) >= 1):
-                tmp.extend([self.stmts[i].replace(","," "),str(self.buttons_var[i][0].get()),self.tokens[i][0].replace(","," "),str(self.buttons_var[i][1].get())])
-            else:
-                tmp = [self.stmts[i].replace(","," "),str(self.buttons_var[i][0].get()),"",""]
-            record.append(tmp)
-            for j in range(1,len(self.tokens[i])):
-                # print(i,j,len(self.tokens[i]),len(self.buttons_var[i]))
-                record.append(["","",self.tokens[i][j].replace(","," "),str(self.buttons_var[i][j + 1].get())])
-            records.append(record)
-        return records
-        
-    def save_file(self,data,the_pos):
-        # with open()
-        content = ""
-        # print(len(data))
-        for i in range(len(data)):
-            if(i != the_pos and i != 3):
-                content += data[i]
-                content += "=" * 50 + "\n"
-            elif(i != the_pos and i == 3):
-                content += data[i] + "\n"
-            else:
-                print(data[i][0][0])
-                content += data[i][0][0] + "\n"
-                content += "-" * 50 + "\n"
-                for j in range(1,len(data[i])):
-                    for p in range(len(data[i][j])):
-                        content += ",".join(data[i][j][p]) + "\n"
-                    content += "-" * 50 + "\n"
-                if(i != 3):
-                    content += "=" * 50 + "\n"
-                
-            
-        with open(self.file_name + "/" + "result.txt","w") as f:
-            f.write(content)
-        
-    def split_data(self,data,the_pos):
-        data = data.split("="*50 + "\n")
-        data[the_pos] = data[the_pos].split("-"*50 + "\n")[:-1]
-        for j in range(len(data[the_pos])):
-            data[the_pos][j] = data[the_pos][j].split("\n")[:-1]
-            for p in range(len(data[the_pos][j])):
-                data[the_pos][j][p] = data[the_pos][j][p].split(",")
-        return data
-                
+      
+    def get_win(self):
+        return self.win
+          
     def confirm(self):
-        path = self.file_name + "/" + "result.txt"
-        methods = ["SE_Mapping","GT","MTD","IJM"]
-        if(not os.path.isfile(path)):
-            with open(path, "w") as f:            
-                f.write(methods[0]+"\n")
-                f.write("-"*50 + "\n")
-                for i in methods[1:]:
-                    f.write("="*50 + "\n")
-                    f.write(i+"\n")
-                    f.write("-"*50 + "\n")
-        with open(path, "r") as f:
-            data = f.read()
-        the_pos = self.the_index[self.method]
-        data = self.split_data(data,the_pos)
-        if(len(data[the_pos]) == 1):
-            data[the_pos] = self.first_write()
-            data[the_pos].insert(0,[methods[the_pos]])
-        else:  
-            data[the_pos] = self.update_record(data[the_pos])
-        self.save_file(data,the_pos)
+        self.Data.updated_buttonvar(self.buttons_var)
+        self.Data.update()
+        self.Data.save_file()
+        methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
+        index = methods.index(self.method)
+        self.buttons[index].config(bg="grey")
+        self.win = 1
         self.destroy()
     
+    def __destroy__(self):
+        self.confirm()
+        
     def destroy(self):
         self.Window.destroy();
         
     def reset(self):
         pass
-        # self.all_stmts[self.selected_indices]["state"] = "None"
-        # self.listbox.select_set(self.selected_indices)
-        
     def set_button(self):
-        self.button0 = tk.Button(self.Window,width=10, height=1, text='修改', bg='skyblue', command=self.reset).place(x = 630, y = 120)
-        self.button1 = tk.Button(self.Window,width=10, height=1, text='确认', bg='skyblue', command=self.confirm).place(x = 80, y = 600)
+        # self.button0 = tk.Button(self.Window,width=10, height=1, text='修改', bg='skyblue', command=self.reset).place(x = 630, y = 120)
+        self.button1 = tk.Button(self.Window,width=10, height=1, text='保存并退出', bg='skyblue', command=self.confirm).place(x = 80, y = 600)
     
     def read_file(self):
-        filepath = self.file_name + "/" + self.method + ".txt"
-        with open(filepath, "r") as f:
-            data = f.read().split("==================================================")
-        self.stmts = []
-        self.tokens= []
-        tmp   = []
-        for i in data[1:]:
-            i = i.split("TOKEN MAPPING:")
-            if(len(i) == 1):
-                self.stmts.append(i[0].strip())
-                self.tokens.append([])
-            else:
-                self.stmts.append(i[0].strip())
-                tmp = []
-                for j in i[1].split("\n"):
-                    tmp.append(j.strip())
-                self.tokens.append(tmp)
-        self.actionList = []
-        for i in range(len(self.tokens)):
-            if(len(self.tokens[i]) >= 1):
-                self.tokens[i] = self.tokens[i][1:]
-            if(len(self.tokens) == 1 and self.tokens[i][0] == ""):
-                self.tokens[i] = []
-            for j in range(len(self.tokens[i])):
-                if(self.tokens[i][j] == ""):
-                    self.tokens[i].pop(j)
-        for i in range(len(self.tokens)):
-            buton_var = [tk.IntVar()]
-            buton_var[-1].set(1)
-            for j in self.tokens[i]:
-                buton_var.append(tk.IntVar())
-                buton_var[-1].set(1)
-            self.buttons_var.append(buton_var)
-        for i in range(len(self.stmts)):
-            self.actionList.append([self.stmts[i],self.tokens[i]])
+        self.stmts, self.tokens, self.actionList = self.Data.read_file()
+        self.Data.create_read_resultfile()
+        self.Data.split_data()
+        self.buttons_var = self.Data.create_buttonvar()
             
     
     def build(self):
