@@ -6,8 +6,7 @@ import os
 from tkinter import *
 from tkinter import scrolledtext
 from threading import Thread, RLock
-import idlelib.colorizer as idc
-import idlelib.percolator as idp
+from javaHighlighter import JavaSyntaxHighlighter
 
 class Eva():
     def __init__(self,root,file_name):
@@ -27,56 +26,39 @@ class Eva():
         self.Window.geometry('%dx%d+%d+%d' % (self.w, self.h, x, y))
             
     # def draw_text():        
-    def get_content(self,file_name):
-        with open(self.file_name + "/" + "Srcfile.java","r") as f:
+    def get_content(self,file_name,text):
+        with open(file_name,"r") as f:
             data = f.readlines()
-            nums = 0
-            length = len(data)
-            if(length < 10):
-                nums = 2
-            elif(length < 100):
-                nums = 3
-            elif(length < 1000):
-                nums = 4
-            elif(length < 10000):
-                nums = 5
-            content = ""
-            pos = 1
-            for i in data:
-                content += str(pos).ljust(nums," ") + i
-                pos += 1
-            return content
+        nums = 0
+        length = len(data)
+        if(length < 10):
+            nums = 2
+        elif(length < 100):
+            nums = 3
+        elif(length < 1000):
+            nums = 4
+        elif(length < 10000):
+            nums = 5
+        jsh = JavaSyntaxHighlighter(text,nums)
+        num = 0
+        content = []
+        for i in data:
+            content.append(jsh.highlight(i))
+        return jsh.translate(content)
             
     def draw_layout(self):
         self.text = []
         self.text = tk.Text(self.Window,width = 95,height = 53,font = 10)   
-        data = self.get_content(self.file_name + "/" + "Srcfile.java")
-        self.text.insert(0.0,data)
-    
+        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text)
         self.text.pack()
         self.text.place(x=5,y=10)
-        # idc.color_config(self.text)
-        # self.text.focus_set()
-        # p = idp.Percolator(self.text)
-        # d = idc.ColorDelegator()
-        # p.insertfilter(d)
-
         self.text["state"] = "disabled"
-        nums = 50 * 100
-        self.text.yview_scroll(nums, "units")
+        # nums = 50 * 100
+        # self.text.yview_scroll(nums, "units")
         
         
         self.text0 = tk.Text(self.Window,width = 95,height = 53,font = 10)
-        # scroll0 = tk.Scrollbar(self.text0)
-        # scroll0.pack(side=tk.RIGHT,fill=tk.Y)
-         
-        # scroll0.config(command=self.text0.yview)
-        # self.text0.config(yscrollcommand=scroll0.set)
-        
-        data = self.get_content(self.file_name + "/" + "Dstfile.java")
-        
-        self.text0.insert(0.0,data)
-    
+        self.text0 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text0)
         self.text0.pack()
         self.text0.place(x=970,y=10)
         self.text0["state"] = "disabled"

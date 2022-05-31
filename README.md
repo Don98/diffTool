@@ -36,4 +36,9 @@ A diffTool for annotated data set
   10. https://blog.csdn.net/qq_21238607/article/details/108824662
   11. https://blog.csdn.net/qq_28123095/article/details/79331756
   12. https://www.runoob.com/python/python-tk-canvas.html
-  13. 
+  13. https://blog.csdn.net/qq_35981895/article/details/107311844
+  14. https://blog.csdn.net/w15977858408/article/details/104173780
+  15. https://www.thinbug.com/q/38594978
+  16. https://blog.csdn.net/w15977858408/article/details/104173780
+  17. https://wenku.baidu.com/view/528ab4080366f5335a8102d276a20029bd646328.html
+  18. 
