@@ -95,15 +95,17 @@ class TagData():
         # self.tags = []
         return paths
             
+    def set_label(self):
+        self.files = self.get_tag_files()
+        
+        self.label = tk.Label(self.window, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=30, y=30)
+            
     def build_main(self):   
         
         self.window = tk.Frame(self.root,width=self.w,height=self.h,padx=0,pady=0)
         self.window.pack()
         self.window.place(x=0,y=0)
-        
-        self.files = self.get_tag_files()
-        
-        self.label = tk.Label(self.window, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=30, y=30)
+        self.set_label()
         
         self.set_all_files()
         
@@ -136,7 +138,7 @@ class TagData():
         
     def set_button(self):
         self.button0 = tk.Button(self.window,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 100, y = 320)
-        self.button1 = tk.Button(self.window,width=10, height=1, text='保存退出', bg='skyblue', command=self.save_quit).place(x = 320, y = 320)
+        self.button1 = tk.Button(self.window,width=10, height=1, text='查看结果', bg='skyblue', command=self.query_result).place(x = 320, y = 320)
         self.button2 = tk.Button(self.window,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 540, y = 320)
         # self.text_update = tk.Text(self.window,width=10, height=1).place(x = 540, y = 20)
         # self.button3 = tk.Button(self.window,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 40, y = 20)
@@ -144,23 +146,61 @@ class TagData():
     def set_file_button(self):
         self.files_button = []
         for i in range(len(self.files)):
-            self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i])))
+            self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i],i)))
             self.files_button[-1].place(x = 0, y = 28 * i)
         # self.files_button[0]["state"] = tk.DISABLED
         for i in self.tags:
             self.files_button[i]["state"] = tk.DISABLED
+        self.set_label()
         
         
-    def open_windows(self,name):
+    def open_windows(self,name,pos):
         self.newWindow = Eva(self.root,self.file + "/" + name)
         print(name)
-        del self.newWindow  
+        self.tags.append(pos)
+        del self.newWindow
+        
+    def get_nums(self,path):
+        right = [0,0,0,0,0,0,0,0]
+        all_nums =  [0,0,0,0,0,0,0,0]
+        with open(path + "/result.txt","r") as f:
+            data = f.read().split("==================================================\n")
+        num = 0
+        for i in data:
+            # print(i)
+            i = i.split("--------------------------------------------------\n")
+            if(len(i) <= 1):
+                continue
+            i = i[0].split(" : ")[1]
+            i = i.strip().split(" || ")
+            stmt  = i[0].split("/")
+            token = i[1].split("/")
+            # print(num,stmt,token)
+            right[num] += int(stmt[0])
+            all_nums[num] += int(stmt[1])
+            right[num + 4] += int(token[0])
+            all_nums[num + 4] += int(token[1])
+            num += 1
+        return right,all_nums
         
     def save_result(self):
-        pass
+        for i in range(len(self.files)):
+            self.files_button[i].destroy()
+        self.set_file_button()
     
-    def save_quit(self):
-        pass
+    def query_result(self):
+        right = [0,0,0,0,0,0,0,0]
+        all_nums =  [0,0,0,0,0,0,0,0]
+        for i in self.tags:
+            tmp0, tmp1 = self.get_nums(self.file + "/" + self.files[i])
+            for i in range(8):
+                right[i] += tmp0[i]
+                all_nums[i] += tmp1[i]
+        methos = ["SE","GT","MTD","IJM"]
+        show_content = "Methods\tStmt || Token\n"
+        for i in range(4):
+            show_content += methos[i] + "\t : " + str(right[i]) + "/" + str(all_nums[i]) + " || " + str(right[i+4]) + "/" + str(all_nums[i + 4]) + "\n" 
+        tk.messagebox.showwarning('统计结果', show_content)
     
     def pack_result(self):
         pass

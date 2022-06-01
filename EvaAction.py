@@ -34,7 +34,7 @@ class EvaAction():
         self.build()
         
     def set_size(self):
-        self.w = 720 ; self.h = 650
+        self.w = 720 ; self.h = 700
         self.ws = self.root.winfo_screenwidth()
         self.hs = self.root.winfo_screenheight()
         x = (self.ws/2) - (self.w/2)
@@ -134,9 +134,17 @@ class EvaAction():
         
     def reset(self):
         pass
+    
+    def dechose(self):
+        for i in range(len(self.buttons_var[self.selected_indices][1:])):
+            # print(1 - self.buttons_var[self.selected_indices][1 + i].get())
+            self.buttons_var[self.selected_indices][1 + i].set(1 - self.buttons_var[self.selected_indices][1 + i].get())
+        self.Data.updated_buttonvar(self.buttons_var)
+        
     def set_button(self):
         # self.button0 = tk.Button(self.Window,width=10, height=1, text='修改', bg='skyblue', command=self.reset).place(x = 630, y = 120)
-        self.button1 = tk.Button(self.Window,width=10, height=1, text='保存并退出', bg='skyblue', command=self.confirm).place(x = 80, y = 620)
+        self.button1 = tk.Button(self.Window,width=10, height=1, text='保存并退出', bg='skyblue', command=self.confirm).place(x = 80, y = 650)
+        self.button2 = tk.Button(self.Window,width=10, height=1, text='Token反选', bg='skyblue', command=self.dechose).place(x = 180, y = 650)
     
     def read_file(self):
         self.stmts, self.tokens, self.actionList = self.Data.read_file()

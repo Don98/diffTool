@@ -17,6 +17,7 @@ class Eva():
         self.root = root
         self.methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         self.Window = tk.Toplevel(self.root)
+        self.Window.title(file_name.split("/")[-1])
         self.count = 0
         
         self.set_size()
