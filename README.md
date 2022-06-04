@@ -48,3 +48,13 @@ A diffTool for annotated data set
   22. https://blog.csdn.net/chaodaibing/article/details/108749234
   23. [鼠标事件](https://blog.csdn.net/qq_44168690/article/details/104882776)
 
+这星期开完组会，老师提了新需求，需要优先实现新需求了，新需求有如下几点：
+
+- 把所有内容都放在一个屏幕内，左边放commit文件，主屏幕放比对文件内容，下边放比对工具的操作（需要评估的操作）
+- 把text变成可调整的，目前实现思路为：把两个text放入一个frame中，然后占据frame的所有内容，当frame的大小被调整的时候（只能够上下挪动），text的大小也会被挪动
+- 挪动的实现思路：在需要挪动的部件边缘增加一个看不到的细长条部件块，当鼠标在这个位置的时候才能够挪动部件（和需要挪动的不见融合）
+- 操作评估的拜访，主要展示stmt层次的操作，token层次的操作由下拉列表来实现，当下拉的时候才展现token层次的操作。
+
+大致的需求效果图如下：
+
+![image-20220605024357888](C:\Users\10622\AppData\Roaming\Typora\typora-user-images\image-20220605024357888.png)
