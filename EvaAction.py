@@ -3,7 +3,6 @@ import tkinter as tk
 import tkinter.filedialog
 from functools import partial
 from tkinter.messagebox import showinfo
-from ComBoPicker import Combopicker
 from Data import Data
 import os
 
@@ -130,6 +129,7 @@ class EvaAction():
         self.confirm()
         
     def destroy(self):
+        self.scroll([0,0])
         self.Window.destroy();
         
     def reset(self):
