@@ -3,7 +3,6 @@ import difflib
 import tkinter as tk
 import tkinter.filedialog
 from functools import partial
-from BaseBG import BaseBG
 from BaseBG import TagData
 
 class mainBG():
@@ -12,19 +11,30 @@ class mainBG():
         self.root.title('数据标注工具V1.0')
         self.file = "../first_try/"
         # self.file = "../data/"
-        # self.base = BaseBG(self.root,w,h,self.file)
-        # self.root.resizable(width=False, height=False)
-        self.root.resizable(width=True, height=True)
-        self.tagData = TagData(self.root,self.file)
+        
+        self.root.resizable(width=False, height=False)    
+        self.ws = self.root.winfo_screenwidth()
+        self.hs = self.root.winfo_screenheight()
+        print(self.ws,self.hs)
+        self.set_size()
+        
+        # first stage : build navigation bar
+        # self.navigation = tk.Frame(self.root,width=self.ws / 8,height=self.hs,padx=0,pady=0)
+        self.navigation = tk.Frame(self.root,width=self.ws/8,height=int(6 * self.hs / 8))
+        self.navigation.pack()
+        self.navigation.place(x = 0,y = 0)
+        # self.navigation.config(bg="blue")
+        
+        # print(self.navigation.winfo_width())
+        # print(self.navigation.winfo_height())
+        self.tagData = TagData(self.navigation,self.file,self.ws / 8,int(6 * self.hs / 8))
 
-    # def Diff(self):
-        # with open(file1,encoding='utf-8') as f1,open(file2,encoding='utf-8') as f2:
-            # text1 = f1.readlines()
-            # text2 = f2.readlines()
-        # d = difflib.HtmlDiff()
-        # with open('result1.html','w',encoding='utf-8') as f:
-            # f.write(d.make_file(text1,text2))
 
+    def set_size(self,x = 0,y = 0):
+        # x = (ws/2) - (w/2)
+        # y = (hs/2) - (h/2)
+        self.root.geometry('%dx%d+%d+%d' % (self.ws, self.hs, 0, 0))
+    
     def run(self):
         self.root.mainloop()
 

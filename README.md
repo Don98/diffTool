@@ -58,3 +58,6 @@ A diffTool for annotated data set
 大致的需求效果图如下：
 
 ![image-20220605024357888](C:\Users\10622\AppData\Roaming\Typora\typora-user-images\image-20220605024357888.png)
+
+- 1. [python中tkinter窗口位置\坐标\大小等知识的科普](https://blog.csdn.net/dhjabc_1/article/details/105428853)
+  2. [tkinter中ttk控件的width-height设置](https://blog.csdn.net/qq_35981895/article/details/107311844)

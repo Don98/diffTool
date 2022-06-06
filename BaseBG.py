@@ -51,10 +51,10 @@ class BaseBG():
         self.root.destroy()
 
 class TagData():
-    def __init__(self,root,file):
+    def __init__(self,root,file,ws,hs):
         self.root = root
-        self.w = 720
-        self.h = 600
+        self.ws = ws
+        self.hs = hs
         self.file = file
         if(not self.existOrNot()):
             self.run_base()
@@ -62,7 +62,6 @@ class TagData():
             self.to_build()
         
     def to_build(self):
-        self.set_size()
         self.build_main()
     
     def existOrNot(self):
@@ -73,14 +72,6 @@ class TagData():
     def run_base(self):
         self.base = BaseBG(self.root)
         # self.to_build()
-    
-    def set_size(self):
-        w = 720; h = 400
-        ws = self.root.winfo_screenwidth()
-        hs = self.root.winfo_screenheight()
-        x = (ws/2) - (w/2)
-        y = (hs/2) - (h/2)
-        self.root.geometry('%dx%d+%d+%d' % (w, h, x, y))
     
     def get_file():
         return self.file
@@ -97,60 +88,69 @@ class TagData():
             
     def set_label(self):
         self.files = self.get_tag_files()
-        
-        self.label = tk.Label(self.window, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=30, y=30)
+        self.label = tk.Label(self.window0, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=10, y=10)
             
     def build_main(self):   
+        self.window0 = tk.Frame(self.root,width=self.ws-2,height=30,padx=0,pady=0)
+        self.window = tk.Frame(self.root,width=self.ws-2,height=self.hs-70,padx=0,pady=1)
+        self.window1 = tk.Frame(self.root,width=self.ws-2,height=30,padx=0,pady=2)
+        self.bar_buttom = tk.Frame(self.root,width=self.ws-2,height=2,padx=0,pady=3)
+        self.bar_right = tk.Frame(self.root,width=5,height=self.hs,padx=1,pady=0)
         
-        self.window = tk.Frame(self.root,width=self.w,height=self.h,padx=0,pady=0)
-        self.window.pack()
-        self.window.place(x=0,y=0)
+        self.window0.place(x=0,y=0)
+        self.window.place(x=0,y=35)
+        self.window1.place(x=0,y=self.hs - 35)
+        self.bar_buttom.place(x=0,y=self.hs - 2)
+        self.bar_right.place(x=self.ws-2,y=0)
+        
+        self.bar_right.config(bg="black")
+        self.bar_buttom.config(bg="black")
+        # self.window.config(bg="red")
+        
         self.set_label()
-        
         self.set_all_files()
-        
-        # scroll = tk.Scrollbar()
-        # scroll.pack(side=tk.RIGHT,fill=tk.Y)
-        # scroll.config(command = self.display_files.yview)
-        # self.display_files.config(yscrollcommand=scroll.set)
-
         self.set_button()
         self.set_file_button()
     
-    def set_all_files(self):
-        self.canvas = tk.Canvas(self.window,width=480,height=197,scrollregion=(0,0,480,len(self.files) * 28),bg = "white")
-        self.canvas.pack()
-        self.canvas.place(x = 120, y = 80)
+    def processWheel(event):
+        a= int(-(event.delta)/60)
+        self.canvas.yview_scroll(a,'units')
         
-        self.display_files = tk.Frame(self.canvas,width = 480 ,height = len(self.files) * 30 - 3,padx=0,pady=0)
+    def set_all_files(self):
+        self.canvas = tk.Canvas(self.window,width=self.ws-2,height=self.hs-70,scrollregion=(0,0,self.ws,len(self.files) * 28),bg = "white")
+        self.canvas.place(x = 0, y = 0)
+        
+        self.display_files = tk.Frame(self.canvas,width=600,height=len(self.files) * 28)
         
         self.vbar = tk.Scrollbar(self.canvas, orient = tk.VERTICAL) #竖直滚动条
-        self.vbar.place(x = 470,width = 20,height=200)
-        # self.vbar.place(x = 0,width = 470,height=197)
+        self.vbar.place(x = self.ws-10,width = 10,height=self.hs)
         self.vbar.configure(command=self.canvas.yview)
+        self.vbar.bind("<MouseWheel>", self.processWheel)
+        self.canvas.bind("<MouseWheel>", self.processWheel)
 
         self.canvas.config(yscrollcommand = self.vbar.set) #设置  
-        # self.display_files.config(bg='black')
+        self.display_files.config(bg='black')
         self.display_files.place(x = 0, y = 0)
+        self.display_files.bind("<MouseWheel>", self.processWheel)
         
-        self.canvas.create_window((240,750), window = self.display_files)  #create_window
+        self.canvas.create_window((160,700), window = self.display_files, width = 320, height=len(self.files) * 28)  #create_window
 
         
     def set_button(self):
-        self.button0 = tk.Button(self.window,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 100, y = 320)
-        self.button1 = tk.Button(self.window,width=10, height=1, text='查看结果', bg='skyblue', command=self.query_result).place(x = 320, y = 320)
-        self.button2 = tk.Button(self.window,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 540, y = 320)
-        # self.text_update = tk.Text(self.window,width=10, height=1).place(x = 540, y = 20)
-        # self.button3 = tk.Button(self.window,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 40, y = 20)
+        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 0, y = 0)
+        self.button1 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='skyblue', command=self.query_result).place(x = 120, y = 0)
+        self.button2 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 240, y = 0)
         
     def set_file_button(self):
         self.files_button = []
         for i in range(len(self.files)):
-            self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i],i)))
+            self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i],i),anchor="w"))
             self.files_button[-1].place(x = 0, y = 28 * i)
+            self.files_button[-1]["state"] = tk.DISABLED
+            
         # self.files_button[0]["state"] = tk.DISABLED
-        for i in self.tags:
-            self.files_button[i]["state"] = tk.DISABLED
+        # for i in self.tags:
+            # self.files_button[i]["state"] = tk.DISABLED
         self.set_label()
         
         
