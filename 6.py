@@ -1,34 +1,34 @@
 import tkinter as tk
 
-def processWheel(event):
-    a= int(-(event.delta)/60)
-    c.yview_scroll(a,'units')
+#主程序类
+class main:
+    
+    def __init__(self):
+        
+        self.root = tk.Tk()     #创建根窗体
 
-root = tk.Tk(className='test')
+        self.btn = tk.Button(self.root, text='新建标签', command=self.addlabel)             #按钮btn
+        self.cv = tk.Canvas(self.root, width=200, height=250, bg='white', )   #画布cv
+        self.frm = tk.Frame(self.cv, relief='sunken')                                       #容器frm
 
-scrollbar = tk.Scrollbar(root)
+        self.cv.create_window((0,0), window=self.frm, anchor='nw')      #在cv中绘制控件frm
+        self.cv.configure(scrollregion=(0,0,self.frm.winfo_width(),self.frm.winfo_height()))    #将cv的滚动范围设为frm的大小
 
-c= tk.Canvas(root,background = "#D2D2D2",yscrollcommand=scrollbar.set, width=300, height=300)
+        self.btn.pack()     #pack布局
+        self.cv.pack(fill='x')
 
-scrollbar.config(command=c.yview)
-scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+        self.root.mainloop()
 
-c.pack(side="left", fill="both", expand=True)
+    def addlabel(self):     #新建标签
 
-f = tk.Frame(c)
-c.create_window(0,0,window=f, anchor='nw')
+        __label = tk.Label(self.frm, text='标签', width=27, relief='sunken')
+        self.cv.bind('<MouseWheel>',lambda event:self.cv.yview_scroll(int(-1*(event.delta/50)),'units'))
+        __label.bind('<MouseWheel>',lambda event:self.cv.yview_scroll(int(-1*(event.delta/50)),'units'))
+        #为标签绑定鼠标滚动事件
+        __label.pack(side='bottom', fill='x')
 
-for i in range(10):
-    label=tk.Label(f,wraplength=350 ,text=r"之乎者也 知乎知乎~！"+str(i))
-    label.bind("<MouseWheel>", processWheel)
-    label.pack()
-    button = tk.Button(f,text="凑个数而已..")
-    button.pack()
-    button.bind("<MouseWheel>", processWheel)
-
-root.update()
-c.config(scrollregion=c.bbox("all"))
-f.bind("<MouseWheel>", processWheel)
-c.bind("<MouseWheel>", processWheel)
-
-root.mainloop()
+        self.root.update()  #刷新窗口
+        self.cv.configure(scrollregion=(0,0,self.frm.winfo_width(),self.frm.winfo_height()))
+        #刷新后重新将cv的滚动范围设为frm的大小（问题出现的地方）
+        
+main()

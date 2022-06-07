@@ -143,20 +143,20 @@ def test():
     root.title("Test")
     root.geometry('500x350')
     btn=ttk.Button(root,text="Button")
-    draggable(btn)
-    btn.bind('<B1-Motion>',adjust_button,add='+')
+    # draggable(btn)
+    # btn.bind('<B1-Motion>',adjust_button,add='+')
     x1=20;y1=20;x2=220;y2=170;size=10
     btn.place(x=x1,y=y1,width=x2-x1,height=y2-y1)
     root.update() 
     # 创建各个手柄, 这里是控件缩放的算法
-    add_button(lambda:(btn.winfo_x()-size, btn.winfo_y()-size),
-               'nw')
-    add_button(lambda:(btn.winfo_x()+btn.winfo_width()//2,
-                       btn.winfo_y()-size), 'n')
+    # add_button(lambda:(btn.winfo_x()-size, btn.winfo_y()-size),
+               # 'nw')
+    # add_button(lambda:(btn.winfo_x()+btn.winfo_width()//2,
+                       # btn.winfo_y()-size), 'n')
     # add_button(lambda:(btn.winfo_x()+btn.winfo_width(), btn.winfo_y()-size),
                # 'ne')
-    # add_button(lambda:(btn.winfo_x()+btn.winfo_width(),
-                       # btn.winfo_y()+btn.winfo_height()//2),'e')
+    add_button(lambda:(btn.winfo_x()+btn.winfo_width(),
+                       btn.winfo_y()+btn.winfo_height()//2),'e')
     # add_button(lambda:(btn.winfo_x()+btn.winfo_width(),
                        # btn.winfo_y()+btn.winfo_height()), 'se')
     # add_button(lambda:(btn.winfo_x()+btn.winfo_width()//2,

@@ -1,10 +1,13 @@
 import re
+import tkinter as tk
 
 class JavaSyntaxHighlighter:
-    def __init__(self,text,blank):
+    def __init__(self,text,text1):
         self.columns = 0
-        self.blank = blank
-        self.text = text
+        # self.blank = blank
+        self.text  = text
+        self.text1 = text1
+        # self.labels = labels
         self.config_all()
         self.line = ""  # 保存当前处理的行
         self.keywords = \
@@ -82,14 +85,17 @@ class JavaSyntaxHighlighter:
         res = []
         nums = 1
         for i in data:    
-            self.text.insert("end",str(nums).ljust(self.blank," "),"[None]")
+            # self.text.insert("end",str(nums).ljust(self.blank," "),"[None]")
+            # self.labels.
             i = self.split_classify(i)
             for j in i:
                 self.text.insert("end",j[1],j[0])            
             # self.text.insert("end",i[-1][1].strip() + "\n","[None]")        
             nums += 1
         for i in range(nums):
-            if(self.text.get(i + 0.0 ,i + 0.1) == " "):
+            if(self.text.get(i + 0.0 ,i + 0.2) == "  "):
+                self.text.delete( i + 0.0 ,i + 0.2)
+            elif(self.text.get(i + 0.0 ,i + 0.1) == " "):
                 self.text.delete(i + 0.0,i + 0.1)
         return self.text
                 

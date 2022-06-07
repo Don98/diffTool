@@ -61,3 +61,9 @@ A diffTool for annotated data set
 
 - 1. [python中tkinter窗口位置\坐标\大小等知识的科普](https://blog.csdn.net/dhjabc_1/article/details/105428853)
   2. [tkinter中ttk控件的width-height设置](https://blog.csdn.net/qq_35981895/article/details/107311844)
+  3. [Canvas绘制控件——关于Python的tkinter模块Canvas控件绘制组件的一些问题(scrollregien)：画布的滚动超出预定范围](https://icode.best/i/75816642283712)
+  4. [【Python cursor指针】——Python Tkinter Cursor鼠标指针属性值](https://blog.csdn.net/weixin_46625757/article/details/122517061?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_title~default-0-122517061-blog-102582099.pc_relevant_default&spm=1001.2101.3001.4242.1&utm_relevant_index=2)
+  5. [Python tkinter 设计用鼠标拖动控件、控件缩放算法及程序](https://blog.csdn.net/qfcy_/article/details/122615118)
+  6. [Python的包tkinter中的canvas.winfo_height()或canvas.winfo_width()返回值1的解决](https://blog.csdn.net/RobertChenGuangzhi/article/details/105425187)
+  7. [https://www.javaroad.cn/questions/303594](https://www.javaroad.cn/questions/303594)
+

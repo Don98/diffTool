@@ -4,31 +4,36 @@ import tkinter as tk
 import tkinter.filedialog
 from functools import partial
 from BaseBG import TagData
+from eva import Eva
 
 class mainBG():
     def __init__(self):
         self.root = tk.Tk()
         self.root.title('数据标注工具V1.0')
-        self.file = "../first_try/"
-        # self.file = "../data/"
+        # self.root.config(bg="white")
+        # self.file = "../first_try/"
+        self.file = "../data/"
         
         self.root.resizable(width=False, height=False)    
+        # self.root.resizable(width=True, height=True)    
         self.ws = self.root.winfo_screenwidth()
         self.hs = self.root.winfo_screenheight()
         print(self.ws,self.hs)
         self.set_size()
         
         # first stage : build navigation bar
-        # self.navigation = tk.Frame(self.root,width=self.ws / 8,height=self.hs,padx=0,pady=0)
         self.navigation = tk.Frame(self.root,width=self.ws/8,height=int(6 * self.hs / 8))
         self.navigation.pack()
         self.navigation.place(x = 0,y = 0)
-        # self.navigation.config(bg="blue")
+        self.navigation.config(bg="blue")
         
-        # print(self.navigation.winfo_width())
-        # print(self.navigation.winfo_height())
-        self.tagData = TagData(self.navigation,self.file,self.ws / 8,int(6 * self.hs / 8))
+        self.tagData = TagData(self,self.root,self.navigation,self.file,self.ws / 8,int(6 * self.hs / 8))
 
+    def open_windows(self,name,pos):
+        self.newWindow = Eva(self.root,self.file + "/" + name,self.ws - self.ws / 8,int(6 * self.hs / 8))
+        # print(name)
+        # self.tags.append(pos)
+        # del self.newWindow
 
     def set_size(self,x = 0,y = 0):
         # x = (ws/2) - (w/2)

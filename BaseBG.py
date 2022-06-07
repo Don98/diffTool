@@ -2,8 +2,8 @@ import difflib
 import tkinter as tk
 import tkinter.filedialog
 from functools import partial
-from eva import Eva
 import os
+from ctypes import *
 
 class BaseBG():
     def __init__(self,root):
@@ -50,12 +50,18 @@ class BaseBG():
     def destroy(self):
         self.root.destroy()
 
+class _PointAPI(Structure): # 用于getpos()中API函数的调用
+    _fields_ = [("x", c_ulong), ("y", c_ulong)]
 class TagData():
-    def __init__(self,root,file,ws,hs):
+    def __init__(self,parent,true_root,root,file,ws,hs):
+        self.parent = parent
+        self.true_root = true_root
         self.root = root
         self.ws = ws
         self.hs = hs
         self.file = file
+        self.bound = {}
+        self.all_positions = []
         if(not self.existOrNot()):
             self.run_base()
         else:
@@ -83,58 +89,108 @@ class TagData():
         for i in range(len(paths)):
             if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt")):
                 self.tags.append(i)
-        # self.tags = []
         return paths
             
     def set_label(self):
         self.files = self.get_tag_files()
         self.label = tk.Label(self.window0, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=10, y=10)
-            
-    def build_main(self):   
-        self.window0 = tk.Frame(self.root,width=self.ws-2,height=30,padx=0,pady=0)
-        self.window = tk.Frame(self.root,width=self.ws-2,height=self.hs-70,padx=0,pady=1)
-        self.window1 = tk.Frame(self.root,width=self.ws-2,height=30,padx=0,pady=2)
-        self.bar_buttom = tk.Frame(self.root,width=self.ws-2,height=2,padx=0,pady=3)
-        self.bar_right = tk.Frame(self.root,width=5,height=self.hs,padx=1,pady=0)
-        
-        self.window0.place(x=0,y=0)
-        self.window.place(x=0,y=35)
-        self.window1.place(x=0,y=self.hs - 35)
-        self.bar_buttom.place(x=0,y=self.hs - 2)
-        self.bar_right.place(x=self.ws-2,y=0)
+    
+    def set_main_tk(self):
+        self.root.place(width = self.all_positions[0][2],height = self.all_positions[0][3])
+        self.window0.place(x = self.all_positions[1][0],y = self.all_positions[1][1], width = self.all_positions[1][2], height = self.all_positions[1][3])
+        self.window.place(x = self.all_positions[2][0],y = self.all_positions[2][1], width = self.all_positions[2][2], height = self.all_positions[2][3])
+        self.window1.place(x = self.all_positions[3][0],y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
+        self.bar_buttom.place(x = self.all_positions[4][0],y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
+        self.bar_right.place(x = self.all_positions[5][0],y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
         
         self.bar_right.config(bg="black")
         self.bar_buttom.config(bg="black")
-        # self.window.config(bg="red")
+        # self.window1.config(bg="black")
+        self.window.config(bg="red")
         
+    def build_main(self):
+        self.all_positions.append([0,0,self.ws,self.hs])
+        self.all_positions.append([0,0,self.ws - 2, 35])
+        self.all_positions.append([0,35,self.ws - 2, self.hs - 70])
+        self.all_positions.append([0,self.hs - 35,self.ws - 2, 30])
+        self.all_positions.append([0,self.hs - 5,self.ws, 5])
+        self.all_positions.append([self.ws - 2, 0, 5, self.hs])
+        
+        self.window0 = tk.Frame(self.root, width = self.all_positions[1][2],height = self.all_positions[1][3])
+        self.window  = tk.Frame(self.root, width = self.all_positions[2][2],height = self.all_positions[2][3])
+        self.window1 = tk.Frame(self.root, width = self.all_positions[3][2],height = self.all_positions[3][3])
+        self.bar_buttom = tk.Frame(self.root, width = self.all_positions[4][2],height = self.all_positions[4][3],cursor = 'sb_v_double_arrow')
+        self.bar_right = tk.Frame(self.root, width = self.all_positions[5][2],height = self.all_positions[5][3],cursor = 'sb_h_double_arrow')
+        
+        self.set_main_tk()
         self.set_label()
         self.set_all_files()
         self.set_button()
         self.set_file_button()
+        self.set_adjust()
     
-    def processWheel(event):
+    def getpos(self):
+        # 调用API函数获取当前鼠标位置。返回值以(x,y)形式表示。
+        po = _PointAPI()
+        windll.user32.GetCursorPos(byref(po))
+        return int(po.x - self.true_root.winfo_x()), int(po.y - self.true_root.winfo_y())
+    def xpos(self):return self.getpos()[0]
+    
+    def ypos(self):return self.getpos()[1]
+    
+    def set_canvas(self):
+        self.canvas.place(width = self.all_positions[2][2], height = self.all_positions[2][3])
+        self.vbar.place(x =  self.all_positions[2][2] - 10,width = 10,height =  self.all_positions[2][3])
+        self.display_files.place(width = self.all_positions[2][2],height=len(self.files) * 28)
+        new_pos = self.all_positions[2][2] / 320
+        self.canvas.create_window((160 * new_pos,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28) 
+    
+    def to_resize(self,nums,dx,dy):
+        for i in nums:
+            self.all_positions[i] = [self.all_positions[i][0], self.all_positions[i][1], self.all_positions[i][2] + dx, self.all_positions[i][3]+dy]
+        self.set_main_tk()
+        self.set_canvas()
+    
+    def resize_l(self,event):
+        dx = self.xpos() - self.all_positions[5][0]
+        dy = self.ypos() - self.all_positions[5][1]
+        self.all_positions[5][0] += dx
+        self.to_resize([0,1,2,3,4],dx,0)
+        
+    def resize_t(self,event):
+        dx = self.xpos() - self.all_positions[4][0]
+        dy = self.ypos() - self.all_positions[4][1]
+        self.all_positions[3][1] += dy
+        self.all_positions[4][1] += dy
+        self.to_resize([0,2,5],0,dy)
+        
+    def set_adjust(self):
+        self.bar_right.bind("<B1-Motion>", self.resize_l)
+        self.bar_buttom.bind("<B1-Motion>", self.resize_t)
+        # self.resize()
+    
+    def processWheel(self,event):
         a= int(-(event.delta)/60)
         self.canvas.yview_scroll(a,'units')
         
     def set_all_files(self):
-        self.canvas = tk.Canvas(self.window,width=self.ws-2,height=self.hs-70,scrollregion=(0,0,self.ws,len(self.files) * 28),bg = "white")
+        self.canvas = tk.Canvas(self.window, width = self.all_positions[2][2], height = self.all_positions[2][3],scrollregion=(0,0,self.ws,len(self.files) * 28),bg = "white")
         self.canvas.place(x = 0, y = 0)
         
-        self.display_files = tk.Frame(self.canvas,width=600,height=len(self.files) * 28)
+        self.display_files = tk.Frame(self.canvas, width = self.all_positions[2][2],height=len(self.files) * 28)
         
         self.vbar = tk.Scrollbar(self.canvas, orient = tk.VERTICAL) #竖直滚动条
-        self.vbar.place(x = self.ws-10,width = 10,height=self.hs)
+        self.vbar.place(x =  self.all_positions[2][2] - 10,width = 10,height =  self.all_positions[2][3])
         self.vbar.configure(command=self.canvas.yview)
         self.vbar.bind("<MouseWheel>", self.processWheel)
         self.canvas.bind("<MouseWheel>", self.processWheel)
 
         self.canvas.config(yscrollcommand = self.vbar.set) #设置  
-        self.display_files.config(bg='black')
+        self.display_files.config(bg='white')
         self.display_files.place(x = 0, y = 0)
         self.display_files.bind("<MouseWheel>", self.processWheel)
         
-        self.canvas.create_window((160,700), window = self.display_files, width = 320, height=len(self.files) * 28)  #create_window
-
+        self.canvas.create_window((160,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28)  #create_window
         
     def set_button(self):
         self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 0, y = 0)
@@ -144,13 +200,14 @@ class TagData():
     def set_file_button(self):
         self.files_button = []
         for i in range(len(self.files)):
-            self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i],i),anchor="w"))
+            self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = str(i) + " : " +self.files[i], bg='white', command = partial(self.parent.open_windows,self.files[i],i),anchor="w",bd = 0))
             self.files_button[-1].place(x = 0, y = 28 * i)
-            self.files_button[-1]["state"] = tk.DISABLED
+            self.files_button[-1].bind("<MouseWheel>", self.processWheel)
+            # self.files_button[-1]["state"] = tk.DISABLED
             
         # self.files_button[0]["state"] = tk.DISABLED
-        # for i in self.tags:
-            # self.files_button[i]["state"] = tk.DISABLED
+        for i in self.tags:
+            self.files_button[i]["state"] = tk.DISABLED
         self.set_label()
         
         
@@ -187,7 +244,7 @@ class TagData():
         for i in range(len(self.files)):
             self.files_button[i].destroy()
         self.set_file_button()
-    
+        
     def query_result(self):
         right = [0,0,0,0,0,0,0,0]
         all_nums =  [0,0,0,0,0,0,0,0]
