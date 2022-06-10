@@ -41,14 +41,20 @@ class Eva():
     def get_content(self,file_name,text,text1):
         with open(file_name,"r") as f:
             data = f.readlines()
-        jsh = JavaSyntaxHighlighter(text,text1)
+        jsh = JavaSyntaxHighlighter(data,text,text1)
         content = []
+        nums = 0
         for i in data:
+            # if(nums >= 70 and nums <= 75):
+                # print(nums,i)
             content.append(jsh.highlight(i))
+            # if(nums >= 70 and nums <= 75):
+                # print(nums,content[-1])
+            nums += 1
         return jsh.translate(content)
     
     def processWheel(self,event):
-        a= int(-1*(event.delta/120))
+        a= int(-1*(event.delta/60))
         self.line_text0.yview_scroll(a,'units') 
         self.text.yview_scroll(a,'units')
         return "break" 
@@ -62,7 +68,6 @@ class Eva():
             # self.line_text0.insert('end',str(i) + '\n') 
         self.line_windows0.update()
         self.line_text0.bind("<MouseWheel>", self.processWheel)
-        self.line_text0["state"] = "disabled"
         
     def draw_layout(self):
         self.windows1 = tk.Frame(self.Window,width = self.ws, height = self.hs - 30)
@@ -84,9 +89,10 @@ class Eva():
         self.text_windows0.place(x = 45, y = 5, width = self.ws / 2 - 40, height = self.hs - 30)
         self.text_windows0.update()
         print(self.text.winfo_width(),self.text.winfo_height())
-        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,self.line_text0)
+        self.text, self.line_text0 = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,self.line_text0)
         self.text.bind("<MouseWheel>", self.processWheel)
         self.text["state"] = "disabled"
+        self.line_text0["state"] = "disabled"
         
         print(self.line_text0.winfo_width(),self.line_text0.winfo_height())
         print(self.text.winfo_width()/self.m_len)
@@ -94,14 +100,13 @@ class Eva():
         # self.text.yview_scroll(nums, "units")
         
         
-        self.windows3 = tk.Frame(self.windows1,width = self.ws / 2, height = self.hs - 30)
-        self.windows3.place(x = self.ws / 2, y = 0)
-        self.windows3.config(bg = "yellow")
-        self.text0 = tk.Text(self.windows3,width = 95,height = 53,font = 10)
-        self.text0 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text0)
-        # self.text0.pack()
-        self.text0.place(x = 5, y = 5)
-        self.text0["state"] = "disabled"
+        # self.windows3 = tk.Frame(self.windows1,width = self.ws / 2, height = self.hs - 30)
+        # self.windows3.place(x = self.ws / 2, y = 0)
+        # self.windows3.config(bg = "yellow")
+        # self.text0 = tk.Text(self.windows3,width = 95,height = 53,font = 10)
+        # self.text0 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text0)
+        # self.text0.place(x = 5, y = 5)
+        # self.text0["state"] = "disabled"
             
 
     def to_eva(self,method):

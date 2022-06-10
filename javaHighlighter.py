@@ -2,14 +2,25 @@ import re
 import tkinter as tk
 
 class JavaSyntaxHighlighter:
-    def __init__(self,text,text1):
+    def __init__(self,content,text,text1):
         self.columns = 0
         # self.blank = blank
         self.text  = text
         self.text1 = text1
+        self.file_lines = content
         # self.labels = labels
         self.config_all()
+        self.lines_nums = 0
         self.line = ""  # 保存当前处理的行
+        # self.regexkeywords.append()
+        # print(self.regexkeywords[-1])
+   
+    def config_all(self):
+        self.text.tag_config("[note]", foreground="green")
+        self.text.tag_config("[key]", foreground="blue")
+        self.text.tag_config("[string]", foreground="grey")
+        self.text.tag_config("[opr]", foreground="red")
+        self.text.tag_config("[None]", foreground="black")
         self.keywords = \
             ["abstract", "assert", "boolean", "break", "byte",
              "case", "catch", "char", "class", "const",
@@ -21,14 +32,10 @@ class JavaSyntaxHighlighter:
              "return", "strictfp", "short", "static", "super",
              "switch", "synchronized", "this", "throw", "throws",
              "transient", "try", "void", "volatile", "while"]
-        self.regexkeywords = [r"(?<=\s)" + w + r"(?=\s)" for w in self.keywords]
-   
-    def config_all(self):
-        self.text.tag_config("[note]", foreground="green")
-        self.text.tag_config("[key]", foreground="blue")
-        self.text.tag_config("[string]", foreground="grey")
-        self.text.tag_config("[opr]", foreground="red")
-        self.text.tag_config("[None]", foreground="black")
+        self.regexkeywords = [r"(?<=\s)" + w + r"(?=\s)" for w in self.keywords] + [r"(?<=\s)return;"]
+        self.keywords.append("return;")
+        # for r, w in zip(self.regexkeywords, self.keywords):
+            # print(r,w)
 
     def highlight_note(self, note):
         '高亮注释行'
@@ -50,16 +57,23 @@ class JavaSyntaxHighlighter:
         '高亮关键字'
         codeline = " " + self.line[:pos] + " "
         noteline = self.line[pos:]
+        # if(self.lines_nums >= 70 and self.lines_nums <= 75):
+            # print("|||",codeline , "||",noteline)
         for r, w in zip(self.regexkeywords, self.keywords):
             codeline = re.sub(r, " [key] " + w + " [end] ", codeline)
-        self.line = codeline + noteline
+        self.line = codeline[1:-1] + noteline
 
     def highlight_operator(self):
         '高亮运算符'
         line = self.line
         opr = ['=', '(', ')', '{', '}', '|', '+', '-', '*', '/', '<', '>']
+        line = line.replace("//","777777")
+        
+        # if(self.lines_nums >= 70 and self.lines_nums <= 75):
+            # print("|| ",self.lines_nums-1, "||",line)
         for o in opr:
             line = line.replace(o, " [opr] " + o + " [end] ")  # 未实现关于字符串内的运算符处理
+        line = line.replace("777777","//")
         self.line = line
 
     def split_classify(self,data):
@@ -85,23 +99,47 @@ class JavaSyntaxHighlighter:
         res = []
         nums = 1
         for i in data:    
-            # self.text.insert("end",str(nums).ljust(self.blank," "),"[None]")
-            # self.labels.
+            # if(nums >= 70 and nums <= 80):
+                # print(nums,i)
             i = self.split_classify(i)
+            # if(nums >= 70 and nums <= 80):
+                # print(nums,i)
             for j in i:
-                self.text.insert("end",j[1],j[0])            
-            # self.text.insert("end",i[-1][1].strip() + "\n","[None]")        
+                self.text.insert("end",j[1],j[0])               
             nums += 1
         for i in range(nums):
             if(self.text.get(i + 0.0 ,i + 0.2) == "  "):
                 self.text.delete( i + 0.0 ,i + 0.2)
             elif(self.text.get(i + 0.0 ,i + 0.1) == " "):
                 self.text.delete(i + 0.0,i + 0.1)
-        return self.text
+        now_lines = self.text.get(1.0,"end")[:-1].split("\n")
+        pos = 0
+        # print(self.file_lines[40:50])
+        
+        for i in now_lines:
+            self.text1.insert("end",str(pos+1) + "\n")
+            pos += 1
+        # for i in self.file_lines:
+            # i = i.strip()
+            # now_lines[pos] = now_lines[pos].strip()
+            # if(pos >= 70 and pos <= 90):
+                # print(pos+1,i,now_lines[pos],len(i),len(now_lines[pos]))
+            # if(i == now_lines[pos]):
+                # self.text1.insert("end",str(pos+1) + "\n")
+                # pos += 1
+            # else:
+                # self.text1.insert("end",str(pos+1) + "\n")
+                # lines_nums = len(i)
+                # while(lines_nums > 0):
+                    # self.text1.insert("end","\n")
+                    # lines_nums -= len(now_lines[pos].strip())
+                    # pos += 1
+        return self.text,self.text1
                 
 
     def highlight(self, line):
         '单行代码高亮'
+        self.lines_nums += 1
         self.line = line
         if self.line.strip() == '': return line  # 空串不处理
         global note  # 注释
@@ -115,7 +153,12 @@ class JavaSyntaxHighlighter:
         find_note = re.search(r'(?<=[){};])(.*)/(/|\*).*$', self.line.strip())  # 查找行尾注释
         if find_note:
             note = find_note.group()  # 标记行尾注释
-            pos = find_note.span()[0]  # 标记注释位置
+            pos = find_note.span()[0] + self.line.count("\t") # 标记注释位置
+            # print(find_note.span(),note,self.line.count("\t"),self.line[pos:])
+        # if(self.lines_nums >= 70 and self.lines_nums <= 75):
+            # print("|| ",self.lines_nums-1, self.line)
+        # if(self.lines_nums >= 70 and self.lines_nums <= 75):
+            # print("|||",self.lines_nums ,self.line)
         self.highlight_note(note)  # 处理行尾注释
         self.highlight_keyword(pos)  # 处理关键字
         self.highlight_string(pos)  # 处理字符串
