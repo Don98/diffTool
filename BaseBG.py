@@ -116,7 +116,12 @@ class TagData():
 
         self.set_button()
         self.set_file_button()
+
     
+    def processWheel(self,event):
+        a= int(-(event.delta)/60)
+        self.canvas.yview_scroll(a,'units')
+        
     def set_all_files(self):
         self.canvas = tk.Canvas(self.window,width=480,height=197,scrollregion=(0,0,480,len(self.files) * 28),bg = "white")
         self.canvas.pack()
@@ -129,9 +134,13 @@ class TagData():
         # self.vbar.place(x = 0,width = 470,height=197)
         self.vbar.configure(command=self.canvas.yview)
 
+        self.vbar.bind("<MouseWheel>", self.processWheel)
+        self.canvas.bind("<MouseWheel>", self.processWheel)
+        
         self.canvas.config(yscrollcommand = self.vbar.set) #设置  
         # self.display_files.config(bg='black')
         self.display_files.place(x = 0, y = 0)
+        self.display_files.bind("<MouseWheel>", self.processWheel)
         
         self.canvas.create_window((240,750), window = self.display_files)  #create_window
 
@@ -148,6 +157,7 @@ class TagData():
         for i in range(len(self.files)):
             self.files_button.append(tk.Button(self.display_files,width=70, height=1, text = self.files[i], bg='white', command=partial(self.open_windows,self.files[i],i)))
             self.files_button[-1].place(x = 0, y = 28 * i)
+            self.files_button[-1].bind("<MouseWheel>", self.processWheel)
         # self.files_button[0]["state"] = tk.DISABLED
         for i in self.tags:
             self.files_button[i]["state"] = tk.DISABLED
