@@ -53,7 +53,7 @@ class BaseBG():
 class _PointAPI(Structure): # 用于getpos()中API函数的调用
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 class TagData():
-    def __init__(self,parent,true_root,root,file,ws,hs):
+    def __init__(self,parent,true_root,root,file,ws,hs,bar_buttom,bar_right):
         self.parent = parent
         self.true_root = true_root
         self.root = root
@@ -62,6 +62,8 @@ class TagData():
         self.file = file
         self.bound = {}
         self.all_positions = []
+        self.bar_buttom = bar_buttom
+        self.bar_right  = bar_right
         if(not self.existOrNot()):
             self.run_base()
         else:
@@ -110,24 +112,24 @@ class TagData():
         
     def build_main(self):
         self.all_positions.append([0,0,self.ws,self.hs])
-        self.all_positions.append([0,0,self.ws - 2, 35])
-        self.all_positions.append([0,35,self.ws - 2, self.hs - 70])
-        self.all_positions.append([0,self.hs - 35,self.ws - 2, 30])
-        self.all_positions.append([0,self.hs - 5,self.ws, 5])
-        self.all_positions.append([self.ws - 2, 0, 5, self.hs])
+        self.all_positions.append([0,0,self.ws, 35])
+        self.all_positions.append([0,35,self.ws, self.hs - 70])
+        self.all_positions.append([0,self.hs - 35,self.ws, 35])
+        self.all_positions.append([0,self.hs,self.ws * 8, 5])
+        self.all_positions.append([self.ws, 0, 5, self.hs])
         
         self.window0 = tk.Frame(self.root, width = self.all_positions[1][2],height = self.all_positions[1][3])
         self.window  = tk.Frame(self.root, width = self.all_positions[2][2],height = self.all_positions[2][3])
         self.window1 = tk.Frame(self.root, width = self.all_positions[3][2],height = self.all_positions[3][3])
-        self.bar_buttom = tk.Frame(self.root, width = self.all_positions[4][2],height = self.all_positions[4][3],cursor = 'sb_v_double_arrow')
-        self.bar_right = tk.Frame(self.root, width = self.all_positions[5][2],height = self.all_positions[5][3],cursor = 'sb_h_double_arrow')
+        # self.bar_buttom = tk.Frame(self.root, width = self.all_positions[4][2],height = self.all_positions[4][3],cursor = 'sb_v_double_arrow')
+        # self.bar_right = tk.Frame(self.root, width = self.all_positions[5][2],height = self.all_positions[5][3],cursor = 'sb_h_double_arrow')
         
         self.set_main_tk()
         self.set_label()
         self.set_all_files()
         self.set_button()
         self.set_file_button()
-        self.set_adjust()
+        # self.set_adjust()
     
     def getpos(self):
         # 调用API函数获取当前鼠标位置。返回值以(x,y)形式表示。
@@ -164,9 +166,9 @@ class TagData():
         self.all_positions[4][1] += dy
         self.to_resize([0,2,5],0,dy)
         
-    def set_adjust(self):
-        self.bar_right.bind("<B1-Motion>", self.resize_l)
-        self.bar_buttom.bind("<B1-Motion>", self.resize_t)
+    # def set_adjust(self):
+        # self.bar_right.bind("<B1-Motion>", self.resize_l)
+        # self.bar_buttom.bind("<B1-Motion>", self.resize_t)
         # self.resize()
     
     def processWheel(self,event):
@@ -193,9 +195,9 @@ class TagData():
         self.canvas.create_window((160,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28)  #create_window
         
     def set_button(self):
-        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 0, y = 0)
-        self.button1 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='skyblue', command=self.query_result).place(x = 120, y = 0)
-        self.button2 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 240, y = 0)
+        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 0, y = 2)
+        self.button1 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='skyblue', command=self.query_result).place(x = 120, y = 2)
+        self.button2 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 240, y = 2)
         
     def set_file_button(self):
         self.files_button = []

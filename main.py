@@ -23,14 +23,43 @@ class mainBG():
         
         # first stage : build navigation bar
         self.navigation = tk.Frame(self.root,width=self.ws/8,height=int(6 * self.hs / 8))
-        self.navigation.pack()
         self.navigation.place(x = 0,y = 0)
-        self.navigation.config(bg="blue")
+        # self.navigation.config(bg="red")
         
-        self.tagData = TagData(self,self.root,self.navigation,self.file,self.ws / 8,int(6 * self.hs / 8))
+        self.bar_buttom = tk.Frame(self.root, width = self.ws, height = 5, cursor = 'sb_v_double_arrow')
+        self.bar_buttom.place(x = 0,y = int(6 * self.hs / 8) - 5)
+        self.bar_buttom.config(bg = "black")
+        # [self.ws - 2, 0, 5, self.hs]
+        self.bar_right = tk.Frame(self.root, width = 5,height = int(6 * self.hs / 8),cursor = 'sb_h_double_arrow')
+        self.bar_right.place(x = self.ws / 8,y = 0)
+        self.bar_right.config(bg = "black")
+        
+        self.tagData = TagData(self,self.root,self.navigation,self.file,self.ws / 8 - 2,int(6 * self.hs / 8)-5,self.bar_buttom,self.bar_right)
+        
+        self.text_place = tk.Frame(self.root,width=self.ws - self.ws / 8,height=int(6 * self.hs / 8) - 5)
+        self.text_place.place(x = self.ws / 8 + 5,y = 0)
+        # self.text_place.config(bg="blue")
+        
+        # self.open_windows("AbstractApplicationContext_d3d011143972c3d2e639855836f135e3c869a680",0)
+        
+        # self.set_bar()
+        
+    def resize_l(self,event):
+        self.tagData.resize_l(event)
+        self.newWindow.resize_l(event)
+    
+    def resize_t(self,event):
+        self.tagData.resize_t(event)
+        self.newWindow.resize_t(event)
+        
+    def set_bar(self):
+        self.bar_right.bind("<B1-Motion>", self.resize_l)
+        self.bar_buttom.bind("<B1-Motion>", self.resize_t)
 
     def open_windows(self,name,pos):
-        self.newWindow = Eva(self.root,self.file + "/" + name,self.ws - self.ws / 8,int(6 * self.hs / 8))
+        self.newWindow = Eva(self.root,self.text_place,self.file + "/" + name,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
+        self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
+        self.set_bar()
         # print(name)
         # self.tags.append(pos)
         # del self.newWindow
