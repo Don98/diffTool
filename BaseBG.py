@@ -95,7 +95,7 @@ class TagData():
             
     def set_label(self):
         self.files = self.get_tag_files()
-        self.label = tk.Label(self.window0, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12)).place(x=10, y=10)
+        self.label = tk.Label(self.window0, text='你还需要标注数据数量为：' + str(len(self.files) - len(self.tags)) + "/" + str(len(self.files)),fg='black',font=('Arial', 12),bg = "white").place(x=10, y=10)
     
     def set_main_tk(self):
         self.root.place(width = self.all_positions[0][2],height = self.all_positions[0][3])
@@ -108,7 +108,7 @@ class TagData():
         self.bar_right.config(bg="black")
         self.bar_buttom.config(bg="black")
         # self.window1.config(bg="black")
-        self.window.config(bg="red")
+        self.window.config(bg="white")
         
     def build_main(self):
         self.all_positions.append([0,0,self.ws,self.hs])
@@ -119,8 +119,10 @@ class TagData():
         self.all_positions.append([self.ws, 0, 5, self.hs])
         
         self.window0 = tk.Frame(self.root, width = self.all_positions[1][2],height = self.all_positions[1][3])
+        self.window0.config(bg="white")
         self.window  = tk.Frame(self.root, width = self.all_positions[2][2],height = self.all_positions[2][3])
         self.window1 = tk.Frame(self.root, width = self.all_positions[3][2],height = self.all_positions[3][3])
+        self.window1.config(bg="white")
         # self.bar_buttom = tk.Frame(self.root, width = self.all_positions[4][2],height = self.all_positions[4][3],cursor = 'sb_v_double_arrow')
         # self.bar_right = tk.Frame(self.root, width = self.all_positions[5][2],height = self.all_positions[5][3],cursor = 'sb_h_double_arrow')
         

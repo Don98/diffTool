@@ -5,17 +5,18 @@ import tkinter.filedialog
 from functools import partial
 from BaseBG import TagData
 from eva import Eva
+from EvaAction import EvaAction
 
 class mainBG():
     def __init__(self):
         self.root = tk.Tk()
         self.root.title('数据标注工具V1.0')
-        # self.root.config(bg="white")
+        self.root.config(bg="white")
         # self.file = "../first_try/"
         self.file = "../data/"
         
-        self.root.resizable(width=False, height=False)    
-        # self.root.resizable(width=True, height=True)    
+        # self.root.resizable(width=False, height=False)    
+        self.root.resizable(width=True, height=True)    
         self.ws = self.root.winfo_screenwidth()
         self.hs = self.root.winfo_screenheight()
         print(self.ws,self.hs)
@@ -24,7 +25,7 @@ class mainBG():
         # first stage : build navigation bar
         self.navigation = tk.Frame(self.root,width=self.ws/8,height=int(6 * self.hs / 8))
         self.navigation.place(x = 0,y = 0)
-        # self.navigation.config(bg="red")
+        self.navigation.config(bg="white")
         
         self.bar_buttom = tk.Frame(self.root, width = self.ws, height = 5, cursor = 'sb_v_double_arrow')
         self.bar_buttom.place(x = 0,y = int(6 * self.hs / 8) - 5)
@@ -38,11 +39,12 @@ class mainBG():
         
         self.text_place = tk.Frame(self.root,width=self.ws - self.ws / 8,height=int(6 * self.hs / 8) - 5)
         self.text_place.place(x = self.ws / 8 + 5,y = 0)
-        # self.text_place.config(bg="blue")
+        self.text_place.config(bg="white")
         
-        # self.open_windows("AbstractApplicationContext_d3d011143972c3d2e639855836f135e3c869a680",0)
+        self.eva_place  = tk.Frame(self.root,width = self.ws, height = int(2 * self.hs / 8))
+        self.eva_place.place(x = 0, y = int(6 * self.hs / 8))
+        self.eva_place.config(bg="white")
         
-        # self.set_bar()
         
     def resize_l(self,event):
         self.tagData.resize_l(event)
@@ -57,12 +59,13 @@ class mainBG():
         self.bar_buttom.bind("<B1-Motion>", self.resize_t)
 
     def open_windows(self,name,pos):
-        self.newWindow = Eva(self.root,self.text_place,self.file + "/" + name,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
+        self.newWindow = Eva(self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
         self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
         self.set_bar()
-        # print(name)
-        # self.tags.append(pos)
-        # del self.newWindow
+        self.set_eva(self.newWindow.get_text(),self.newWindow.get_text1(),self.newWindow.get_filename())
+        
+    def set_eva(self,text,text0,file_name):
+        self.eva_windows = EvaAction(self.eva_place,file_name, text, text0, self.ws, int(2 * self.hs / 8))
 
     def set_size(self,x = 0,y = 0):
         # x = (ws/2) - (w/2)

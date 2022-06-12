@@ -66,4 +66,5 @@ A diffTool for annotated data set
   5. [Python tkinter 设计用鼠标拖动控件、控件缩放算法及程序](https://blog.csdn.net/qfcy_/article/details/122615118)
   6. [Python的包tkinter中的canvas.winfo_height()或canvas.winfo_width()返回值1的解决](https://blog.csdn.net/RobertChenGuangzhi/article/details/105425187)
   7. [https://www.javaroad.cn/questions/303594](https://www.javaroad.cn/questions/303594)
+  8. [Tkinter 组件详解之Listbox](https://www.cxyzjd.com/article/qq_41556318/85108351)
 

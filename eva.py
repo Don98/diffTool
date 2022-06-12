@@ -9,16 +9,16 @@ from tkinter import *
 from tkinter import scrolledtext
 from threading import Thread, RLock
 from javaHighlighter import JavaSyntaxHighlighter
-from EvaAction import EvaAction
 from tkinter import messagebox
 from ctypes import *
 class _PointAPI(Structure): # 用于getpos()中API函数的调用
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 
 class Eva():
-    def __init__(self,true_root,root,file_name,ws,hs,bar_buttom,bar_right):
+    def __init__(self,true_root,root,file_name,the_index,ws,hs,bar_buttom,bar_right):
         self.true_root = true_root
         self.file_name = file_name
+        self.the_index = the_index
         self.root = root
         self.bar_buttom = bar_buttom
         self.bar_right  = bar_right
@@ -31,20 +31,11 @@ class Eva():
         # self.root = tk.Toplevel(self.root)
         # self.root.title(file_name.split("/")[-1])
         # self.root = tk.Frame(self.root, width = self.ws,height = self.hs)
-        self.count = 0
         
-        # self.set_size()
         self.build()
-        
-    # def set_size(self):
-        # self.w = self.root.winfo_screenwidth() * 3 / 4; self.h = self.root.winfo_screenheight() * 3 / 4 + 20
-        # self.ws = self.root.winfo_screenwidth()
-        # self.hs = self.root.winfo_screenheight()
-        # x = (self.ws/2) - (self.w/2)
-        # y = (self.hs/2) - (self.h/2)
-        # self.root.geometry('%dx%d+%d+%d' % (self.w, self.h, x, y))
-            
-    # def draw_text():        
+    def get_filename(self):
+        return self.file_name
+    
     def get_content(self,file_name,text,text1):
         with open(file_name,"r") as f:
             data = f.readlines()
@@ -91,7 +82,16 @@ class Eva():
         self.windows4.place(x = self.all_positions[3][2] / 2, y = 0,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
         self.text_windows1.update()
+        self.line_windows0.place(x = 5, y = 5, width = 40, height = self.all_positions[3][3] + 5)
+        self.line_windows0.update()
+        self.line_windows1.place(x = 5, y = 5, width = 40, height = self.all_positions[3][3] + 5)
+        self.line_windows1.update()
         
+    def get_text(self):
+        return self.text
+        
+    def get_text1(self):
+        return self.text1
     
     def draw_layout(self):
         
@@ -103,9 +103,9 @@ class Eva():
         
         self.windows2 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows2.place(x = 0, y = 0)
-        # self.windows2.config(bg = "blue")
+        self.windows2.config(bg = "white")
         # self.text_windows0 = tk.Frame(self.windows2,width = self.ws / 2 - 40, height = self.hs - 30)
-        self.text_windows0 = tk.Frame(self.windows2,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
+        self.text_windows0 = tk.Frame(self.windows2,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5,bg="white")
         # self.text_windows0.place(x = 45, y = 5)
         
         self.set_line_windows()
@@ -129,8 +129,8 @@ class Eva():
         
         self.windows4 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows4.place(x = self.all_positions[3][2] / 2, y = 0)
-        # self.windows4.config(bg = "yellow")
-        self.text_windows1 = tk.Frame(self.windows4,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
+        self.windows4.config(bg = "white")
+        self.text_windows1 = tk.Frame(self.windows4,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5,bg="white")
         # self.text_windows1.place(x = 45, y = 5)
         
         self.set_line_windows1()
@@ -147,27 +147,6 @@ class Eva():
         self.texts.append(self.text1)
         self.texts.append(self.line_text1)
             
-
-    def to_eva(self,method):
-        self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
-        
-    def set_button(self):
-        self.windows0 = tk.Frame(self.root, width = self.ws, height = 30)
-        self.windows0.place(x = 0 , y = self.hs - 30)
-        self.buttons = []
-        self.button0 = tk.Button(self.windows0,width=10, height=1, text='SE-Mapping', bg='skyblue', command=partial(self.to_eva,"Se_actionList"))
-        self.button0.place(x = 100, y = 2)
-        self.button1 = tk.Button(self.windows0,width=10, height=1, text='GT', bg='skyblue', command = partial(self.to_eva,"GT_actionList"))
-        self.button1.place(x = 320, y = 2)
-        self.button2 = tk.Button(self.windows0,width=10, height=1, text='MTD', bg='skyblue', command = partial(self.to_eva,"MTD_actionList"))
-        self.button2.place(x = 540, y = 2)
-        self.button3 = tk.Button(self.windows0,width=10, height=1, text='IJM', bg='skyblue', command = partial(self.to_eva,"IJM_actionList"))
-        self.button3.place(x = 760, y = 2)
-        self.button4 = tk.Button(self.windows0,width=10, height=1, text='退出', bg='skyblue', command = self.destroy).place(x = 980, y = 2)
-        self.buttons.append(self.button0)
-        self.buttons.append(self.button1)
-        self.buttons.append(self.button2)
-        self.buttons.append(self.button3)
     
     def destroy(self):
         # messagebox.showinfo(title="提示", message="你还有"+ str(4 - self.count) + "份还未标注")
@@ -177,9 +156,9 @@ class Eva():
 
     def set_label(self):
         self.all_positions.append([0,0,self.ws,30])
-        self.windows0 = tk.Frame(self.root, width = self.all_positions[2][2], height = self.all_positions[2][3])
+        self.windows0 = tk.Frame(self.root, width = self.all_positions[2][2], height = self.all_positions[2][3], bg = "white")
         self.windows0.place(x = self.all_positions[2][0], y = self.all_positions[2][1])
-        self.label = tk.Label(self.windows0, text= self.file_name.split("/")[-1],fg='black',font=('Arial', 12)).place(x=10, y=10)
+        self.label = tk.Label(self.windows0, text = str(self.the_index) + " : " +self.file_name.split("/")[-1],fg='black',font=('Arial', 12),bg="white").place(x=10, y=10)
     
     def getpos(self):
         # 调用API函数获取当前鼠标位置。返回值以(x,y)形式表示。
@@ -221,14 +200,6 @@ class Eva():
     def set_bar_place(self,a_pos,b_pos):
         self.all_positions.append(a_pos)
         self.all_positions.append(b_pos)
-        # tmp = []
-        # for i in a_pos:
-            # tmp.append(i)
-        # self.all_positions.append(tmp)
-        # tmp = []
-        # for i in b_pos:
-            # tmp.append(i)
-        # self.all_positions.append(tmp)
         
     def build(self):
         self.all_positions.append([self.root.winfo_screenwidth() - self.ws + 5 , 0 , self.ws,self.hs])
