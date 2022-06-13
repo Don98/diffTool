@@ -10,7 +10,7 @@ from EvaAction import EvaAction
 class mainBG():
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title('数据标注工具V1.0')
+        self.root.title('数据标注工具V2.0')
         self.root.config(bg="white")
         # self.file = "../first_try/"
         self.file = "../data/"
@@ -59,13 +59,14 @@ class mainBG():
         self.bar_buttom.bind("<B1-Motion>", self.resize_t)
 
     def open_windows(self,name,pos):
+        self.tagData.files_button[pos].config(bg = "#AA72AE")
         self.newWindow = Eva(self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
         self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
         self.set_bar()
         self.set_eva(self.newWindow.get_text(),self.newWindow.get_text1(),self.newWindow.get_filename())
         
     def set_eva(self,text,text0,file_name):
-        self.eva_windows = EvaAction(self.eva_place,file_name, text, text0, self.ws, int(2 * self.hs / 8))
+        self.eva_windows = EvaAction(self.root, self.eva_place,file_name, text, text0, self.ws, int(2 * self.hs / 8),self.bar_buttom,self.bar_right)
 
     def set_size(self,x = 0,y = 0):
         # x = (ws/2) - (w/2)

@@ -197,9 +197,9 @@ class TagData():
         self.canvas.create_window((160,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28)  #create_window
         
     def set_button(self):
-        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='skyblue', command=self.save_result).place(x = 0, y = 2)
-        self.button1 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='skyblue', command=self.query_result).place(x = 120, y = 2)
-        self.button2 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='skyblue', command=self.pack_result).place(x = 240, y = 2)
+        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='#00BFFF', command=self.save_result).place(x = 0, y = 2)
+        self.button1 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='#00BFFF', command=self.query_result).place(x = 120, y = 2)
+        self.button2 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result).place(x = 240, y = 2)
         
     def set_file_button(self):
         self.files_button = []
