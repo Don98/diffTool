@@ -102,8 +102,8 @@ class TagData():
         self.window0.place(x = self.all_positions[1][0],y = self.all_positions[1][1], width = self.all_positions[1][2], height = self.all_positions[1][3])
         self.window.place(x = self.all_positions[2][0],y = self.all_positions[2][1], width = self.all_positions[2][2], height = self.all_positions[2][3])
         self.window1.place(x = self.all_positions[3][0],y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
-        self.bar_buttom.place(x = self.all_positions[4][0],y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
-        self.bar_right.place(x = self.all_positions[5][0],y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
+        # self.bar_buttom.place(x = self.all_positions[4][0],y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
+        # self.bar_right.place(x = self.all_positions[5][0],y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
         
         self.bar_right.config(bg="black")
         self.bar_buttom.config(bg="black")
@@ -155,15 +155,15 @@ class TagData():
         self.set_main_tk()
         self.set_canvas()
     
-    def resize_l(self,event):
-        dx = self.xpos() - self.all_positions[5][0]
-        dy = self.ypos() - self.all_positions[5][1]
+    def resize_l(self,event,dx):
+        # dx = self.xpos() - self.all_positions[5][0]
+        # dy = self.ypos() - self.all_positions[5][1]
         self.all_positions[5][0] += dx
         self.to_resize([0,1,2,3,4],dx,0)
         
-    def resize_t(self,event):
-        dx = self.xpos() - self.all_positions[4][0]
-        dy = self.ypos() - self.all_positions[4][1]
+    def resize_t(self,event,dy):
+        # dx = self.xpos() - self.all_positions[4][0]
+        # dy = self.ypos() - self.all_positions[4][1]
         self.all_positions[3][1] += dy
         self.all_positions[4][1] += dy
         self.to_resize([0,2,5],0,dy)

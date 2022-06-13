@@ -69,6 +69,7 @@ class EvaAction():
         self.buttons = []
         self.Window = root
         self.ws = ws
+        self.true_hs = hs
         self.hs = int(hs * 7 / 8)
         self.bar_buttom = bar_buttom
         self.bar_right  = bar_right
@@ -76,8 +77,10 @@ class EvaAction():
         # self.Window.title(method)
         self.text = text
         self.text0= text0
-        self.all_positions = [[]]
-        
+        self.all_positions = [[0,hs * 3 , self.ws , hs]]
+        # print(self.all_positions[0])
+        self.Window.config(bg="black")
+        self.Window.place(x = self.all_positions[0][0], y = self.all_positions[0][1], width = self.all_positions[0][2], height = self.all_positions[0][3])
         
         self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         
@@ -96,11 +99,30 @@ class EvaAction():
         # self.set_size()
         # self.build()
     
+    def to_resize(self,nums,dx,dy,sign):
+        # print(self.all_positions[0])
+        for i in nums:
+            self.all_positions[i] = [self.all_positions[i][0], self.all_positions[i][1], self.all_positions[i][2] + sign * dx, self.all_positions[i][3]+ sign * dy]
+        self.Window.place(x = self.all_positions[0][0], y = self.all_positions[0][1], width = self.all_positions[0][2], height = self.all_positions[0][3])
+        self.set_content_windows()
+        # self.bar_buttom.place(x = self.all_positions[4][0], y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
+        # self.bar_right.place(x = self.all_positions[5][0], y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
+        
+    def resize_l(self,event,dx):
+        # dx = self.xpos() - self.all_positions[5][0]
+        # dy = self.ypos() - self.all_positions[5][1]
+        self.all_positions[5][0] += dx
+        self.to_resize([],dx,0,1)
+        
+    def resize_t(self,event,dy):
+        # dx = self.xpos() - self.all_positions[4][0]
+        # dy = self.ypos() - self.all_positions[4][1]
+        self.all_positions[0][1] += dy
+        self.all_positions[4][1] += dy
+        self.to_resize([0,2,3],0,dy,-1)
+        
     def set_label(self):
         self.read_file()
-        # self.label = tk.Label(self.windows0, text='总共需要标注数量为：' + str(len(self.actionList)),fg='black',font=('Arial', 12)).place(x=self.all_positions[0][2], y=0)
-        # print(int(self.all_positions[1][2] / 2) - 340)
-        # self.label = tk.Label(self.windows0, text='总共需要标注数量为：' + str(len(self.actionList)),fg='black',font=('Arial', 12),bg="white",width = int(self.all_positions[1][2] / 2),height=1).place(x = 340, y=4)
         self.label = tk.Label(self.windows0, text='总共需要标注数量为：' + str(len(self.actionList)),fg='black',font=('Arial', 12),bg="white").place(x = 440, y=4)
         self.draw_layout()
         self.win += 1
@@ -113,11 +135,17 @@ class EvaAction():
         self.Data = Data(self.file_name,self.method)
         self.Data.set_pos(self.the_index[self.method])
         self.set_label()
-    def print_value(self):
-        for i in self.all_points:
-            print(i.get())
+    # def print_value(self):
+        # for i in self.all_points:
+            # print(i.get())
+            
     def save_points(self):
-        pass
+        methods = ["SE","GT","MTD","IJM"]
+        with open(self.file_name + "/points.txt","w") as f: 
+            for i , value in enumerate(self.all_points):
+                f.write(methods[i] + ":" + str(value.get()) + "\n")
+        self.points.destroy()
+        
     def point_algorithm(self):
         self.confirm()
         self.points = tk.Toplevel(self.true_root)
@@ -154,7 +182,7 @@ class EvaAction():
                     tk.Label(self.algorithms_scores, text=str(j),fg='black',font=('Arial', 12),bg="white").place(x = 240 + 60 * j , y = 80 + i * 80)
             else:
                 for j in range(5):
-                    Radiobutton(self.algorithms_scores,text = "",variable=self.all_points[i-1],value=j,command=self.print_value,bg = "white").place(x = 240 + 60 * j , y = 80 + i * 80)
+                    Radiobutton(self.algorithms_scores,text = "",variable=self.all_points[i-1],value=j,bg = "white").place(x = 240 + 60 * j , y = 80 + i * 80)
         self.point_button_save = tk.Button(self.algorithms_scores,width=10, height=1, text='保存打分结果', bg='#00BFFF', command = self.save_points)
         self.point_button_save.place(x = 320, y = 480)
         
@@ -178,14 +206,6 @@ class EvaAction():
         self.buttons.append(self.button2)
         self.buttons.append(self.button3)
         self.buttons.append(self.button4)
-        
-    # def set_size(self):
-        # self.w = 720 ; self.h = 700
-        # self.ws = self.root.winfo_screenwidth()
-        # self.hs = self.root.winfo_screenheight()
-        # x = (self.ws/2) - (self.w/2)
-        # y = (self.hs/2) - (self.h/2)
-        # self.Window.geometry('%dx%d+%d+%d' % (self.w, self.h, x, y))
             
     def get_pos(self,action):
         parts = action.split(" => ")
@@ -252,27 +272,38 @@ class EvaAction():
         self.checkbuttons[0]['command'] = self.select_all;
         self.set_button()
 
-
+    def set_content_windows(self):
+        self.content_windows.place(x = self.all_positions[2][0], y = self.all_positions[2][1], width = self.all_positions[2][2], height = self.all_positions[2][3])
+        self.token_windows.place(x = self.all_positions[3][2], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
+        self.listbox.pack(fill = BOTH, expand = True)
+        self.stmts_windows.place(x = self.all_positions[3][0], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
+        self.stmts_windows.update()
+        
     def draw_layout(self):
         self.all_positions.append([0,30,self.ws,self.hs - 30])
         self.content_windows = tk.Frame(self.Window, width = self.all_positions[2][2], height = self.all_positions[2][3],bg="white")
-        self.content_windows.place(x = self.all_positions[2][0], y = self.all_positions[2][1])
+        # self.content_windows.place(x = self.all_positions[2][0], y = self.all_positions[2][1])
         
         self.all_positions.append([0,0,int(self.ws / 2),self.hs - 30])
         self.stmts_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
         self.token_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
-        self.token_windows.place(x = self.all_positions[3][2], y = self.all_positions[3][1])
+        # self.token_windows.place(x = self.all_positions[3][2], y = self.all_positions[3][1])
         
         # self.content_windows.config(bg = "red")
         
         self.all_stmts = tk.StringVar(value=self.stmts)
 
-        self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single')
+        self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single',bg = "white")
         self.listbox.pack(fill = BOTH, expand = True)
-        self.stmts_windows.place(x = self.all_positions[3][0], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
-        self.stmts_windows.update()
-        self.stmts_windows.config(bg = "green")
-        self.listbox.bind('<<ListboxSelect>>', self.items_selected) 
+        # self.stmts_windows.place(x = self.all_positions[3][0], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
+        # self.stmts_windows.update()
+        # self.stmts_windows.config(bg = "green")
+        self.set_content_windows()
+        self.listbox.bind('<<ListboxSelect>>', self.items_selected)
+        
+        self.all_positions.append([0 , self.true_hs * 3 - 5 , self.ws , 5])
+        self.all_positions.append([self.ws / 8 , 0 , 5 , self.true_hs * 3])
+        print(self.all_positions[5])
       
     def get_win(self):
         return self.win

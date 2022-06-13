@@ -160,16 +160,6 @@ class Eva():
         self.windows0.place(x = self.all_positions[2][0], y = self.all_positions[2][1])
         self.label = tk.Label(self.windows0, text = str(self.the_index) + " : " +self.file_name.split("/")[-1],fg='black',font=('Arial', 12),bg="white").place(x=10, y=10)
     
-    def getpos(self):
-        # 调用API函数获取当前鼠标位置。返回值以(x,y)形式表示。
-        po = _PointAPI()
-        windll.user32.GetCursorPos(byref(po))
-        return int(po.x - self.true_root.winfo_x()), int(po.y - self.true_root.winfo_y())
-        
-    def xpos(self):return self.getpos()[0]
-    
-    def ypos(self):return self.getpos()[1]
-    
     def to_resize(self,nums,dx,dy,sign):
         # print(self.all_positions[1])
         for i in nums:
@@ -177,19 +167,15 @@ class Eva():
         self.root.place(x = self.all_positions[1][0], y = self.all_positions[1][1], width = self.all_positions[1][2], height = self.all_positions[1][3])
         self.set_two_textWindows()
         self.reset_label()
-        self.bar_buttom.place(x = self.all_positions[4][0], y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
-        self.bar_right.place(x = self.all_positions[5][0], y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
+        # self.bar_buttom.place(x = self.all_positions[4][0], y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
+        # self.bar_right.place(x = self.all_positions[5][0], y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
     
-    def resize_l(self,event):
-        dx = self.xpos() - self.all_positions[5][0]
-        dy = self.ypos() - self.all_positions[5][1]
+    def resize_l(self,event,dx):
         self.all_positions[1][0] += dx
         self.all_positions[5][0] += dx
         self.to_resize([0,1,2,3],dx,0,-1)
         
-    def resize_t(self,event):
-        dx = self.xpos() - self.all_positions[4][0]
-        dy = self.ypos() - self.all_positions[4][1]
+    def resize_t(self,event,dy):
         self.all_positions[4][1] += dy
         self.to_resize([0,1,3,5],0,dy,1)
         
