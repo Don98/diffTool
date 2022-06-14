@@ -194,7 +194,8 @@ class TagData():
         self.display_files.place(x = 0, y = 0)
         self.display_files.bind("<MouseWheel>", self.processWheel)
         
-        self.canvas.create_window((160,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28)  #create_window
+        new_pos = self.all_positions[2][2] / 320
+        self.canvas.create_window((160 * new_pos,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28) 
         
     def set_button(self):
         self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='#00BFFF', command=self.save_result).place(x = 0, y = 2)

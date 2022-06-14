@@ -90,6 +90,13 @@ class Eva():
     def get_text(self):
         return self.text
         
+    def get_line_text(self):
+        return self.line_text0
+        
+    def get_line_text1(self):
+        return self.line_text1
+        
+        
     def get_text1(self):
         return self.text1
     

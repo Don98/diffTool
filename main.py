@@ -91,11 +91,11 @@ class mainBG():
         self.tagData.files_button[pos].config(bg = "#AA72AE")
         self.newWindow = Eva(self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
         self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
-        self.set_eva(self.newWindow.get_text(),self.newWindow.get_text1(),self.newWindow.get_filename())
+        self.set_eva(self.newWindow.get_text(),self.newWindow.get_text1(),self.newWindow.get_line_text(),self.newWindow.get_line_text1(),self.newWindow.get_filename())
         self.set_bar()
         
-    def set_eva(self,text,text0,file_name):
-        self.eva_windows = EvaAction(self.root, self.eva_place,file_name, text, text0, self.ws, int(2 * self.hs / 8),self.bar_buttom,self.bar_right)
+    def set_eva(self,text,text0,line_text,line_text0,file_name):
+        self.eva_windows = EvaAction(self.root, self.eva_place,file_name, text, text0, line_text,line_text0, self.ws, int(2 * self.hs / 8),self.bar_buttom,self.bar_right)
 
     def set_size(self,x = 0,y = 0):
         # x = (ws/2) - (w/2)

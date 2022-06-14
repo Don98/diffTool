@@ -63,9 +63,11 @@ class ScrollFrame(tk.Frame):
         for child in children:
             child.grid_remove() 
 class EvaAction():
-    def __init__(self,true_root,root,file_name,text,text0,ws,hs,bar_buttom,bar_right):
+    def __init__(self,true_root,root,file_name,text,text0,line_text,line_text1,ws,hs,bar_buttom,bar_right):
         self.true_root = true_root
         self.file_name = file_name
+        self.line_text = line_text
+        self.line_text1= line_text1
         self.buttons = []
         self.Window = root
         self.ws = ws
@@ -221,7 +223,9 @@ class EvaAction():
         
     def scroll(self, two_nums):
         self.text.yview_scroll(two_nums[0] - self.pos, "units")
-        self.text0.yview_scroll(two_nums[1] - self.pos0, "units")
+        self.line_text.yview_scroll(two_nums[1] - self.pos0, "units")
+        self.text0.yview_scroll(two_nums[0] - self.pos, "units")
+        self.line_text1.yview_scroll(two_nums[1] - self.pos0, "units")
         self.pos += two_nums[0] - self.pos
         self.pos0+= two_nums[1] - self.pos0
         
@@ -263,7 +267,7 @@ class EvaAction():
         self.token_frame.place(x = 0, y = 0, width = int(3 * self.all_positions[3][2] / 4), height = self.all_positions[3][3])
         self.token_frame.delete_all()
         for i in all_tokens:
-            self.checkbuttons.append(tk.Checkbutton(self.token_frame.viewPort, text = str(nums) + "/" + str(len(all_tokens)) + " " + i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = int(3 * self.all_positions[3][2] / 4),bg="white"))
+            self.checkbuttons.append(tk.Checkbutton(self.token_frame.viewPort, text = str(nums+1) + "/" + str(len(all_tokens)) + " " + i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = int(3 * self.all_positions[3][2] / 4),bg="white"))
             self.checkbuttons[-1].grid(column = 0, columnspan = 2)
             self.checkbuttons[-1].bind("<MouseWheel>", self.token_frame.processWheel)
             self.checkbuttons[-1].config(anchor = "w")
