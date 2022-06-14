@@ -77,14 +77,16 @@ class Eva():
     def set_two_textWindows(self):
         self.windows1.place(x = self.all_positions[3][0], y = self.all_positions[3][1],width = self.all_positions[3][2], height = self.all_positions[3][3])
         self.windows2.place(x = 0, y = 0, width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
-        self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
+        self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 5)
         self.text_windows0.update()
+        self.hbar0.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
         self.windows4.place(x = self.all_positions[3][2] / 2, y = 0,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
         self.text_windows1.update()
         self.line_windows0.place(x = 5, y = 5, width = 40, height = self.all_positions[3][3] + 5)
         self.line_windows0.update()
         self.line_windows1.place(x = 5, y = 5, width = 40, height = self.all_positions[3][3] + 5)
+        self.hbar1.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
         self.line_windows1.update()
         
     def get_text(self):
@@ -111,15 +113,18 @@ class Eva():
         self.windows2 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows2.place(x = 0, y = 0)
         self.windows2.config(bg = "white")
-        # self.text_windows0 = tk.Frame(self.windows2,width = self.ws / 2 - 40, height = self.hs - 30)
-        self.text_windows0 = tk.Frame(self.windows2,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5,bg="white")
-        # self.text_windows0.place(x = 45, y = 5)
+        self.text_windows0 = tk.Frame(self.windows2,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10,bg="white")
         
         self.set_line_windows()
-        self.text = tk.Text(self.text_windows0, font = self.font)   
+        self.hbar0 = tk.Scrollbar(self.windows2, orient = tk.HORIZONTAL)
+        self.hbar0.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
+        self.text = tk.Text(self.text_windows0, font = self.font,wrap = 'none',xscrollcommand = self.hbar0.set)   
         self.text.place(x = 0, y = 0)
         self.text.pack(fill = BOTH, expand = True)
-        self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
+        self.hbar0.configure(command=self.text.xview)
+                
+        
+        self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10)
         self.text_windows0.update()
         self.text, self.line_text0 = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,self.line_text0)
         self.text.bind("<MouseWheel>", self.processWheel)
@@ -131,20 +136,22 @@ class Eva():
         
         # Second text window
         
-        # self.windows3 = tk.Frame(self.root,width = self.ws, height = self.hs - 30)
-        # self.windows3.place(x = self.ws, y = 30)
-        
         self.windows4 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows4.place(x = self.all_positions[3][2] / 2, y = 0)
         self.windows4.config(bg = "white")
-        self.text_windows1 = tk.Frame(self.windows4,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5,bg="white")
+        self.text_windows1 = tk.Frame(self.windows4,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10,bg="white")
         # self.text_windows1.place(x = 45, y = 5)
         
         self.set_line_windows1()
-        self.text1 = tk.Text(self.text_windows1, font = self.font)   
+        self.hbar1 = tk.Scrollbar(self.windows4, orient = tk.HORIZONTAL)
+        self.hbar1.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
+        self.text1 = tk.Text(self.text_windows1, font = self.font,wrap = 'none',xscrollcommand = self.hbar1.set)   
         self.text1.place(x = 0, y = 0)
         self.text1.pack(fill = BOTH, expand = True)
-        self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] + 5)
+        
+        self.hbar1.configure(command=self.text1.xview)
+        
+        self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 15)
         self.text_windows1.update()
         self.text1, self.line_text1 = self.get_content(self.file_name + "/" + "Srcfile.java",self.text1,self.line_text1)
         self.text1.bind("<MouseWheel>", self.processWheel1)

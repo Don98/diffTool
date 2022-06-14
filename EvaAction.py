@@ -286,28 +286,21 @@ class EvaAction():
     def draw_layout(self):
         self.all_positions.append([0,30,self.ws,self.hs - 30])
         self.content_windows = tk.Frame(self.Window, width = self.all_positions[2][2], height = self.all_positions[2][3],bg="white")
-        # self.content_windows.place(x = self.all_positions[2][0], y = self.all_positions[2][1])
         
         self.all_positions.append([0,0,int(self.ws / 2),self.hs - 30])
         self.stmts_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
         self.token_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
-        # self.token_windows.place(x = self.all_positions[3][2], y = self.all_positions[3][1])
-        
-        # self.content_windows.config(bg = "red")
         
         self.all_stmts = tk.StringVar(value=self.stmts)
 
         self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single',bg = "white")
         self.listbox.pack(fill = BOTH, expand = True)
-        # self.stmts_windows.place(x = self.all_positions[3][0], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
-        # self.stmts_windows.update()
-        # self.stmts_windows.config(bg = "green")
         self.set_content_windows()
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
         
         self.all_positions.append([0 , self.true_hs * 3 - 5 , self.ws , 5])
         self.all_positions.append([self.ws / 8 , 0 , 5 , self.true_hs * 3])
-        print(self.all_positions[5])
+        # print(self.all_positions[5])
       
     def get_win(self):
         return self.win
