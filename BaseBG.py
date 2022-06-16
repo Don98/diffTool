@@ -4,6 +4,9 @@ import tkinter.filedialog
 from functools import partial
 import os
 from ctypes import *
+from shutil import copyfile
+import shutil
+import zipfile
 
 class BaseBG():
     def __init__(self,root):
@@ -199,8 +202,8 @@ class TagData():
         
     def set_button(self):
         self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='#00BFFF', command=self.save_result).place(x = 0, y = 2)
-        self.button1 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='#00BFFF', command=self.query_result).place(x = 120, y = 2)
-        self.button2 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result).place(x = 240, y = 2)
+        self.button1 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result).place(x = 120, y = 2)
+        self.button2 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='#00BFFF', command=self.query_result).place(x = 240, y = 2)
         
     def set_file_button(self):
         self.files_button = []
@@ -263,9 +266,25 @@ class TagData():
         for i in range(4):
             show_content += methos[i] + "\t : " + str(right[i]) + "/" + str(all_nums[i]) + " || " + str(right[i+4]) + "/" + str(all_nums[i + 4]) + "\n" 
         tk.messagebox.showwarning('统计结果', show_content)
-    
+    def file2zip(self,zip_file_name: str, file_names: list):
+        with zipfile.ZipFile(zip_file_name, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
+            for fn in file_names:
+                parent_path, name = os.path.split(fn)
+                zf.write(fn, arcname=name)
     def pack_result(self):
-        pass
+        # for file , index in enumerate(self.files):
+        if(not os.path.isdir("result")):
+            os.mkdir("result")
+        result_list = []
+        for i in self.tags:
+            copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "_result.txt")
+            copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "_points.txt")
+            copyfile(self.file + self.files[i] + "/readme.md","./result/" + self.files[i] + "_readme.md")
+            result_list.append("./result/" + self.files[i] + "_readme.md")
+            result_list.append("./result/" + self.files[i] + "_result.txt")
+            result_list.append("./result/" + self.files[i] + "_points.txt")
+        self.file2zip("./result.zip",result_list)
+        shutil.rmtree("./result")
 
     def to_main(self):
         self.window.destroy()

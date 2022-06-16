@@ -70,7 +70,7 @@ class mainBG():
         self.tagData.resize_l(event,dx)
         self.newWindow.resize_l(event,dx)
         self.eva_windows.resize_l(event,dx)
-        print(self.bar_right_pos)
+        # print(self.bar_right_pos)
         self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
     
     def resize_t(self,event):
