@@ -63,7 +63,9 @@ class ScrollFrame(tk.Frame):
         for child in children:
             child.grid_remove() 
 class EvaAction():
-    def __init__(self,true_root,root,file_name,text,text0,line_text,line_text1,ws,hs,bar_buttom,bar_right):
+    def __init__(self,parent,file_pos,true_root,root,file_name,text,text0,line_text,line_text1,ws,hs,bar_buttom,bar_right):
+        self.parent = parent
+        self.file_pos = file_pos
         self.true_root = true_root
         self.file_name = file_name
         self.line_text = line_text
@@ -86,11 +88,6 @@ class EvaAction():
         
         self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         
-        
-        self.selected_indices = -1
-        self.checkbuttons = []
-        self.buttons_var = []
-        self.actionList =[]
         
         self.set_buttons()
         # self.method = method
@@ -131,6 +128,7 @@ class EvaAction():
     
     def to_eva(self,method):
         # self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
+        self.buttons[self.the_index[method]].config(bg="#E8E8ED")
         if(self.win > 0):
             self.confirm()
         self.method = method
@@ -146,6 +144,14 @@ class EvaAction():
         with open(self.file_name + "/points.txt","w") as f: 
             for i , value in enumerate(self.all_points):
                 f.write(methods[i] + ":" + str(value.get()) + "\n")
+        self.buttons[-1].config(bg="#E8E8ED")
+        tk.messagebox.showwarning('打分', "本份数据打分完毕，已保存")
+        self.parent.set_buttonDiabled(self.file_pos)
+        for i in self.buttons:
+            i["state"] = tk.DISABLED
+        for i in self.checkbuttons:
+            i.destroy()
+        self.listbox['state'] = tk.DISABLED
         self.points.destroy()
         
     def point_algorithm(self):
@@ -189,6 +195,12 @@ class EvaAction():
         self.point_button_save.place(x = 320, y = 480)
         
     def set_buttons(self):
+    
+        
+        self.selected_indices = -1
+        self.checkbuttons = []
+        self.buttons_var = []
+        self.actionList =[]
         self.all_positions.append([0,0,self.ws,30])
         self.windows0 = tk.Frame(self.Window, width = self.all_positions[1][2], height = self.all_positions[1][3],bg="white")
         self.windows0.place(x = self.all_positions[1][0], y = self.all_positions[1][1])
@@ -219,6 +231,7 @@ class EvaAction():
         else:
             two_nums.append(parts[0][parts[0].find("LINE:") + 6:-1])
             two_nums.append(parts[1][parts[1].find("LINE:") + 6:-1])
+        # print(parts,two_nums)
         return [int(i) for i in two_nums]
         
     def scroll(self, two_nums):
@@ -250,6 +263,7 @@ class EvaAction():
     def draw_tokens(self,index):
         for i in self.checkbuttons:
             i.destroy()
+        # print(len(self.buttons_var),self.selected_indices)
         if(self.selected_indices != -1):
             tmp = []
             for i in self.buttons_var[self.selected_indices]:
@@ -311,7 +325,6 @@ class EvaAction():
         self.Data.save_file()
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         # index = methods.index(self.method)
-        self.buttons[self.the_index[self.method]].config(bg="#E8E8ED")
         # self.dest11roy()
     
     def __destroy__(self):

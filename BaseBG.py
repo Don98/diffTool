@@ -92,7 +92,7 @@ class TagData():
         paths = os.listdir(self.file)
         self.tags = []
         for i in range(len(paths)):
-            if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt")):
+            if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt") and os.path.isfile(self.file + "/" + paths[i] + "/points.txt")):
                 self.tags.append(i)
         return paths
             
@@ -150,7 +150,7 @@ class TagData():
         self.vbar.place(x =  self.all_positions[2][2] - 10,width = 10,height =  self.all_positions[2][3])
         self.display_files.place(width = self.all_positions[2][2],height=len(self.files) * 28)
         new_pos = self.all_positions[2][2] / 320
-        self.canvas.create_window((160 * new_pos,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28) 
+        self.canvas.create_window((160 * new_pos,14 * len(self.files)), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28) 
     
     def to_resize(self,nums,dx,dy):
         for i in nums:
@@ -198,12 +198,15 @@ class TagData():
         self.display_files.bind("<MouseWheel>", self.processWheel)
         
         new_pos = self.all_positions[2][2] / 320
-        self.canvas.create_window((160 * new_pos,700), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28) 
+        self.canvas.create_window((160 * new_pos,14 * len(self.files)), window = self.display_files, width = self.all_positions[2][2], height=len(self.files) * 28) 
         
     def set_button(self):
-        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='#00BFFF', command=self.save_result).place(x = 0, y = 2)
-        self.button1 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result).place(x = 120, y = 2)
-        self.button2 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='#00BFFF', command=self.query_result).place(x = 240, y = 2)
+        self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='#00BFFF', command=self.save_result)
+        self.button0.place(x = 0, y = 2)
+        self.button1 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result)
+        self.button1.place(x = 120, y = 2)
+        self.button2 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='#00BFFF', command=self.query_result)
+        self.button2.place(x = 240, y = 2)
         
     def set_file_button(self):
         self.files_button = []
@@ -217,13 +220,16 @@ class TagData():
         for i in self.tags:
             self.files_button[i]["state"] = tk.DISABLED
         self.set_label()
-        
-        
-    def open_windows(self,name,pos):
-        self.newWindow = Eva(self.root,self.file + "/" + name)
-        print(name)
+    
+    def set_buttonDiabled(self,pos):
         self.tags.append(pos)
-        del self.newWindow
+        self.set_file_button()
+        
+    # def open_windows(self,name,pos):
+        # self.newWindow = Eva(self.root,self.file + "/" + name)
+        # print(name)
+        # self.tags.append(pos)
+        # del self.newWindow
         
     def get_nums(self,path):
         right = [0,0,0,0,0,0,0,0]

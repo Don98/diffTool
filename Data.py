@@ -140,7 +140,7 @@ class Data():
                     buton_var[-1].set(int(j[3]))
                 self.buttons_var.append(buton_var)
         
-        self.print_button()
+        # self.print_button()
         
         return self.buttons_var
         
