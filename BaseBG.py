@@ -266,25 +266,32 @@ class TagData():
         for i in range(4):
             show_content += methos[i] + "\t : " + str(right[i]) + "/" + str(all_nums[i]) + " || " + str(right[i+4]) + "/" + str(all_nums[i + 4]) + "\n" 
         tk.messagebox.showwarning('统计结果', show_content)
-    def file2zip(self,zip_file_name: str, file_names: list):
-        with zipfile.ZipFile(zip_file_name, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
-            for fn in file_names:
-                parent_path, name = os.path.split(fn)
-                zf.write(fn, arcname=name)
+    def zipDir(self,dirpath, outFullName):
+        zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
+        for path, dirnames, filenames in os.walk(dirpath):
+            # 去掉目标跟路径，只对目标文件夹下边的文件及文件夹进行压缩
+            fpath = path.replace(dirpath, '')
+     
+            for filename in filenames:
+                zip.write(os.path.join(path, filename), os.path.join(fpath, filename))
+        zip.close()
     def pack_result(self):
         # for file , index in enumerate(self.files):
         if(not os.path.isdir("result")):
             os.mkdir("result")
         result_list = []
         for i in self.tags:
-            copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "_result.txt")
-            copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "_points.txt")
-            copyfile(self.file + self.files[i] + "/readme.md","./result/" + self.files[i] + "_readme.md")
-            result_list.append("./result/" + self.files[i] + "_readme.md")
-            result_list.append("./result/" + self.files[i] + "_result.txt")
-            result_list.append("./result/" + self.files[i] + "_points.txt")
-        self.file2zip("./result.zip",result_list)
+            if(not os.path.isdir("./result/" + self.files[i])):
+                os.mkdir("./result/" + self.files[i])
+            copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "/result.txt")
+            copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "/points.txt")
+            copyfile(self.file + self.files[i] + "/readme.md","./result/" + self.files[i] + "/readme.md")
+            result_list.append("./result/" + self.files[i] + "/readme.md")
+            result_list.append("./result/" + self.files[i] + "/result.txt")
+            result_list.append("./result/" + self.files[i] + "/points.txt")
+        self.zipDir("./result","./result.zip")
         shutil.rmtree("./result")
+        tk.messagebox.showwarning('打包结果', str(int(len(result_list) / 3)) + "份结果已打包完成")
 
     def to_main(self):
         self.window.destroy()
