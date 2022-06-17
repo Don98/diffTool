@@ -153,7 +153,7 @@ class Eva():
         
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 15)
         self.text_windows1.update()
-        self.text1, self.line_text1 = self.get_content(self.file_name + "/" + "Srcfile.java",self.text1,self.line_text1)
+        self.text1, self.line_text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,self.line_text1)
         self.text1.bind("<MouseWheel>", self.processWheel1)
         self.text1["state"] = "disabled"
         self.line_text1["state"] = "disabled"
