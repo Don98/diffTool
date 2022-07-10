@@ -88,6 +88,7 @@ class EvaAction():
         
         self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         
+        self.tmp_data = {}
         
         self.set_buttons()
         # self.method = method
@@ -129,9 +130,9 @@ class EvaAction():
     def to_eva(self,method):
         # self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
         self.buttons[self.the_index[method]].config(bg="#E8E8ED")
-        if(self.win > 0):
-            self.confirm()
         self.method = method
+        if(self.win > 0):
+            self.tmp_data[self.method] = self.Data
         self.Data = Data(self.file_name,self.method)
         self.Data.set_pos(self.the_index[self.method])
         self.set_label()
@@ -182,12 +183,14 @@ class EvaAction():
         self.algorithms_scores.config(bg = "white")
         
         methods = [" ","SE","GT","MTD","IJM"]
+        score_names = ["难以理解","较难理解","中立","较易理解","易于理解"]
+        score_pos = [200,280,360,400,480,560]
         self.all_points = [IntVar(),IntVar(),IntVar(),IntVar()]
         for i in range(5):
             tk.Label(self.algorithms_scores, text = methods[i] ,fg='black',font=('Arial', 12),bg="white").place(x = 120,y = 80 + i * 80)
             if(i == 0):
                 for j in range(5):
-                    tk.Label(self.algorithms_scores, text=str(j),fg='black',font=('Arial', 12),bg="white").place(x = 240 + 60 * j , y = 80 + i * 80)
+                    tk.Label(self.algorithms_scores, text=score_names[j],fg='black',font=('Arial', 12),bg="white").place(x = score_pos[j] , y = 80 + i * 80)
             else:
                 for j in range(5):
                     Radiobutton(self.algorithms_scores,text = "",variable=self.all_points[i-1],value=j,bg = "white").place(x = 240 + 60 * j , y = 80 + i * 80)
@@ -205,13 +208,17 @@ class EvaAction():
         self.windows0 = tk.Frame(self.Window, width = self.all_positions[1][2], height = self.all_positions[1][3],bg="white")
         self.windows0.place(x = self.all_positions[1][0], y = self.all_positions[1][1])
         self.buttons = []
-        self.button0 = tk.Button(self.windows0,width=10, height=1, text='SE-Mapping', bg='#00BFFF', command=partial(self.to_eva,"Se_actionList"))
+        # self.button0 = tk.Button(self.windows0,width=10, height=1, text='SE-Mapping', bg='#00BFFF', command=partial(self.to_eva,"Se_actionList"))
+        # self.button1 = tk.Button(self.windows0,width=10, height=1, text='GT', bg='#00BFFF', command = partial(self.to_eva,"GT_actionList"))
+        # self.button2 = tk.Button(self.windows0,width=10, height=1, text='MTD', bg='#00BFFF', command = partial(self.to_eva,"MTD_actionList"))
+        # self.button3 = tk.Button(self.windows0,width=10, height=1, text='IJM', bg='#00BFFF', command = partial(self.to_eva,"IJM_actionList"))
+        self.button0 = tk.Button(self.windows0,width=10, height=1, text='算法0', bg='#00BFFF', command=partial(self.to_eva,"Se_actionList"))
         self.button0.place(x = 0, y = 2)
-        self.button1 = tk.Button(self.windows0,width=10, height=1, text='GT', bg='#00BFFF', command = partial(self.to_eva,"GT_actionList"))
+        self.button1 = tk.Button(self.windows0,width=10, height=1, text='算法1', bg='#00BFFF', command = partial(self.to_eva,"GT_actionList"))
         self.button1.place(x = 80, y = 2)
-        self.button2 = tk.Button(self.windows0,width=10, height=1, text='MTD', bg='#00BFFF', command = partial(self.to_eva,"MTD_actionList"))
+        self.button2 = tk.Button(self.windows0,width=10, height=1, text='算法2', bg='#00BFFF', command = partial(self.to_eva,"MTD_actionList"))
         self.button2.place(x = 160, y = 2)
-        self.button3 = tk.Button(self.windows0,width=10, height=1, text='IJM', bg='#00BFFF', command = partial(self.to_eva,"IJM_actionList"))
+        self.button3 = tk.Button(self.windows0,width=10, height=1, text='算法3', bg='#00BFFF', command = partial(self.to_eva,"IJM_actionList"))
         self.button3.place(x = 240, y = 2)
         self.button4 = tk.Button(self.windows0,width=10, height=1, text='打分', bg='#00BFFF', command = self.point_algorithm)
         self.button4.place(x = 320, y = 2)
@@ -350,13 +357,23 @@ class EvaAction():
         self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg='#00BFFF', command=self.dechose)
         self.button2.place(x = self.all_positions[3][2], y = 0)
     
+    def update_data(self):
+        for i in self.the_index.keys():
+            if(i in self.tmp_data.keys()):
+                self.Data.updateUsingData(self.tmp_data[i])
+    
     def read_file(self):
         self.stmts, self.tokens, self.actionList = self.Data.read_file()
+        # print(self.Data.get_stmts())
         for i , stmt in enumerate(self.stmts):
             self.stmts[i] = str(i) + " : " + stmt
         self.Data.create_read_resultfile()
         self.Data.split_data()
         self.buttons_var = self.Data.create_buttonvar()
+        # print(self.Data.get_stmts())
+        self.update_data()
+        
+        # print(self.buttons_var)
         # print(len(self.stmts))
         # print(len(self.buttons_var))
             

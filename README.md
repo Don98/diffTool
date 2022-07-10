@@ -69,3 +69,8 @@ A diffTool for annotated data set
   8. [Tkinter 组件详解之Listbox](https://www.cxyzjd.com/article/qq_41556318/85108351)
   9. [使用Python的pyinstaller打包程序出现failed to create process的问题](https://blog.csdn.net/qq_41618978/article/details/90476429)
 
+打包exe文件的指令
+
+```shell
+D:\Anaconda3\Scripts>python pyinstaller-script.py -w -F .\package.spec --distpath .\	
+```

@@ -1,6 +1,6 @@
 import tkinter as tk
 import os
-
+import copy
 class Data():
     def __init__(self,file_name,method):
         self.file_name = file_name
@@ -108,6 +108,8 @@ class Data():
                     f.write("-"*50 + "\n")
         with open(path, "r") as f:
             self.data = f.read()
+        os.remove(path)
+        
     def set_pos(self,the_pos):
         self.the_pos = the_pos
     
@@ -119,6 +121,47 @@ class Data():
             self.data[the_pos][j] = self.data[the_pos][j].split("\n")[:-1]
             for p in range(len(self.data[the_pos][j])):
                 self.data[the_pos][j][p] = self.data[the_pos][j][p].split(",")
+    
+    def get_buttons_var(self):
+        return self.buttons_var
+    
+    def get_stmts(self):
+        return self.stmts
+    def get_tokens(self):
+        return self.tokens
+    def get_actionList(self):
+        return self.actionList
+    def get_stmtToToken(self):
+        return self.stmt_tokens
+    def get_tokenToStmt(self):
+        return self.token_stmts
+    def getResultByIndex(self,index,col):
+        return self.buttons_var[index][col]
+    def setResultByIndex(self,index,col,val):
+        self.buttons_var[index][col] = val
+        
+    def updateUsingData(self,updatedData):
+        # print(updatedData.stmt_tokens)
+        StmtsNums = []
+        the_stmts = updatedData.get_stmts()
+        for index, stmt in enumerate(the_stmts):
+            for i, myStmt in enumerate(self.stmts):
+                if(stmt == myStmt):
+                    self.setResultByIndex(i,0,updatedData.getResultByIndex(index,0))      
+                    StmtsNums.append(i)
+        TokenNums = []
+        the_dict = updatedData.get_tokenToStmt()
+        the_dict1 = updatedData.get_stmtToToken()
+        for j, myTokens in enumerate(self.tokens):
+            for pos,myToken in enumerate(myTokens):
+                if(myToken in the_dict):
+                    the_stmt = the_dict[myToken]
+                    the_index= the_stmts.index(the_stmt)
+                    ths_pos  = the_dict1[the_stmt].index(myToken)
+                    self.setResultByIndex(j,pos + 1,updatedData.getResultByIndex(the_index,ths_pos + 1))
+                    TokenNums.append([j,pos])
+        return StmtsNums, TokenNums
+        
     def create_buttonvar(self):
         self.buttons_var = []
         if(not self.exist or len(self.data[self.the_pos]) <= 1):
@@ -150,6 +193,8 @@ class Data():
             data = f.read().split("==================================================")
         self.stmts = []
         self.tokens= []
+        self.stmt_tokens = {}
+        self.token_stmts = {}
         tmp   = []
         for i in data[1:]:
             i = i.split("TOKEN MAPPING:")
@@ -161,7 +206,9 @@ class Data():
                 tmp = []
                 for j in i[1].split("\n"):
                     tmp.append(j.strip())
+                    
                 self.tokens.append(tmp)
+                
         self.actionList = []
         for i in range(len(self.tokens)):
             if(len(self.tokens[i]) >= 1):
@@ -172,6 +219,12 @@ class Data():
                 if(self.tokens[i][j] == ""):
                     self.tokens[i].pop(j)
         for i in range(len(self.stmts)):
+            self.stmt_tokens[self.stmts[i]] = tuple(self.tokens[i])
+            for token in self.tokens[i]:
+                self.token_stmts[token] = self.stmts[i]
             self.actionList.append([self.stmts[i],self.tokens[i]])
-        return self.stmts, self.tokens, self.actionList
+        # print(self.stmt_tokens)
+        # for i in self.stmt_tokens.keys():
+            # print(self.stmt_tokens[i])
+        return copy.deepcopy(self.stmts), copy.deepcopy(self.tokens), copy.deepcopy(self.actionList)
     
