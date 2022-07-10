@@ -2,11 +2,9 @@ import re
 import tkinter as tk
 
 class JavaSyntaxHighlighter:
-    def __init__(self,content,text,text1):
+    def __init__(self,content):
         self.columns = 0
         # self.blank = blank
-        self.text  = text
-        self.text1 = text1
         self.file_lines = content
         # self.labels = labels
         self.config_all()
@@ -16,11 +14,6 @@ class JavaSyntaxHighlighter:
         # print(self.regexkeywords[-1])
    
     def config_all(self):
-        self.text.tag_config("[note]", foreground="green")
-        self.text.tag_config("[key]", foreground="blue")
-        self.text.tag_config("[string]", foreground="grey")
-        self.text.tag_config("[opr]", foreground="red")
-        self.text.tag_config("[None]", foreground="black")
         self.keywords = \
             ["abstract", "assert", "boolean", "break", "byte",
              "case", "catch", "char", "class", "const",
@@ -101,40 +94,19 @@ class JavaSyntaxHighlighter:
         for i in data:    
             # if(nums >= 70 and nums <= 80):
                 # print(nums,i)
-            i = self.split_classify(i)
             # if(nums >= 70 and nums <= 80):
                 # print(nums,i)
+            i = self.split_classify(i)
+            # print(i)
             for j in i:
                 self.text.insert("end",j[1],j[0])               
             nums += 1
-        for i in range(nums):
-            if(self.text.get(i + 0.0 ,i + 0.2) == "  "):
-                self.text.delete( i + 0.0 ,i + 0.2)
-            elif(self.text.get(i + 0.0 ,i + 0.1) == " "):
-                self.text.delete(i + 0.0,i + 0.1)
-        now_lines = self.text.get(1.0,"end")[:-1].split("\n")
-        pos = 0
-        # print(self.file_lines[40:50])
-        
-        for i in now_lines:
-            self.text1.insert("end",str(pos+1) + "\n")
-            pos += 1
-        # for i in self.file_lines:
-            # i = i.strip()
-            # now_lines[pos] = now_lines[pos].strip()
-            # if(pos >= 70 and pos <= 90):
-                # print(pos+1,i,now_lines[pos],len(i),len(now_lines[pos]))
-            # if(i == now_lines[pos]):
-                # self.text1.insert("end",str(pos+1) + "\n")
-                # pos += 1
-            # else:
-                # self.text1.insert("end",str(pos+1) + "\n")
-                # lines_nums = len(i)
-                # while(lines_nums > 0):
-                    # self.text1.insert("end","\n")
-                    # lines_nums -= len(now_lines[pos].strip())
-                    # pos += 1
-        return self.text,self.text1
+        # for i in range(nums):
+            # if(self.text.get(i + 0.0 ,i + 0.2) == "  "):
+                # self.text.delete( i + 0.0 ,i + 0.2)
+            # elif(self.text.get(i + 0.0 ,i + 0.1) == " "):
+                # self.text.delete(i + 0.0,i + 0.1)
+        return self.text
                 
 
     def highlight(self, line):
@@ -165,3 +137,41 @@ class JavaSyntaxHighlighter:
         self.highlight_operator()  # 处理运算符
         return self.line  # 返回处理好的行
 
+def split_classify(data):
+    data = data.split(" [end] ")
+    res = []
+    name = [" [note] ", " [key] ", " [str] ", " [opr] ","[None]"]
+    for i in data:
+        pos = -1
+        for j in range(4):
+            if(name[j] in i):
+                pos = j
+                break
+        if(pos == -1):
+            res.append((name[4],i))
+        else:
+            tmp = i.split(name[pos])
+            # print(tmp)
+            res.append((name[4],tmp[0]))
+            res.append((name[pos],tmp[1]))
+    return res
+
+def translate(text,data=""):
+    res = []
+    nums = 1
+    for i in data:    
+        # if(nums >= 70 and nums <= 80):
+            # print(nums,i)
+        # if(nums >= 70 and nums <= 80):
+            # print(nums,i)
+        i = split_classify(i)
+        # print(i)
+        for j in i:
+            text.insert("end",j[1],j[0])               
+        nums += 1
+    # for i in range(nums):
+        # if(self.text.get(i + 0.0 ,i + 0.2) == "  "):
+            # self.text.delete( i + 0.0 ,i + 0.2)
+        # elif(self.text.get(i + 0.0 ,i + 0.1) == " "):
+            # self.text.delete(i + 0.0,i + 0.1)
+    return text

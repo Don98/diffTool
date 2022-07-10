@@ -9,6 +9,7 @@ from tkinter import *
 from tkinter import scrolledtext
 from threading import Thread, RLock
 from javaHighlighter import JavaSyntaxHighlighter
+from javaHighlighter import translate
 from tkinter import messagebox
 from ctypes import *
 import _thread as thread
@@ -16,7 +17,8 @@ class _PointAPI(Structure): # 用于getpos()中API函数的调用
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 
 class Eva():
-    def __init__(self,true_root,root,file_name,the_index,ws,hs,bar_buttom,bar_right):
+    def __init__(self,mainBG,true_root,root,file_name,the_index,ws,hs,bar_buttom,bar_right):
+        self.mainBG = mainBG
         self.true_root = true_root
         self.file_name = file_name
         self.the_index = the_index
@@ -38,17 +40,33 @@ class Eva():
         self.build()
     def get_filename(self):
         return self.file_name
-    
-    def get_content(self,file_name,text,text1):
-        with open(file_name,"r") as f:
-            data = f.readlines()
-        jsh = JavaSyntaxHighlighter(data,text,text1)
-        content = []
-        nums = 0
-        for i in data:
-            content.append(jsh.highlight(i))
-            nums += 1
-        return jsh.translate(content)
+    def set_line(self,num,pos):
+        text1 = self.line_text0
+        if(num == 1):
+            text1 = self.line_text1
+        for i in range(pos):
+            text1.insert("end",str(i+1) + "\n")
+            # pos += 1
+        # return text1
+        
+    def get_content(self,file_name,text,num):
+        fileDict = self.mainBG.get_dict()
+        if(not file_name in fileDict):
+            self.mainBG.readFile(file_name)
+        content, pos = fileDict[file_name]
+        # self.tmp_text = text1
+        thread.start_new_thread(self.set_line,(num,pos,))
+        # text = thread.start_new_thread(jsh.translate,(content,))
+        
+        text.tag_config("[note]", foreground="green")
+        text.tag_config("[key]", foreground="blue")
+        text.tag_config("[string]", foreground="grey")
+        text.tag_config("[opr]", foreground="red")
+        text.tag_config("[None]", foreground="black")
+        text = translate(text,content)
+        # text1 = self.set_line(text1,pos)
+        
+        return text
     
     def processWheel(self,event):
         a= int(-1*(event.delta/60))
@@ -92,17 +110,17 @@ class Eva():
         self.hbar1.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
         self.line_windows1.update()
         
-    def get_text(self):
-        return self.text
+    # def get_text(self):
+        # return self.text
         
-    def get_line_text(self):
-        return self.line_text0
+    # def get_line_text(self):
+        # return self.line_text0
         
-    def get_line_text1(self):
-        return self.line_text1
+    # def get_line_text1(self):
+        # return self.line_text1
     
-    def get_text1(self):
-        return self.text1
+    # def get_text1(self):
+        # return self.text1
         
     def scroll(self, two_nums):
         self.text.yview_scroll(two_nums[0] - self.pos, "units")
@@ -130,7 +148,7 @@ class Eva():
         
         self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10)
         self.text_windows0.update()
-        self.text, self.line_text0 = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,self.line_text0)
+        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0)
         self.text.bind("<MouseWheel>", self.processWheel)
         self.text["state"] = "disabled"
         self.line_text0["state"] = "disabled"
@@ -156,7 +174,7 @@ class Eva():
         
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 15)
         self.text_windows1.update()
-        self.text1, self.line_text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,self.line_text1)
+        self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1)
         self.text1.bind("<MouseWheel>", self.processWheel1)
         self.text1["state"] = "disabled"
         self.line_text1["state"] = "disabled"

@@ -7,6 +7,9 @@ from BaseBG import TagData
 from eva import Eva
 from EvaAction import EvaAction
 from ctypes import *
+from javaHighlighter import JavaSyntaxHighlighter
+import _thread as thread
+import os
 class _PointAPI(Structure): # 用于getpos()中API函数的调用
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 
@@ -23,6 +26,8 @@ class mainBG():
         self.ws = self.root.winfo_screenwidth()
         self.hs = self.root.winfo_screenheight()
         print(self.ws,self.hs)
+        self.file_dict = {}
+        thread.start_new_thread(self.readFiles,())
         self.set_size()
         
         # first stage : build navigation bar
@@ -50,8 +55,31 @@ class mainBG():
         # self.eva_place.place(x = 0, y = int(6 * self.hs / 8))
         # print([0,int(6 * self.hs / 8),self.ws,int(2 * self.hs / 8)])
         self.eva_place.config(bg="white")
-        
-        
+    def readFile(self,file_name):
+        with open(file_name,"r") as f:
+            data = f.readlines()
+            pos = len(data)
+        jsh = JavaSyntaxHighlighter(data)
+        content = []
+        nums = 0
+        for i in data:
+            content.append(jsh.highlight(i))
+            nums += 1
+        self.file_dict[file_name] = (content,pos)
+    
+    def get_dict(self):
+        return self.file_dict
+    
+    def readFiles(self):
+        files = os.listdir(self.file)
+        # print(files)
+        for file in files:
+            file_name0 = self.file + "/" + file + "/Srcfile.java"
+            # self.readFile(file_name0)
+            thread.start_new_thread(self.readFile,(file_name0,))
+            file_name1 = self.file + "/" + file + "/Dstfile.java"
+            # self.readFile(file_name1)
+            thread.start_new_thread(self.readFile,(file_name1,))
     
     def getpos(self):
         # 调用API函数获取当前鼠标位置。返回值以(x,y)形式表示。
@@ -89,7 +117,7 @@ class mainBG():
 
     def open_windows(self,name,pos):
         self.tagData.files_button[pos].config(bg = "#AA72AE")
-        self.newWindow = Eva(self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
+        self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
         self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
         self.set_eva(self.newWindow,self.newWindow.get_filename(),pos)
         self.set_bar()
