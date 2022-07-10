@@ -255,6 +255,7 @@ class EvaAction():
         two_nums = self.get_pos(action)
         self.scroll(two_nums)
         self.draw_tokens(selected_indices[0])
+        # print(selected_indices[0])
         self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
         self.selected_indices = selected_indices[0]
 
@@ -318,6 +319,8 @@ class EvaAction():
         self.listbox.pack(fill = BOTH, expand = True)
         self.set_content_windows()
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
+        for i in range(len(self.stmtNums)):
+            self.set_buttons_color(self.stmtNums[i],self.tokenNums[i])
         
         self.all_positions.append([0 , self.true_hs * 3 - 5 , self.ws , 5])
         self.all_positions.append([self.ws / 8 , 0 , 5 , self.true_hs * 3])
@@ -357,10 +360,20 @@ class EvaAction():
         self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg='#00BFFF', command=self.dechose)
         self.button2.place(x = self.all_positions[3][2], y = 0)
     
+    def set_buttons_color(self,StmtsNums,TokenNums):
+        for i in StmtsNums:
+            # print(i)
+            self.listbox.itemconfig(i,bg="#FB7299")
+    
     def update_data(self):
+        self.stmtNums = []
+        self.tokenNums = []
         for i in self.the_index.keys():
             if(i in self.tmp_data.keys()):
-                self.Data.updateUsingData(self.tmp_data[i])
+                StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
+                self.stmtNums.append(StmtsNums)
+                self.tokenNums.append(TokenNums)
+                # self.set_buttons_color(StmtsNums,TokenNums)
     
     def read_file(self):
         self.stmts, self.tokens, self.actionList = self.Data.read_file()
