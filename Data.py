@@ -143,13 +143,14 @@ class Data():
     def updateUsingData(self,updatedData):
         # print(updatedData.stmt_tokens)
         StmtsNums = []
+        TokenNums = []
         the_stmts = updatedData.get_stmts()
         for index, stmt in enumerate(the_stmts):
             for i, myStmt in enumerate(self.stmts):
                 if(stmt == myStmt):
                     self.setResultByIndex(i,0,updatedData.getResultByIndex(index,0))      
                     StmtsNums.append(i)
-        TokenNums = []
+                    TokenNums.append([index,0])
         the_dict = updatedData.get_tokenToStmt()
         the_dict1 = updatedData.get_stmtToToken()
         for j, myTokens in enumerate(self.tokens):
@@ -157,9 +158,10 @@ class Data():
                 if(myToken in the_dict):
                     the_stmt = the_dict[myToken]
                     the_index= the_stmts.index(the_stmt)
-                    ths_pos  = the_dict1[the_stmt].index(myToken)
-                    self.setResultByIndex(j,pos + 1,updatedData.getResultByIndex(the_index,ths_pos + 1))
-                    TokenNums.append([j,pos])
+                    the_pos  = the_dict1[the_stmt].index(myToken)
+                    self.setResultByIndex(j,pos + 1,updatedData.getResultByIndex(the_index,the_pos + 1))
+                    # TokenNums.append([j,pos])
+                    TokenNums.append([the_index,the_pos + 1])
         return StmtsNums, TokenNums
         
     def create_buttonvar(self):

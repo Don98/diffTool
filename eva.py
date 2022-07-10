@@ -11,6 +11,7 @@ from threading import Thread, RLock
 from javaHighlighter import JavaSyntaxHighlighter
 from tkinter import messagebox
 from ctypes import *
+import _thread as thread
 class _PointAPI(Structure): # 用于getpos()中API函数的调用
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 
@@ -28,6 +29,8 @@ class Eva():
         self.font = tkFont.Font(family="microsoft yahei", size=12, weight="normal")
         self.m_len = self.font.measure("n")
         self.all_positions = []
+        self.pos = 0
+        self.pos0= 0
         # self.root = tk.Toplevel(self.root)
         # self.root.title(file_name.split("/")[-1])
         # self.root = tk.Frame(self.root, width = self.ws,height = self.hs)
@@ -97,18 +100,19 @@ class Eva():
         
     def get_line_text1(self):
         return self.line_text1
-        
-        
+    
     def get_text1(self):
         return self.text1
-    
-    def draw_layout(self):
         
-        self.texts = []
-        # first text window 
-        self.all_positions.append([0, 30, self.ws, self.hs - 35])
-        self.windows1 = tk.Frame(self.root,width = self.all_positions[3][2], height = self.all_positions[3][3])
-        self.windows1.place(x = self.all_positions[3][0], y = self.all_positions[3][1])
+    def scroll(self, two_nums):
+        self.text.yview_scroll(two_nums[0] - self.pos, "units")
+        self.line_text0.yview_scroll(two_nums[1] - self.pos0, "units")
+        self.text1.yview_scroll(two_nums[0] - self.pos, "units")
+        self.line_text1.yview_scroll(two_nums[1] - self.pos0, "units")
+        self.pos += two_nums[0] - self.pos
+        self.pos0+= two_nums[1] - self.pos0    
+    
+    def set_text1(self):
         
         self.windows2 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows2.place(x = 0, y = 0)
@@ -132,10 +136,9 @@ class Eva():
         self.line_text0["state"] = "disabled"
         
         self.texts.append(self.text)
-        self.texts.append(self.line_text0)
+        self.texts.append(self.line_text0)    
         
-        # Second text window
-        
+    def set_text2(self):
         self.windows4 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows4.place(x = self.all_positions[3][2] / 2, y = 0)
         self.windows4.config(bg = "white")
@@ -160,6 +163,21 @@ class Eva():
         
         self.texts.append(self.text1)
         self.texts.append(self.line_text1)
+    
+    def draw_layout(self):
+        
+        self.texts = []
+        self.all_positions.append([0, 30, self.ws, self.hs - 35])
+        self.windows1 = tk.Frame(self.root,width = self.all_positions[3][2], height = self.all_positions[3][3])
+        self.windows1.place(x = self.all_positions[3][0], y = self.all_positions[3][1])
+        # first text window
+        # self.set_text1()
+        thread.start_new_thread(self.set_text1,())
+        
+        
+        # Second text window
+        # self.set_text2()
+        thread.start_new_thread(self.set_text2,())
             
     
     def destroy(self):

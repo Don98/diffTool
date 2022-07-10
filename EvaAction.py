@@ -6,6 +6,7 @@ from tkinter.messagebox import showinfo
 from Data import Data
 import os
 from tkinter import *
+
 class ScrollFrame(tk.Frame):
 
     def __init__(self, parent):
@@ -63,13 +64,12 @@ class ScrollFrame(tk.Frame):
         for child in children:
             child.grid_remove() 
 class EvaAction():
-    def __init__(self,parent,file_pos,true_root,root,file_name,text,text0,line_text,line_text1,ws,hs,bar_buttom,bar_right):
+    def __init__(self,newWindow,parent,file_pos,true_root,root,file_name,ws,hs,bar_buttom,bar_right):
+        self.newWindow = newWindow
         self.parent = parent
         self.file_pos = file_pos
         self.true_root = true_root
         self.file_name = file_name
-        self.line_text = line_text
-        self.line_text1= line_text1
         self.buttons = []
         self.Window = root
         self.ws = ws
@@ -79,8 +79,6 @@ class EvaAction():
         self.bar_right  = bar_right
         # self.Window = tk.Toplevel(self.root)
         # self.Window.title(method)
-        self.text = text
-        self.text0= text0
         self.all_positions = [[0,hs * 3 , self.ws , hs]]
         # print(self.all_positions[0])
         self.Window.config(bg="black")
@@ -93,8 +91,6 @@ class EvaAction():
         self.set_buttons()
         # self.method = method
         self.win = 0
-        self.pos = 0
-        self.pos0= 0
         self.to_eva("Se_actionList")
         # self.set_size()
         # self.build()
@@ -130,9 +126,10 @@ class EvaAction():
     def to_eva(self,method):
         # self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
         self.buttons[self.the_index[method]].config(bg="#E8E8ED")
-        self.method = method
         if(self.win > 0):
+            self.newWindow.scroll([0,0])
             self.tmp_data[self.method] = self.Data
+        self.method = method
         self.Data = Data(self.file_name,self.method)
         self.Data.set_pos(self.the_index[self.method])
         self.set_label()
@@ -241,19 +238,12 @@ class EvaAction():
         # print(parts,two_nums)
         return [int(i) for i in two_nums]
         
-    def scroll(self, two_nums):
-        self.text.yview_scroll(two_nums[0] - self.pos, "units")
-        self.line_text.yview_scroll(two_nums[1] - self.pos0, "units")
-        self.text0.yview_scroll(two_nums[0] - self.pos, "units")
-        self.line_text1.yview_scroll(two_nums[1] - self.pos0, "units")
-        self.pos += two_nums[0] - self.pos
-        self.pos0+= two_nums[1] - self.pos0
         
     def items_selected(self,event):
         selected_indices = self.listbox.curselection()
         action = ",".join([self.listbox.get(i) for i in selected_indices])
         two_nums = self.get_pos(action)
-        self.scroll(two_nums)
+        self.newWindow.scroll(two_nums)
         self.draw_tokens(selected_indices[0])
         # print(selected_indices[0])
         self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
@@ -269,6 +259,13 @@ class EvaAction():
         self.Data.updated_buttonvar(self.buttons_var)
 
     def draw_tokens(self,index):
+        tokenNum = []
+        # print(index,self.tokenNums)
+        for i in self.tokenNums:
+            for j in i:
+                if(j[0] == index):
+                    tokenNum.append(j[1])
+        # print(tokenNum)
         for i in self.checkbuttons:
             i.destroy()
         # print(len(self.buttons_var),self.selected_indices)
@@ -295,6 +292,9 @@ class EvaAction():
             self.checkbuttons[-1].config(anchor = "w")
             # self.checkbuttons[-1].select()
             nums += 1
+            
+        for i in tokenNum:
+            self.checkbuttons[i].config(bg = "#FB7299")
         self.checkbuttons[0]['command'] = self.select_all;
         self.set_button()
 
@@ -319,8 +319,9 @@ class EvaAction():
         self.listbox.pack(fill = BOTH, expand = True)
         self.set_content_windows()
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
+        # if(self.the_index[self.method] != 0):
         for i in range(len(self.stmtNums)):
-            self.set_buttons_color(self.stmtNums[i],self.tokenNums[i])
+            self.set_buttons_color(self.stmtNums[i])
         
         self.all_positions.append([0 , self.true_hs * 3 - 5 , self.ws , 5])
         self.all_positions.append([self.ws / 8 , 0 , 5 , self.true_hs * 3])
@@ -341,7 +342,7 @@ class EvaAction():
         self.confirm()
         
     def destroy(self):
-        self.scroll([0,0])
+        self.newWindow.scroll([0,0])
         self.Window.destroy();
         
     def reset(self):
@@ -360,16 +361,16 @@ class EvaAction():
         self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg='#00BFFF', command=self.dechose)
         self.button2.place(x = self.all_positions[3][2], y = 0)
     
-    def set_buttons_color(self,StmtsNums,TokenNums):
+    def set_buttons_color(self,StmtsNums):
         for i in StmtsNums:
-            # print(i)
             self.listbox.itemconfig(i,bg="#FB7299")
     
     def update_data(self):
         self.stmtNums = []
         self.tokenNums = []
         for i in self.the_index.keys():
-            if(i in self.tmp_data.keys()):
+            # print(self.tmp_data)
+            if(i in self.tmp_data.keys() and self.the_index[i] < self.the_index[self.method]):
                 StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
                 self.stmtNums.append(StmtsNums)
                 self.tokenNums.append(TokenNums)
