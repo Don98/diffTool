@@ -86,6 +86,8 @@ class EvaAction():
         
         self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         
+        self.colors = ["#FB7299","#5EBA7D","#0074CC","#E8E8ED","#00BFFF","#FDF7E2"]
+        
         self.tmp_data = {}
         
         self.set_buttons()
@@ -125,8 +127,9 @@ class EvaAction():
     
     def to_eva(self,method):
         # self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
-        self.buttons[self.the_index[method]].config(bg="#E8E8ED")
+        self.buttons[self.the_index[method]].config(bg=self.colors[5])
         if(self.win > 0):
+            self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.scroll([0,0])
             self.tmp_data[self.method] = self.Data
         self.method = method
@@ -142,7 +145,7 @@ class EvaAction():
         with open(self.file_name + "/points.txt","w") as f: 
             for i , value in enumerate(self.all_points):
                 f.write(methods[i] + ":" + str(value.get()) + "\n")
-        self.buttons[-1].config(bg="#E8E8ED")
+        self.buttons[-1].config(bg=self.colors[3])
         tk.messagebox.showwarning('打分', "本份数据打分完毕，已保存")
         self.parent.set_buttonDiabled(self.file_pos)
         for i in self.buttons:
@@ -179,7 +182,8 @@ class EvaAction():
         self.algorithms_scores.place(x = 0, y = h / 6)
         self.algorithms_scores.config(bg = "white")
         
-        methods = [" ","SE","GT","MTD","IJM"]
+        # methods = [" ","SE","GT","MTD","IJM"]
+        methods = [" ","算法0","算法1","算法2","算法3"]
         score_names = ["难以理解","较难理解","中立","较易理解","易于理解"]
         score_pos = [200,280,360,400,480,560]
         self.all_points = [IntVar(),IntVar(),IntVar(),IntVar()]
@@ -191,7 +195,7 @@ class EvaAction():
             else:
                 for j in range(5):
                     Radiobutton(self.algorithms_scores,text = "",variable=self.all_points[i-1],value=j,bg = "white").place(x = 240 + 60 * j , y = 80 + i * 80)
-        self.point_button_save = tk.Button(self.algorithms_scores,width=10, height=1, text='保存打分结果', bg='#00BFFF', command = self.save_points)
+        self.point_button_save = tk.Button(self.algorithms_scores,width=10, height=1, text='保存打分结果', bg=self.colors[4], command = self.save_points)
         self.point_button_save.place(x = 320, y = 480)
         
     def set_buttons(self):
@@ -205,19 +209,19 @@ class EvaAction():
         self.windows0 = tk.Frame(self.Window, width = self.all_positions[1][2], height = self.all_positions[1][3],bg="white")
         self.windows0.place(x = self.all_positions[1][0], y = self.all_positions[1][1])
         self.buttons = []
-        # self.button0 = tk.Button(self.windows0,width=10, height=1, text='SE-Mapping', bg='#00BFFF', command=partial(self.to_eva,"Se_actionList"))
-        # self.button1 = tk.Button(self.windows0,width=10, height=1, text='GT', bg='#00BFFF', command = partial(self.to_eva,"GT_actionList"))
-        # self.button2 = tk.Button(self.windows0,width=10, height=1, text='MTD', bg='#00BFFF', command = partial(self.to_eva,"MTD_actionList"))
-        # self.button3 = tk.Button(self.windows0,width=10, height=1, text='IJM', bg='#00BFFF', command = partial(self.to_eva,"IJM_actionList"))
-        self.button0 = tk.Button(self.windows0,width=10, height=1, text='算法0', bg='#00BFFF', command=partial(self.to_eva,"Se_actionList"))
+        # self.button0 = tk.Button(self.windows0,width=10, height=1, text='SE-Mapping', bg=self.colors[4], command=partial(self.to_eva,"Se_actionList"))
+        # self.button1 = tk.Button(self.windows0,width=10, height=1, text='GT', bg=self.colors[4], command = partial(self.to_eva,"GT_actionList"))
+        # self.button2 = tk.Button(self.windows0,width=10, height=1, text='MTD', bg=self.colors[4], command = partial(self.to_eva,"MTD_actionList"))
+        # self.button3 = tk.Button(self.windows0,width=10, height=1, text='IJM', bg=self.colors[4], command = partial(self.to_eva,"IJM_actionList"))
+        self.button0 = tk.Button(self.windows0,width=10, height=1, text='算法0', bg=self.colors[4], command=partial(self.to_eva,"Se_actionList"))
         self.button0.place(x = 0, y = 2)
-        self.button1 = tk.Button(self.windows0,width=10, height=1, text='算法1', bg='#00BFFF', command = partial(self.to_eva,"GT_actionList"))
+        self.button1 = tk.Button(self.windows0,width=10, height=1, text='算法1', bg=self.colors[4], command = partial(self.to_eva,"GT_actionList"))
         self.button1.place(x = 80, y = 2)
-        self.button2 = tk.Button(self.windows0,width=10, height=1, text='算法2', bg='#00BFFF', command = partial(self.to_eva,"MTD_actionList"))
+        self.button2 = tk.Button(self.windows0,width=10, height=1, text='算法2', bg=self.colors[4], command = partial(self.to_eva,"MTD_actionList"))
         self.button2.place(x = 160, y = 2)
-        self.button3 = tk.Button(self.windows0,width=10, height=1, text='算法3', bg='#00BFFF', command = partial(self.to_eva,"IJM_actionList"))
+        self.button3 = tk.Button(self.windows0,width=10, height=1, text='算法3', bg=self.colors[4], command = partial(self.to_eva,"IJM_actionList"))
         self.button3.place(x = 240, y = 2)
-        self.button4 = tk.Button(self.windows0,width=10, height=1, text='打分', bg='#00BFFF', command = self.point_algorithm)
+        self.button4 = tk.Button(self.windows0,width=10, height=1, text='打分', bg=self.colors[4], command = self.point_algorithm)
         self.button4.place(x = 320, y = 2)
         self.buttons.append(self.button0)
         self.buttons.append(self.button1)
@@ -321,7 +325,7 @@ class EvaAction():
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
         # if(self.the_index[self.method] != 0):
         for i in range(len(self.stmtNums)):
-            self.set_buttons_color(self.stmtNums[i])
+            self.set_buttons_color(self.stmtNums[len(self.stmtNums) - i - 1],self.colors[len(self.stmtNums) - i - 1])
         
         self.all_positions.append([0 , self.true_hs * 3 - 5 , self.ws , 5])
         self.all_positions.append([self.ws / 8 , 0 , 5 , self.true_hs * 3])
@@ -358,12 +362,12 @@ class EvaAction():
         # self.button0 = tk.Button(self.Window,width=10, height=1, text='修改', bg='skyblue', command=self.reset).place(x = 630, y = 120)
         # self.button1 = tk.Button(self.token_windows,width=10, height=1, text='保存并退出', bg='#E8F6FF', command=self.confirm)
         # self.button1.place(x = int(6.5 * self.all_positions[3][2] / 8), y = self.all_positions[3][3] / 2 - 50)
-        self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg='#00BFFF', command=self.dechose)
+        self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg=self.colors[4], command=self.dechose)
         self.button2.place(x = self.all_positions[3][2], y = 0)
     
-    def set_buttons_color(self,StmtsNums):
+    def set_buttons_color(self,StmtsNums,color):
         for i in StmtsNums:
-            self.listbox.itemconfig(i,bg="#FB7299")
+            self.listbox.itemconfig(i,bg=color)
     
     def update_data(self):
         self.stmtNums = []

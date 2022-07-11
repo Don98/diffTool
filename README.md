@@ -74,3 +74,7 @@ A diffTool for annotated data set
 ```shell
 D:\Anaconda3\Scripts>python pyinstaller-script.py -w -F .\package.spec --distpath .\	
 ```
+
+
+
+其实应该把界面和内容分开来整，这样子就不需要每次都重绘界面
