@@ -19,7 +19,7 @@ class mainBG():
         self.root.title('数据标注工具V2.0')
         self.root.config(bg="white")
         # self.file = "../first_try/"
-        self.file = "./data/"
+        self.file = "../data/"
         
         # self.root.resizable(width=False, height=False)    
         self.root.resizable(width=True, height=True)    
