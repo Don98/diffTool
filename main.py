@@ -19,7 +19,7 @@ class mainBG():
         self.root.title('数据标注工具V2.0')
         self.root.config(bg="white")
         # self.file = "../first_try/"
-        self.file = "../data/"
+        self.file = "./data/"
         
         # self.root.resizable(width=False, height=False)    
         self.root.resizable(width=True, height=True)    
@@ -55,6 +55,9 @@ class mainBG():
         # self.eva_place.place(x = 0, y = int(6 * self.hs / 8))
         # print([0,int(6 * self.hs / 8),self.ws,int(2 * self.hs / 8)])
         self.eva_place.config(bg="white")
+        
+        self.tagData.defaultFirst()
+        
     def readFile(self,file_name):
         with open(file_name,"r") as f:
             data = f.readlines()

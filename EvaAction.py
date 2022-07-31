@@ -86,7 +86,8 @@ class EvaAction():
         
         self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         
-        self.colors = ["#FB7299","#5EBA7D","#0074CC","#E8E8ED","#00BFFF","#FDF7E2"]
+        # self.colors = ["#FB7299","#5EBA7D","#0074CC","#E8E8ED","#00BFFF","#FDF7E2"]
+        self.colors = ["#FB7299","#FB7299","#FB7299","#E8E8ED","#00BFFF","#FDF7E2"]
         
         self.tmp_data = {}
         
@@ -313,7 +314,7 @@ class EvaAction():
         self.all_positions.append([0,30,self.ws,self.hs - 30])
         self.content_windows = tk.Frame(self.Window, width = self.all_positions[2][2], height = self.all_positions[2][3],bg="white")
         
-        self.all_positions.append([0,0,int(self.ws / 2),self.hs - 30])
+        self.all_positions.append([0,0,int(self.ws / 2),self.hs - 60])
         self.stmts_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
         self.token_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
         
@@ -379,6 +380,8 @@ class EvaAction():
                 self.stmtNums.append(StmtsNums)
                 self.tokenNums.append(TokenNums)
                 # self.set_buttons_color(StmtsNums,TokenNums)
+            if(i in self.tmp_data.keys() and self.the_index[i] == self.the_index[self.method]):
+                StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
     
     def read_file(self):
         self.stmts, self.tokens, self.actionList = self.Data.read_file()

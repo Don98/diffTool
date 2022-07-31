@@ -135,6 +135,13 @@ class TagData():
         self.set_button()
         self.set_file_button()
         # self.set_adjust()
+    def defaultFirst(self):
+        pos = 0
+        for i in range(len(self.files_button)):
+            if(not i in self.tags):
+                pos = i
+                break
+        self.parent.open_windows(self.files[pos],pos)
     
     def getpos(self):
         # 调用API函数获取当前鼠标位置。返回值以(x,y)形式表示。
