@@ -247,12 +247,15 @@ class EvaAction():
     def items_selected(self,event):
         selected_indices = self.listbox.curselection()
         action = ",".join([self.listbox.get(i) for i in selected_indices])
-        two_nums = self.get_pos(action)
-        self.newWindow.scroll(two_nums)
-        self.draw_tokens(selected_indices[0])
-        # print(selected_indices[0])
-        self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
-        self.selected_indices = selected_indices[0]
+        try:
+            two_nums = self.get_pos(action)
+            self.newWindow.scroll(two_nums)
+            self.draw_tokens(selected_indices[0])
+            # print(selected_indices[0])
+            self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+            self.selected_indices = selected_indices[0]
+        except:
+            print(action)
 
     def select_all(self):
         if(self.buttons_var[self.selected_indices][0].get() == 0):

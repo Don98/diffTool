@@ -124,8 +124,8 @@ class Eva():
         
     def scroll(self, two_nums):
         self.text.yview_scroll(two_nums[0] - self.pos, "units")
-        self.line_text0.yview_scroll(two_nums[1] - self.pos0, "units")
-        self.text1.yview_scroll(two_nums[0] - self.pos, "units")
+        self.line_text0.yview_scroll(two_nums[0] - self.pos, "units")
+        self.text1.yview_scroll(two_nums[1] - self.pos0, "units")
         self.line_text1.yview_scroll(two_nums[1] - self.pos0, "units")
         self.pos += two_nums[0] - self.pos
         self.pos0+= two_nums[1] - self.pos0    
