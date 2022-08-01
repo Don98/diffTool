@@ -122,10 +122,11 @@ class EvaAction():
         
     def set_label(self):
         self.read_file()
-        self.label = tk.Label(self.windows0, text='总共需要标注数量为：' + str(len(self.actionList)),fg='black',font=('Arial', 12),bg="white").place(x = 440, y=4)
+        self.label = tk.Label(self.windows0, text='总共需要标注数量为: ' + str(len(self.actionList)),fg='black',font=('Arial', 12),bg="white")
+        self.label.place(x = 440, y=4)
         self.draw_layout()
         self.win += 1
-    
+        
     def to_eva(self,method):
         # self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
         self.buttons[self.the_index[method]].config(bg=self.colors[5])
@@ -133,6 +134,7 @@ class EvaAction():
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.scroll([0,0])
             self.tmp_data[self.method] = self.Data
+            self.label.config(text='总共需要标注数量为: ')
         self.method = method
         self.Data = Data(self.file_name,self.method)
         self.Data.set_pos(self.the_index[self.method])
