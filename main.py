@@ -119,7 +119,7 @@ class mainBG():
         self.bar_buttom.bind("<B1-Motion>", self.resize_t)
 
     def open_windows(self,name,pos):
-        self.tagData.files_button[pos].config(bg = "#AA72AE")
+        # self.tagData.files_button[pos].config(bg = "#AA72AE") # 关闭选中revision设置为紫色
         self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
         self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
         self.set_eva(self.newWindow,self.newWindow.get_filename(),pos)

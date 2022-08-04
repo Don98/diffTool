@@ -254,7 +254,8 @@ class EvaAction():
             self.newWindow.scroll(two_nums)
             self.draw_tokens(selected_indices[0])
             # print(selected_indices[0])
-            self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+            # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+            self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
             self.selected_indices = selected_indices[0]
         except:
             print(action)
@@ -325,7 +326,7 @@ class EvaAction():
         
         self.all_stmts = tk.StringVar(value=self.stmts)
 
-        self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single',bg = "white")
+        self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single',bg = "white",selectbackground = self.colors[0])
         self.listbox.pack(fill = BOTH, expand = True)
         self.set_content_windows()
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
