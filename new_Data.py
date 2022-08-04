@@ -105,9 +105,12 @@ class Data():
         self.records = records
         return records
         
+    # def read_method(self):
+        # path = self.file_name + "/" + self.method + "_result.txt"
         
     def create_read_resultfile(self):
-        path = self.file_name + "/" + self.method + "_result.txt"
+        # self.read_method()
+        path = self.file_name + "/result.txt"
         if(not os.path.isfile(path)):
             self.exist = False
             with open(path, "w") as f:            
@@ -136,6 +139,8 @@ class Data():
         return self.stmts
     def get_tokens(self):
         return self.tokens
+    def get_stmtresult(self):
+        return self.stmt_result
     def get_actionList(self):
         return self.actionList
     def get_stmtToToken(self):
@@ -182,9 +187,27 @@ class Data():
                     TokenNums.append([j,pos + 1])
         return StmtsNums, TokenNums
         
-    def create_buttonvar(self):
-        self.buttons_var = []
+    def build_stmt_result(self):
         self.stmt_result = []
+        path = self.file_name + "/" + self.method + "_result.txt"
+        if(not os.path.isfile(path)):
+            for i in range(len(self.tokens)):
+                buton_var1 = [tk.IntVar(),tk.IntVar()]
+                buton_var1[0].set(0)
+                buton_var1[1].set(0)
+                self.stmt_result.append(buton_var1)
+        else:
+            with open(path,"r") as f:
+                liststmts = [i.strip().split(",") for i in f.readlines()]
+                for stmt in liststmts:
+                    buton_var1 = [tk.IntVar(),tk.IntVar()]
+                    buton_var1[0].set(int(stmt[1]))
+                    buton_var1[1].set(1 - int(stmt[1]))
+                    self.stmt_result.append(buton_var1)
+                
+    def create_buttonvar(self):
+        self.build_stmt_result()
+        self.buttons_var = []
         if(not self.exist or len(self.data[self.the_pos]) <= 1):
             for i in range(len(self.tokens)):
                 buton_var = [tk.IntVar()]
@@ -194,10 +217,10 @@ class Data():
                     buton_var[-1].set(1)
                 self.buttons_var.append(buton_var)
                 
-                buton_var1 = [tk.IntVar(),tk.IntVar()]
-                buton_var1[0].set(0)
-                buton_var1[1].set(0)
-                self.stmt_result.append(buton_var1)
+                # buton_var1 = [tk.IntVar(),tk.IntVar()]
+                # buton_var1[0].set(0)
+                # buton_var1[1].set(0)
+                # self.stmt_result.append(buton_var1)
         else:
             for i in self.data[self.the_pos][1:]:
                 buton_var = [tk.IntVar()]
@@ -209,10 +232,10 @@ class Data():
                     buton_var[-1].set(int(j[3]))
                 self.buttons_var.append(buton_var)
                 
-                buton_var1 = [tk.IntVar(),tk.IntVar()]
-                buton_var1[0].set(0)
-                buton_var1[1].set(0)
-                self.stmt_result.append(buton_var1)
+                # buton_var1 = [tk.IntVar(),tk.IntVar()]
+                # buton_var1[0].set(int(i[0][1]))
+                # buton_var1[1].set(1 - int(i[0][1]))
+                # self.stmt_result.append(buton_var1)
         
         # self.print_button()
         

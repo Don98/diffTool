@@ -144,16 +144,47 @@ class EvaAction():
                 f.write(methods[i] + ":" + str(value.get()) + "\n")
         self.buttons[-1].config(bg=self.colors[3])
         tk.messagebox.showwarning('打分', "本份数据打分完毕，已保存")
-        self.parent.set_buttonDiabled(self.file_pos)
-        for i in self.buttons:
-            i["state"] = tk.DISABLED
-        for i in self.checkbuttons:
-            i.destroy()
-        self.listbox['state'] = tk.DISABLED
+        # self.parent.set_buttonDiabled(self.file_pos)
+        # for i in self.buttons:
+            # i["state"] = tk.DISABLED
+        # for i in self.checkbuttons:
+            # i.destroy()
+        # self.listbox['state'] = tk.DISABLED
         self.points.destroy()
+    def validation(self):
+        if(len(self.tmp_data.keys()) < 4):
+            content = "你还有"
+            num = 0
+            rest = [i for i in self.the_index.keys() if not i in self.tmp_data.keys()]
+            for i in rest:
+                if(num != 0):
+                    content += "、"
+                content += "算法" + str(self.the_index[i])
+                num += 1
+            content += "没有评估完成!\n请评估完成之后再进行打分！"
+            tk.messagebox.showwarning('提示', content)
+            return False
+        content = "你还有"
+        num = 0
+        for i in self.tmp_data.keys():
+            stmts = self.tmp_data[i].get_stmtresult()
+            for stmt in stmts:
+                if(stmt[0].get() + stmt[1].get() == 0):
+                    if(num != 0):
+                        content += "、"
+                    content += "算法" + str(self.the_index[i])
+                    num += 1
+                    break
+        if(num > 0):
+            content += "没有评估完成!\n请评估完成之后再进行打分！"
+            tk.messagebox.showwarning('提示', content)
+            return False
+        return True
         
     def point_algorithm(self):
         self.tmp_data[self.method] = self.Data
+        if(not self.validation()):
+            return;
         self.confirm()
         self.points = tk.Toplevel(self.true_root)
         self.points.title("打分")
@@ -326,10 +357,13 @@ class EvaAction():
     def dechoseOne(self):
         if(self.stmt_result[self.now_index_stmt][1].get() == 1):
             self.stmt_result[self.now_index_stmt][1].set(0)
+        self.buttons_var[self.now_index_stmt][0].set(1)
+        
     def dechoseTwo(self):
         if(self.stmt_result[self.now_index_stmt][0].get() == 1):
             self.stmt_result[self.now_index_stmt][0].set(0)
-            
+        self.buttons_var[self.now_index_stmt][0].set(0)
+        
     def set_content_windows(self):
         self.content_windows.place(x = self.all_positions[2][0], y = self.all_positions[2][1], width = self.all_positions[2][2], height = self.all_positions[2][3])
         self.token_windows.place(x = self.all_positions[3][2], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
@@ -371,7 +405,6 @@ class EvaAction():
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         for method in methods:
             self.tmp_data[method].save_method_file()
-        # index = methods.index(self.method)
         # self.dest11roy()
     
     def __destroy__(self):
