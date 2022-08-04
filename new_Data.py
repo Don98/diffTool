@@ -10,7 +10,6 @@ class Data():
         self.exist = True
         self.the_pos = the_pos
         
-        
     def print_button(self):
         for i in self.buttons_var:
             for j in i:
@@ -55,8 +54,9 @@ class Data():
         with open(self.file_name + "/" + "result.txt","w") as f:
             f.write(content)
     
-    def updated_buttonvar(self,buttons_var):
+    def updated_buttonvar(self,buttons_var,stmt_result):
         self.buttons_var = buttons_var
+        self.stmt_result = stmt_result
     
     def update(self):
         if(len(self.data[self.the_pos]) == 1):
@@ -98,7 +98,7 @@ class Data():
         
         
     def create_read_resultfile(self):
-        path = self.file_name + "/" + "result.txt"
+        path = self.file_name + "/" + self.method + "_result.txt"
         if(not os.path.isfile(path)):
             self.exist = False
             with open(path, "w") as f:            
@@ -110,7 +110,6 @@ class Data():
                     f.write("-"*50 + "\n")
         with open(path, "r") as f:
             self.data = f.read()
-        os.remove(path)
     
     def split_data(self):
         the_pos = self.the_pos
@@ -165,6 +164,7 @@ class Data():
         
     def create_buttonvar(self):
         self.buttons_var = []
+        self.stmt_result = []
         if(not self.exist or len(self.data[self.the_pos]) <= 1):
             for i in range(len(self.tokens)):
                 buton_var = [tk.IntVar()]
@@ -173,6 +173,11 @@ class Data():
                     buton_var.append(tk.IntVar())
                     buton_var[-1].set(1)
                 self.buttons_var.append(buton_var)
+                
+                buton_var1 = [tk.IntVar(),tk.IntVar()]
+                buton_var1[0].set(0)
+                buton_var1[1].set(0)
+                self.stmt_result.append(buton_var1)
         else:
             for i in self.data[self.the_pos][1:]:
                 buton_var = [tk.IntVar()]
@@ -183,10 +188,15 @@ class Data():
                     buton_var.append(tk.IntVar())
                     buton_var[-1].set(int(j[3]))
                 self.buttons_var.append(buton_var)
+                
+                buton_var1 = [tk.IntVar(),tk.IntVar()]
+                buton_var1[0].set(0)
+                buton_var1[1].set(0)
+                self.stmt_result.append(buton_var1)
         
         # self.print_button()
         
-        return self.buttons_var
+        return self.buttons_var,self.stmt_result
         
     def read_file(self):
         filepath = self.file_name + "/" + self.method + ".txt"

@@ -3,7 +3,8 @@ import tkinter as tk
 import tkinter.filedialog
 from functools import partial
 from tkinter.messagebox import showinfo
-from Data import Data
+# from Data import Data
+from new_Data import Data
 import os
 from tkinter import *
 
@@ -104,18 +105,12 @@ class EvaAction():
             self.all_positions[i] = [self.all_positions[i][0], self.all_positions[i][1], self.all_positions[i][2] + sign * dx, self.all_positions[i][3]+ sign * dy]
         self.Window.place(x = self.all_positions[0][0], y = self.all_positions[0][1], width = self.all_positions[0][2], height = self.all_positions[0][3])
         self.set_content_windows()
-        # self.bar_buttom.place(x = self.all_positions[4][0], y = self.all_positions[4][1], width = self.all_positions[4][2], height = self.all_positions[4][3])
-        # self.bar_right.place(x = self.all_positions[5][0], y = self.all_positions[5][1], width = self.all_positions[5][2], height = self.all_positions[5][3])
         
     def resize_l(self,event,dx):
-        # dx = self.xpos() - self.all_positions[5][0]
-        # dy = self.ypos() - self.all_positions[5][1]
         self.all_positions[5][0] += dx
         self.to_resize([],dx,0,1)
         
     def resize_t(self,event,dy):
-        # dx = self.xpos() - self.all_positions[4][0]
-        # dy = self.ypos() - self.all_positions[4][1]
         self.all_positions[0][1] += dy
         self.all_positions[4][1] += dy
         self.to_resize([0,2,3],0,dy,-1)
@@ -136,8 +131,7 @@ class EvaAction():
             self.tmp_data[self.method] = self.Data
             self.label.config(text='总共需要标注数量为: ')
         self.method = method
-        self.Data = Data(self.file_name,self.method)
-        self.Data.set_pos(self.the_index[self.method])
+        self.Data = Data(self.file_name,self.method,self.the_index[self.method])
         self.set_label()
     # def print_value(self):
         # for i in self.all_points:
@@ -249,16 +243,16 @@ class EvaAction():
     def items_selected(self,event):
         selected_indices = self.listbox.curselection()
         action = ",".join([self.listbox.get(i) for i in selected_indices])
-        try:
-            two_nums = self.get_pos(action)
-            self.newWindow.scroll(two_nums)
-            self.draw_tokens(selected_indices[0])
-            # print(selected_indices[0])
-            # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
-            self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
-            self.selected_indices = selected_indices[0]
-        except:
-            print(action)
+        # try:
+        two_nums = self.get_pos(action)
+        self.newWindow.scroll(two_nums)
+        self.draw_tokens(selected_indices[0])
+        # print(selected_indices[0])
+        # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+        self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
+        self.selected_indices = selected_indices[0]
+        # except:
+            # print(action)
 
     def select_all(self):
         if(self.buttons_var[self.selected_indices][0].get() == 0):
@@ -281,6 +275,8 @@ class EvaAction():
             i.destroy()
         # print(len(self.buttons_var),self.selected_indices)
         if(self.selected_indices != -1):
+            if(self.stmt_result[self.selected_indices][0].get() == 0 and self.stmt_result[self.selected_indices][1].get() == 0):      
+                self.listbox.itemconfig(self.selected_indices,bg = "white")
             tmp = []
             for i in self.buttons_var[self.selected_indices]:
                 tmp.append(i.get())
@@ -288,27 +284,46 @@ class EvaAction():
                 self.actionList[self.selected_indices].append(tmp)
             else:
                 self.actionList[self.selected_indices][2] = tmp
-            self.Data.updated_buttonvar(self.buttons_var)
+            self.Data.updated_buttonvar(self.buttons_var,self.stmt_result)
+        self.now_index_stmt = index
+        self.stmt_chose = [tk.Checkbutton(self.windows0,width=10, height=1, text='正确', variable = self.stmt_result[index][0],bg="white",command = self.dechoseOne)]
+        self.stmt_chose.append(tk.Checkbutton(self.windows0,width=10, height=1, text='错误', variable = self.stmt_result[index][1],bg="white",command = self.dechoseTwo))
+        self.stmt_chose[0].place(x = self.all_positions[3][2], y = 0)
+        self.stmt_chose[1].place(x = self.all_positions[3][2] + 200, y = 0)
+        
+        
         self.checkbuttons = []
         all_tokens = [self.actionList[index][0]] + self.actionList[index][1]
         nums = 0
+        
         
         self.token_frame = ScrollFrame(self.token_windows)
         self.token_frame.place(x = 0, y = 0, width = int(3 * self.all_positions[3][2] / 4), height = self.all_positions[3][3])
         self.token_frame.delete_all()
         for i in all_tokens:
-            self.checkbuttons.append(tk.Checkbutton(self.token_frame.viewPort, text = str(nums+1) + "/" + str(len(all_tokens)) + " " + i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = int(3 * self.all_positions[3][2] / 4),bg="white"))
-            self.checkbuttons[-1].grid(column = 0, columnspan = 2)
+            # self.checkbuttons.append(tk.Checkbutton(self.token_frame.viewPort, text = str(nums+1) + "/" + str(len(all_tokens)) + " " + i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = int(3 * self.all_positions[3][2] / 4),bg="white"))
+            if(nums == 0):
+                self.checkbuttons.append(tk.Label(self.token_frame.viewPort, text="   " + i, width = self.all_positions[0][3], fg='black',font=('Arial', 10),bg="white"))
+            else:
+                self.checkbuttons.append(tk.Label(self.token_frame.viewPort, text= str(nums) + "/" + str(len(all_tokens)-1) + " " + i,width = self.all_positions[0][3],fg='black',font=('Arial', 10),bg="white"))
+            # self.checkbuttons[-1].grid(column = 0, columnspan = 2)
+            self.checkbuttons[-1].grid(column = 0, columnspan = 1)
             self.checkbuttons[-1].bind("<MouseWheel>", self.token_frame.processWheel)
             self.checkbuttons[-1].config(anchor = "w")
             # self.checkbuttons[-1].select()
             nums += 1
             
         for i in tokenNum:
-            self.checkbuttons[i].config(bg = "#FB7299")
-        self.checkbuttons[0]['command'] = self.select_all;
+            self.checkbuttons[i].config(bg = self.colors[0])
+        # self.checkbuttons[0]['command'] = self.select_all;
         self.set_button()
-
+    def dechoseOne(self):
+        if(self.stmt_result[self.now_index_stmt][1].get() == 1):
+            self.stmt_result[self.now_index_stmt][1].set(0)
+    def dechoseTwo(self):
+        if(self.stmt_result[self.now_index_stmt][0].get() == 1):
+            self.stmt_result[self.now_index_stmt][0].set(0)
+            
     def set_content_windows(self):
         self.content_windows.place(x = self.all_positions[2][0], y = self.all_positions[2][1], width = self.all_positions[2][2], height = self.all_positions[2][3])
         self.token_windows.place(x = self.all_positions[3][2], y = self.all_positions[3][1], width = self.all_positions[3][2], height = self.all_positions[3][3])
@@ -369,8 +384,10 @@ class EvaAction():
         # self.button0 = tk.Button(self.Window,width=10, height=1, text='修改', bg='skyblue', command=self.reset).place(x = 630, y = 120)
         # self.button1 = tk.Button(self.token_windows,width=10, height=1, text='保存并退出', bg='#E8F6FF', command=self.confirm)
         # self.button1.place(x = int(6.5 * self.all_positions[3][2] / 8), y = self.all_positions[3][3] / 2 - 50)
-        self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg=self.colors[4], command=self.dechose)
-        self.button2.place(x = self.all_positions[3][2], y = 0)
+        # self.button2 = tk.Button(self.windows0,width=10, height=1, text='Token反选', bg=self.colors[4], command=self.dechose)
+        # self.button2.place(x = self.all_positions[3][2], y = 0)
+        # self.stmt
+        pass
     
     def set_buttons_color(self,StmtsNums,color):
         for i in StmtsNums:
@@ -396,7 +413,7 @@ class EvaAction():
             self.stmts[i] = str(i) + " : " + stmt
         self.Data.create_read_resultfile()
         self.Data.split_data()
-        self.buttons_var = self.Data.create_buttonvar()
+        self.buttons_var, self.stmt_result = self.Data.create_buttonvar()
         # print(self.Data.get_stmts())
         self.update_data()
         
