@@ -129,6 +129,8 @@ class EvaAction():
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.scroll([0,0])
             self.tmp_data[self.method] = self.Data
+            self.stmt_chose[0].destroy()
+            self.stmt_chose[1].destroy()
             self.label.config(text='总共需要标注数量为: ')
         self.method = method
         self.Data = Data(self.file_name,self.method,self.the_index[self.method])
@@ -144,7 +146,7 @@ class EvaAction():
                 f.write(methods[i] + ":" + str(value.get()) + "\n")
         self.buttons[-1].config(bg=self.colors[3])
         tk.messagebox.showwarning('打分', "本份数据打分完毕，已保存")
-        # self.parent.set_buttonDiabled(self.file_pos)
+        self.parent.set_buttonDiabled(self.file_pos)
         # for i in self.buttons:
             # i["state"] = tk.DISABLED
         # for i in self.checkbuttons:

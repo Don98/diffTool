@@ -231,7 +231,7 @@ class TagData():
     
     def set_buttonDiabled(self,pos):
         self.tags.append(pos)
-        self.set_file_button()
+        # self.set_file_button()
         
     # def open_windows(self,name,pos):
         # self.newWindow = Eva(self.root,self.file + "/" + name)

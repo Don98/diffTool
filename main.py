@@ -95,14 +95,14 @@ class mainBG():
     def ypos(self):return self.getpos()[1]    
         
     def resize_l(self,event):
-        # print(self.bar_right_pos)
+        print(self.bar_right_pos)
         dx = self.xpos() - self.bar_right_pos[0]
         self.bar_right_pos[0] += dx
         self.tagData.resize_l(event,dx)
         self.newWindow.resize_l(event,dx)
         self.eva_windows.resize_l(event,dx)
-        # print(self.bar_right_pos)
         self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
+        pass
     
     def resize_t(self,event):
         dy = self.ypos() - self.bar_buttom_pos[1]
@@ -113,6 +113,7 @@ class mainBG():
         self.eva_windows.resize_t(event,dy)
         self.bar_buttom.place(x = self.bar_buttom_pos[0], y = self.bar_buttom_pos[1], width = self.bar_buttom_pos[2], height = self.bar_buttom_pos[3])
         self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
+        pass    
         
     def set_bar(self):
         self.bar_right.bind("<B1-Motion>", self.resize_l)
