@@ -81,8 +81,9 @@ class TagData():
         return False
     
     def run_base(self):
-        self.base = BaseBG(self.root)
+        # self.base = BaseBG(self.root)
         # self.to_build()
+        tk.messagebox.showwarning('提示', "请将工具和data文件夹放在同一个目录下，谢谢。")
     
     def get_file():
         return self.file
