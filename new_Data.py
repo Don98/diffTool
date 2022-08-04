@@ -137,7 +137,13 @@ class Data():
         return self.buttons_var[index][col]
     def setResultByIndex(self,index,col,val):
         self.buttons_var[index][col] = val
-        
+    def getStmtResultByIndex(self,index):
+        return self.stmt_result[index]
+    def setStmtResultByIndex(self,index,val):
+        # print(val[0].get(),val[1].get())
+        self.stmt_result[index] = val
+    # def getStmtResult(self):
+        # return self.stmt_result
     def updateUsingData(self,updatedData):
         # print(updatedData.stmt_tokens)
         StmtsNums = []
@@ -147,6 +153,7 @@ class Data():
             for i, myStmt in enumerate(self.stmts):
                 if(stmt == myStmt):
                     self.setResultByIndex(i,0,updatedData.getResultByIndex(index,0))      
+                    self.setStmtResultByIndex(i,updatedData.getStmtResultByIndex(index))      
                     StmtsNums.append(i)
                     TokenNums.append([i,0])
         the_dict = updatedData.get_tokenToStmt()

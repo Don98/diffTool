@@ -275,6 +275,9 @@ class EvaAction():
             i.destroy()
         # print(len(self.buttons_var),self.selected_indices)
         if(self.selected_indices != -1):
+            self.stmt_chose[0].destroy()
+            self.stmt_chose[1].destroy()
+            # print("selected_indices ",self.selected_indices,len(self.stmt_result))
             if(self.stmt_result[self.selected_indices][0].get() == 0 and self.stmt_result[self.selected_indices][1].get() == 0):      
                 self.listbox.itemconfig(self.selected_indices,bg = "white")
             tmp = []
@@ -398,13 +401,12 @@ class EvaAction():
         self.tokenNums = []
         for i in self.the_index.keys():
             # print(self.tmp_data)
-            if(i in self.tmp_data.keys() and self.the_index[i] < self.the_index[self.method]):
+            if(i in self.tmp_data.keys() and self.the_index[i] <= self.the_index[self.method]):
                 StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
                 self.stmtNums.append(StmtsNums)
                 self.tokenNums.append(TokenNums)
-                # self.set_buttons_color(StmtsNums,TokenNums)
-            if(i in self.tmp_data.keys() and self.the_index[i] == self.the_index[self.method]):
-                StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
+            # if(i in self.tmp_data.keys() and self.the_index[i] == self.the_index[self.method]):
+                # StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
     
     def read_file(self):
         self.stmts, self.tokens, self.actionList = self.Data.read_file()
