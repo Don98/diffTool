@@ -153,6 +153,7 @@ class EvaAction():
         self.points.destroy()
         
     def point_algorithm(self):
+        self.tmp_data[self.method] = self.Data
         self.confirm()
         self.points = tk.Toplevel(self.true_root)
         self.points.title("打分")
@@ -316,8 +317,10 @@ class EvaAction():
             # self.checkbuttons[-1].select()
             nums += 1
             
-        for i in tokenNum:
-            self.checkbuttons[i].config(bg = self.colors[0])
+        # token 染色
+        # for i in tokenNum:
+            # self.checkbuttons[i].config(bg = self.colors[0])
+            
         # self.checkbuttons[0]['command'] = self.select_all;
         self.set_button()
     def dechoseOne(self):
@@ -349,6 +352,7 @@ class EvaAction():
         self.set_content_windows()
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
         # if(self.the_index[self.method] != 0):
+        # stmt 染色
         for i in range(len(self.stmtNums)):
             self.set_buttons_color(self.stmtNums[len(self.stmtNums) - i - 1],self.colors[len(self.stmtNums) - i - 1])
         
@@ -360,10 +364,13 @@ class EvaAction():
         return self.win
           
     def confirm(self):
-        self.Data.updated_buttonvar(self.buttons_var)
+        self.Data.updated_buttonvar(self.buttons_var,self.stmt_result)
         self.Data.update()
-        self.Data.save_file()
+        # self.Data.save_file()
+        # self.Data.save_method_file()
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
+        for method in methods:
+            self.tmp_data[method].save_method_file()
         # index = methods.index(self.method)
         # self.dest11roy()
     

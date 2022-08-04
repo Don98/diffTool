@@ -31,7 +31,6 @@ class Data():
         return str(self.stmt_pre) + "/" + str(len(self.buttons_var)),str(self.token_pre) + "/" + str(token_nums)
     
     def save_file(self):
-        # self.print_button()
         content = ""
         for i in range(len(self.data)):
             if(i != self.the_pos and i != 3):
@@ -52,6 +51,16 @@ class Data():
                 
             
         with open(self.file_name + "/" + "result.txt","w") as f:
+            f.write(content)
+    def save_method_file(self):
+        content = ""
+        for i in range(len(self.stmt_result)):
+            num = 1
+            if(self.stmt_result[i][1].get() == 1):
+                num = 0
+            content += self.stmts[i] + "," + str(num) + "\n"
+        path = self.file_name + "/" + self.method + "_result.txt"
+        with open(path,"w") as f:
             f.write(content)
     
     def updated_buttonvar(self,buttons_var,stmt_result):
@@ -142,8 +151,11 @@ class Data():
     def setStmtResultByIndex(self,index,val):
         # print(val[0].get(),val[1].get())
         self.stmt_result[index] = val
-    # def getStmtResult(self):
-        # return self.stmt_result
+    def StmtHasResult(self,index):
+        if(self.stmt_result[index][0].get() == 0 and self.stmt_result[index][1].get() == 0):
+            return False;
+        return True
+        
     def updateUsingData(self,updatedData):
         # print(updatedData.stmt_tokens)
         StmtsNums = []
@@ -154,8 +166,9 @@ class Data():
                 if(stmt == myStmt):
                     self.setResultByIndex(i,0,updatedData.getResultByIndex(index,0))      
                     self.setStmtResultByIndex(i,updatedData.getStmtResultByIndex(index))      
-                    StmtsNums.append(i)
-                    TokenNums.append([i,0])
+                    if(updatedData.StmtHasResult(index)):
+                        StmtsNums.append(i)
+                        TokenNums.append([i,0])
         the_dict = updatedData.get_tokenToStmt()
         the_dict1 = updatedData.get_stmtToToken()
         for j, myTokens in enumerate(self.tokens):
