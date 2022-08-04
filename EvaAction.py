@@ -129,8 +129,11 @@ class EvaAction():
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.scroll([0,0])
             self.tmp_data[self.method] = self.Data
-            self.stmt_chose[0].destroy()
-            self.stmt_chose[1].destroy()
+            try:
+                self.stmt_chose[0].destroy()
+                self.stmt_chose[1].destroy()
+            except:
+                pass
             self.label.config(text='总共需要标注数量为: ')
         self.method = method
         self.Data = Data(self.file_name,self.method,self.the_index[self.method])

@@ -31,29 +31,31 @@ class mainBG():
         self.set_size()
         
         # first stage : build navigation bar
-        self.navigation = tk.Frame(self.root,width=self.ws/8,height=int(6 * self.hs / 8))
+        self.high = int(6 * self.hs / 8)
+        self.low_high = int(2 * self.hs / 8)
+        self.navigation = tk.Frame(self.root,width=self.ws/8,height=self.high)
         self.navigation.place(x = 0,y = 0)
         self.navigation.config(bg="white")
         
         self.bar_buttom = tk.Frame(self.root, width = self.ws, height = 5, cursor = 'sb_v_double_arrow')
-        self.bar_buttom.place(x = 0,y = int(6 * self.hs / 8) - 5)
+        self.bar_buttom.place(x = 0,y = self.high - 5)
         self.bar_buttom.config(bg = "black")
-        self.bar_buttom_pos = [0,int(6 * self.hs / 8) - 5,self.ws,5]
+        self.bar_buttom_pos = [0,self.high - 5,self.ws,5]
         # [self.ws - 2, 0, 5, self.hs]
-        self.bar_right = tk.Frame(self.root, width = 5,height = int(6 * self.hs / 8),cursor = 'sb_h_double_arrow')
+        self.bar_right = tk.Frame(self.root, width = 5,height = self.high,cursor = 'sb_h_double_arrow')
         self.bar_right.place(x = self.ws / 8,y = 0)
-        self.bar_right_pos = [self.ws / 8,0,5,int(6 * self.hs / 8)]
+        self.bar_right_pos = [self.ws / 8,0,5,self.high]
         self.bar_right.config(bg = "black")
         
-        self.tagData = TagData(self,self.root,self.navigation,self.file,self.ws / 8 - 2,int(6 * self.hs / 8)-5,self.bar_buttom,self.bar_right)
+        self.tagData = TagData(self,self.root,self.navigation,self.file,self.ws / 8 - 2,self.high-5,self.bar_buttom,self.bar_right)
         
-        self.text_place = tk.Frame(self.root,width=self.ws - self.ws / 8,height=int(6 * self.hs / 8) - 5)
+        self.text_place = tk.Frame(self.root,width=self.ws - self.ws / 8,height=self.high - 5)
         self.text_place.place(x = self.ws / 8 + 5,y = 0)
         self.text_place.config(bg="white")
         
-        self.eva_place  = tk.Frame(self.root,width = self.ws, height = int(2 * self.hs / 8))
-        # self.eva_place.place(x = 0, y = int(6 * self.hs / 8))
-        # print([0,int(6 * self.hs / 8),self.ws,int(2 * self.hs / 8)])
+        self.eva_place  = tk.Frame(self.root,width = self.ws, height = self.low_high)
+        # self.eva_place.place(x = 0, y = high)
+        # print([0,high,self.ws,int(2 * self.hs / 8)])
         self.eva_place.config(bg="white")
         
         self.tagData.defaultFirst()
@@ -95,24 +97,24 @@ class mainBG():
     def ypos(self):return self.getpos()[1]    
         
     def resize_l(self,event):
-        print(self.bar_right_pos)
-        dx = self.xpos() - self.bar_right_pos[0]
-        self.bar_right_pos[0] += dx
-        self.tagData.resize_l(event,dx)
-        self.newWindow.resize_l(event,dx)
-        self.eva_windows.resize_l(event,dx)
-        self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
+        # print(self.bar_right_pos)
+        # dx = self.xpos() - self.bar_right_pos[0]
+        # self.bar_right_pos[0] += dx
+        # self.tagData.resize_l(event,dx)
+        # self.newWindow.resize_l(event,dx)
+        # self.eva_windows.resize_l(event,dx)
+        # self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
         pass
     
     def resize_t(self,event):
-        dy = self.ypos() - self.bar_buttom_pos[1]
-        self.bar_buttom_pos[1] += dy
-        self.bar_right_pos[3] += dy
-        self.tagData.resize_t(event,dy)
-        self.newWindow.resize_t(event,dy)
-        self.eva_windows.resize_t(event,dy)
-        self.bar_buttom.place(x = self.bar_buttom_pos[0], y = self.bar_buttom_pos[1], width = self.bar_buttom_pos[2], height = self.bar_buttom_pos[3])
-        self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
+        # dy = self.ypos() - self.bar_buttom_pos[1]
+        # self.bar_buttom_pos[1] += dy
+        # self.bar_right_pos[3] += dy
+        # self.tagData.resize_t(event,dy)
+        # self.newWindow.resize_t(event,dy)
+        # self.eva_windows.resize_t(event,dy)
+        # self.bar_buttom.place(x = self.bar_buttom_pos[0], y = self.bar_buttom_pos[1], width = self.bar_buttom_pos[2], height = self.bar_buttom_pos[3])
+        # self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
         pass    
         
     def set_bar(self):
@@ -121,13 +123,13 @@ class mainBG():
 
     def open_windows(self,name,pos):
         # self.tagData.files_button[pos].config(bg = "#AA72AE") # 关闭选中revision设置为紫色
-        self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,int(6 * self.hs / 8) - 5,self.bar_buttom,self.bar_right)
-        self.newWindow.set_bar_place([0,int(6 * self.hs / 8) - 5,self.ws, 5],[self.ws / 8,0,5,int(6 * self.hs / 8)])
+        self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,self.high - 5,self.bar_buttom,self.bar_right)
+        self.newWindow.set_bar_place([0,self.high - 5,self.ws, 5],[self.ws / 8,0,5,self.high])
         self.set_eva(self.newWindow,self.newWindow.get_filename(),pos)
         self.set_bar()
         
     def set_eva(self,newWindow,file_name,pos):
-        self.eva_windows = EvaAction(newWindow,self.tagData,pos,self.root, self.eva_place,file_name, self.ws, int(2 * self.hs / 8),self.bar_buttom,self.bar_right)
+        self.eva_windows = EvaAction(newWindow,self.tagData,pos,self.root, self.eva_place,file_name, self.ws, self.low_high,self.bar_buttom,self.bar_right)
 
     def set_size(self,x = 0,y = 0):
         # x = (ws/2) - (w/2)
