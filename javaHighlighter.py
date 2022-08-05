@@ -90,6 +90,7 @@ class JavaSyntaxHighlighter:
 
     def translate(self, data=""):
         res = []
+        pos = 0
         nums = 1
         for i in data:    
             # if(nums >= 70 and nums <= 80):
@@ -97,7 +98,7 @@ class JavaSyntaxHighlighter:
             # if(nums >= 70 and nums <= 80):
                 # print(nums,i)
             i = self.split_classify(i)
-            # print(i)
+            # print(i[0])
             for j in i:
                 self.text.insert("end",j[1],j[0])               
             nums += 1
@@ -156,19 +157,27 @@ def split_classify(data):
             res.append((name[pos],tmp[1]))
     return res
 
-def translate(text,data=""):
+def translate(text,data="",blue_pos = []):
     res = []
+    the_dict = {"[note]":"[note]1","[key]":"[key]1","[string]":"[string]1","[opr]":"[opr]1","[None]":"[None]1"}
     nums = 1
+    pos = 0
     for i in data:    
         # if(nums >= 70 and nums <= 80):
             # print(nums,i)
         # if(nums >= 70 and nums <= 80):
             # print(nums,i)
         i = split_classify(i)
-        # print(i)
+        # print(i[0])
         for j in i:
-            text.insert("end",j[1],j[0])               
+            if(nums == blue_pos[pos]):
+                text.insert("end",j[1],the_dict[j[0].strip()])
+            else:
+                text.insert("end",j[1],j[0])               
+        if(nums == blue_pos[pos]):
+            pos += 1
         nums += 1
+        
     # for i in range(nums):
         # if(self.text.get(i + 0.0 ,i + 0.2) == "  "):
             # self.text.delete( i + 0.0 ,i + 0.2)

@@ -28,11 +28,11 @@ class Eva():
         self.methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         self.ws = ws
         self.hs = hs
-        self.font = tkFont.Font(family="microsoft yahei", size=12, weight="normal")
+        self.font = tkFont.Font(family="microsoft yahei", size=10, weight="normal")
         self.m_len = self.font.measure("n")
         self.all_positions = []
-        self.pos = 0
-        self.pos0= 0
+        self.pos = 20
+        self.pos0= 20
         # self.root = tk.Toplevel(self.root)
         # self.root.title(file_name.split("/")[-1])
         # self.root = tk.Frame(self.root, width = self.ws,height = self.hs)
@@ -49,7 +49,7 @@ class Eva():
             # pos += 1
         # return text1
         
-    def get_content(self,file_name,text,num):
+    def get_content(self,file_name,text,num,blue_pos):
         fileDict = self.mainBG.get_dict()
         if(not file_name in fileDict):
             self.mainBG.readFile(file_name)
@@ -57,13 +57,18 @@ class Eva():
         # self.tmp_text = text1
         thread.start_new_thread(self.set_line,(num,pos,))
         # text = thread.start_new_thread(jsh.translate,(content,))
-        
+        blue = "#00BFFF"
         text.tag_config("[note]", foreground="green")
         text.tag_config("[key]", foreground="blue")
         text.tag_config("[string]", foreground="grey")
         text.tag_config("[opr]", foreground="red")
         text.tag_config("[None]", foreground="black")
-        text = translate(text,content)
+        text.tag_config("[note]1", foreground="green",background=blue)
+        text.tag_config("[key]1", foreground="blue",background=blue)
+        text.tag_config("[string]1", foreground="grey",background=blue)
+        text.tag_config("[opr]1", foreground="red",background=blue)
+        text.tag_config("[None]1", foreground="black",background=blue)
+        text = translate(text,content,blue_pos)
         # text1 = self.set_line(text1,pos)
         
         return text
@@ -72,11 +77,13 @@ class Eva():
         a= int(-1*(event.delta/60))
         self.line_text0.yview_scroll(a,'units') 
         self.text.yview_scroll(a,'units')
+        self.pos += a
         return "break" 
     def processWheel1(self,event):
         a= int(-1*(event.delta/60))
         self.line_text1.yview_scroll(a,'units') 
         self.text1.yview_scroll(a,'units')
+        self.pos0 += a
         return "break" 
         
     def set_line_windows(self):
@@ -148,7 +155,7 @@ class Eva():
         
         self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10)
         self.text_windows0.update()
-        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0)
+        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos)
         self.text.bind("<MouseWheel>", self.processWheel)
         self.text["state"] = "disabled"
         self.line_text0["state"] = "disabled"
@@ -174,7 +181,7 @@ class Eva():
         
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 15)
         self.text_windows1.update()
-        self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1)
+        self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos)
         self.text1.bind("<MouseWheel>", self.processWheel1)
         self.text1["state"] = "disabled"
         self.line_text1["state"] = "disabled"
@@ -236,6 +243,51 @@ class Eva():
     def set_bar_place(self,a_pos,b_pos):
         self.all_positions.append(a_pos)
         self.all_positions.append(b_pos)
+    
+    def get_pos(self,action):
+        parts = action.split(" => ")
+        two_nums = []
+        if(len(parts) == 1):
+            num = parts[0][parts[0].find("LINE:") + 6:-1]
+            if(action.startswith("**ADD**")):
+                two_nums.append(num)
+                two_nums.append(-1)
+            else:
+                two_nums.append(-1)
+                two_nums.append(num)
+                
+        else:
+            two_nums.append(parts[0][parts[0].find("LINE:") + 6:-1])
+            two_nums.append(parts[1][parts[1].find("LINE:") + 6:-1])
+        # print(parts,two_nums)
+        return [int(i) for i in two_nums]
+        
+    def getNums(self,content):
+        src = []
+        dst = []
+        content = content.split("==================================================\n")[1:]
+        content = [i.split("\n")[0] for i in content]
+        for i in content:
+            tmp = self.get_pos(i)
+            if(tmp[0] != -1):
+                src.append(tmp[0])
+            if(tmp[1] != -1):
+                dst.append(tmp[1])
+        # print(src)
+        # print(dst)
+        return src,dst
+    
+    def read_stmt(self):
+        methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
+        self.srcStmtPos = []
+        self.dstStmtPos = []
+        for method in methods:
+            with open(self.file_name + "/" + method + ".txt") as f:
+                src , dst = self.getNums(f.read())
+            self.srcStmtPos.extend(src)
+            self.dstStmtPos.extend(dst)
+        # print(self.srcStmtPos)
+        # print(self.dstStmtPos)
         
     def build(self):
         self.all_positions.append([self.root.winfo_screenwidth() - self.ws + 5 , 0 , self.ws,self.hs])
@@ -245,5 +297,6 @@ class Eva():
         # self.root.config(bg="red")
         self.set_label()
         # self.set_button()
+        self.read_stmt()
         self.draw_layout()
         # self.set_adjust()

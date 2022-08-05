@@ -166,7 +166,7 @@ class EvaAction():
                     content += "、"
                 content += "算法" + str(self.the_index[i])
                 num += 1
-            content += "没有评估完成!\n请评估完成之后再进行打分！"
+            content += "还未开始评估!\n请评估完成之后再进行打分！"
             tk.messagebox.showwarning('提示', content)
             return False
         content = "你还有"
