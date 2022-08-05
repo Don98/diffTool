@@ -58,7 +58,7 @@ class Data():
             num = 1
             if(self.stmt_result[i][1].get() == 1):
                 num = 0
-            content += self.stmts[i] + "," + str(num) + "\n"
+            content += self.stmts[i].replace(","," ") + "," + str(num) + "\n"
         path = self.file_name + "/" + self.method + "_result.txt"
         with open(path,"w") as f:
             f.write(content)

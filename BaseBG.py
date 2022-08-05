@@ -242,26 +242,18 @@ class TagData():
         # del self.newWindow
         
     def get_nums(self,path):
-        right = [0,0,0,0,0,0,0,0]
-        all_nums =  [0,0,0,0,0,0,0,0]
-        with open(path + "/result.txt","r") as f:
-            data = f.read().split("==================================================\n")
+        right = [0,0,0,0]
+        all_nums =  [0,0,0,0]
+        
+        methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         num = 0
-        for i in data:
-            # print(i)
-            i = i.split("--------------------------------------------------\n")
-            if(len(i) <= 1):
-                continue
-            i = i[0].split(" : ")[1]
-            i = i.strip().split(" || ")
-            stmt  = i[0].split("/")
-            token = i[1].split("/")
-            # print(num,stmt,token)
-            right[num] += int(stmt[0])
-            all_nums[num] += int(stmt[1])
-            right[num + 4] += int(token[0])
-            all_nums[num + 4] += int(token[1])
-            num += 1
+        for method in methods:
+            with open(path + "/" + method + "_result.txt","r") as f:
+                data = f.readlines()
+                for i in data:
+                    right[num] += (i.split(",")[-1])
+                all_nums[num] += len(data)
+                num += 1
         return right,all_nums
         
     def save_result(self):
@@ -272,17 +264,17 @@ class TagData():
         self.set_file_button()
         
     def query_result(self):
-        right = [0,0,0,0,0,0,0,0]
-        all_nums =  [0,0,0,0,0,0,0,0]
+        right = [0,0,0,0]
+        all_nums =  [0,0,0,0]
         for i in self.tags:
             tmp0, tmp1 = self.get_nums(self.file + "/" + self.files[i])
-            for i in range(8):
+            for i in range(4):
                 right[i] += tmp0[i]
                 all_nums[i] += tmp1[i]
         methos = ["SE","GT","MTD","IJM"]
-        show_content = "Methods\tStmt || Token\n"
+        show_content = "Methods\tStmt"
         for i in range(4):
-            show_content += methos[i] + "\t : " + str(right[i]) + "/" + str(all_nums[i]) + " || " + str(right[i+4]) + "/" + str(all_nums[i + 4]) + "\n" 
+            show_content += methos[i] + "\t : " + str(right[i]) + "/" + str(all_nums[i]) + "\n" 
         tk.messagebox.showwarning('统计结果', show_content)
     def zipDir(self,dirpath, outFullName):
         zip = zipfile.ZipFile(outFullName, "w", zipfile.ZIP_DEFLATED)
