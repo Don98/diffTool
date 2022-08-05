@@ -40,7 +40,8 @@ class Data():
                 content += self.data[i] + "\n"
             else:
                 prec = self.get_prec()
-                content += self.data[i][0][0] + " : " + prec[0] + " || " + prec[1] + "\n"
+                # print(self.data[i][0][0],prec[0],prec[1])
+                content += self.data[i][0][0][0] + " : " + prec[0] + " || " + prec[1] + "\n"
                 content += "-" * 50 + "\n"
                 for j in range(1,len(self.data[i])):
                     for p in range(len(self.data[i][j])):
@@ -122,6 +123,7 @@ class Data():
                     f.write("-"*50 + "\n")
         with open(path, "r") as f:
             self.data = f.read()
+        os.remove(path)
     
     def split_data(self):
         the_pos = self.the_pos

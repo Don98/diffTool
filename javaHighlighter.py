@@ -159,7 +159,7 @@ def split_classify(data):
 
 def translate(text,data="",blue_pos = []):
     res = []
-    the_dict = {"[note]":"[note]1","[key]":"[key]1","[string]":"[string]1","[opr]":"[opr]1","[None]":"[None]1"}
+    the_dict = {"[note]":"[note]1","[key]":"[key]1","[string]":"[string]1","[str]":"[str]1","[opr]":"[opr]1","[None]":"[None]1"}
     nums = 1
     pos = 0
     for i in data:    

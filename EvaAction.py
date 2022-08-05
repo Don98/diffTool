@@ -126,6 +126,8 @@ class EvaAction():
         # self.evaAction = EvaAction(self.windows1,self.file_name, self.text, self.text0, method, self.buttons)
         self.buttons[self.the_index[method]].config(bg=self.colors[5])
         if(self.win > 0):
+            self.to_savebuttons()
+            self.selected_indices = -1
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.scroll([0,0])
             self.tmp_data[self.method] = self.Data
@@ -299,7 +301,16 @@ class EvaAction():
             for i in range(len(self.buttons_var[self.selected_indices][1:])):
                 self.buttons_var[self.selected_indices][1 + i].set(1)
         self.Data.updated_buttonvar(self.buttons_var)
-
+    def to_savebuttons(self):
+        tmp = []
+        for i in self.buttons_var[self.selected_indices]:
+            tmp.append(i.get())
+        if(len(self.actionList[self.selected_indices]) < 3):
+            self.actionList[self.selected_indices].append(tmp)
+        else:
+            self.actionList[self.selected_indices][2] = tmp
+        self.Data.updated_buttonvar(self.buttons_var,self.stmt_result)
+    
     def draw_tokens(self,index):
         tokenNum = []
         # print(index,self.tokenNums)
@@ -317,14 +328,8 @@ class EvaAction():
             # print("selected_indices ",self.selected_indices,len(self.stmt_result))
             if(self.stmt_result[self.selected_indices][0].get() == 0 and self.stmt_result[self.selected_indices][1].get() == 0):      
                 self.listbox.itemconfig(self.selected_indices,bg = "white")
-            tmp = []
-            for i in self.buttons_var[self.selected_indices]:
-                tmp.append(i.get())
-            if(len(self.actionList[self.selected_indices]) < 3):
-                self.actionList[self.selected_indices].append(tmp)
-            else:
-                self.actionList[self.selected_indices][2] = tmp
-            self.Data.updated_buttonvar(self.buttons_var,self.stmt_result)
+            self.to_savebuttons()
+            
         self.now_index_stmt = index
         self.stmt_chose = [tk.Checkbutton(self.windows0,width=10, height=1, text='正确', variable = self.stmt_result[index][0],bg="white",command = self.dechoseOne)]
         self.stmt_chose.append(tk.Checkbutton(self.windows0,width=10, height=1, text='错误', variable = self.stmt_result[index][1],bg="white",command = self.dechoseTwo))
@@ -409,6 +414,7 @@ class EvaAction():
         # self.Data.save_method_file()
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         for method in methods:
+            self.tmp_data[method].save_file()
             self.tmp_data[method].save_method_file()
         # self.dest11roy()
     

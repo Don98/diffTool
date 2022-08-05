@@ -251,7 +251,7 @@ class TagData():
             with open(path + "/" + method + "_result.txt","r") as f:
                 data = f.readlines()
                 for i in data:
-                    right[num] += (i.split(",")[-1])
+                    right[num] += int(i.split(",")[-1])
                 all_nums[num] += len(data)
                 num += 1
         return right,all_nums
@@ -271,8 +271,9 @@ class TagData():
             for i in range(4):
                 right[i] += tmp0[i]
                 all_nums[i] += tmp1[i]
-        methos = ["SE","GT","MTD","IJM"]
-        show_content = "Methods\tStmt"
+        # methos = ["SE","GT","MTD","IJM"]
+        methos = ["算法0","算法1","算法2","算法3"]
+        show_content = "Methods\tStmt\n"
         for i in range(4):
             show_content += methos[i] + "\t : " + str(right[i]) + "/" + str(all_nums[i]) + "\n" 
         tk.messagebox.showwarning('统计结果', show_content)
@@ -290,9 +291,12 @@ class TagData():
         if(not os.path.isdir("result")):
             os.mkdir("result")
         result_list = []
+        methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         for i in self.tags:
             if(not os.path.isdir("./result/" + self.files[i])):
                 os.mkdir("./result/" + self.files[i])
+            for method in methods:
+                copyfile(self.file + self.files[i] + "/" + method + "_result.txt","./result/" + self.files[i] + "/" + method + "_result.txt")
             copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "/result.txt")
             copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "/points.txt")
             copyfile(self.file + self.files[i] + "/readme.md","./result/" + self.files[i] + "/readme.md")
