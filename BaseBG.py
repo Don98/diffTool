@@ -67,6 +67,7 @@ class TagData():
         self.all_positions = []
         self.bar_buttom = bar_buttom
         self.bar_right  = bar_right
+        self.save_nums = 0
         if(not self.existOrNot()):
             self.run_base()
         else:
@@ -231,6 +232,7 @@ class TagData():
     
     def set_buttonDiabled(self,pos):
         self.tags.append(pos)
+        self.save_nums += 1
         # self.set_file_button()
         
     # def open_windows(self,name,pos):
@@ -263,6 +265,8 @@ class TagData():
         return right,all_nums
         
     def save_result(self):
+        tk.messagebox.showwarning('提示', "保存了" + str(self.save_nums) + "个文件！")
+        self.save_nums = 0
         for i in range(len(self.files)):
             self.files_button[i].destroy()
         self.set_file_button()
