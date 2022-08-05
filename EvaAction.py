@@ -129,7 +129,7 @@ class EvaAction():
             self.to_savebuttons()
             self.selected_indices = -1
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
-            self.newWindow.scroll([0,0])
+            self.newWindow.scroll([20,20])
             self.tmp_data[self.method] = self.Data
             try:
                 self.stmt_chose[0].destroy()

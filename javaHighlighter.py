@@ -170,11 +170,11 @@ def translate(text,data="",blue_pos = []):
         i = split_classify(i)
         # print(i[0])
         for j in i:
-            if(nums == blue_pos[pos]):
+            if(pos < len(blue_pos) and nums == blue_pos[pos]):
                 text.insert("end",j[1],the_dict[j[0].strip()])
             else:
                 text.insert("end",j[1],j[0])               
-        if(nums == blue_pos[pos]):
+        if(pos < len(blue_pos) and nums == blue_pos[pos]):
             pos += 1
         nums += 1
         

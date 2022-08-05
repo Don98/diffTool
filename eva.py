@@ -288,8 +288,10 @@ class Eva():
                 src , dst = self.getNums(f.read())
             self.srcStmtPos.extend(src)
             self.dstStmtPos.extend(dst)
-        # print(self.srcStmtPos)
-        # print(self.dstStmtPos)
+        self.srcStmtPos = list(set(self.srcStmtPos))
+        self.dstStmtPos = list(set(self.dstStmtPos))
+        self.srcStmtPos.sort()
+        self.dstStmtPos.sort()
         
     def build(self):
         self.all_positions.append([self.root.winfo_screenwidth() - self.ws + 5 , 0 , self.ws,self.hs])
