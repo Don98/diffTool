@@ -250,11 +250,11 @@ class Eva():
         if(len(parts) == 1):
             num = parts[0][parts[0].find("LINE:") + 6:-1]
             if(action.startswith("**ADD**")):
-                two_nums.append(num)
                 two_nums.append(-1)
+                two_nums.append(num)
             else:
-                two_nums.append(-1)
                 two_nums.append(num)
+                two_nums.append(-1)
                 
         else:
             two_nums.append(parts[0][parts[0].find("LINE:") + 6:-1])
