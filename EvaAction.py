@@ -5,6 +5,7 @@ from functools import partial
 from tkinter.messagebox import showinfo
 # from Data import Data
 from new_Data import Data
+import _thread as thread
 import os
 from tkinter import *
 
@@ -131,6 +132,10 @@ class EvaAction():
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.scroll([20,20])
             self.tmp_data[self.method] = self.Data
+            self.newWindow.text.destroy()
+            self.newWindow.text1.destroy()
+            thread.start_new_thread(self.newWindow.set_text1,(self.the_index[method],))
+            thread.start_new_thread(self.newWindow.set_text2,(self.the_index[method],))
             try:
                 self.stmt_chose[0].destroy()
                 self.stmt_chose[1].destroy()
@@ -282,16 +287,16 @@ class EvaAction():
     def items_selected(self,event):
         selected_indices = self.listbox.curselection()
         action = ",".join([self.listbox.get(i) for i in selected_indices])
-        # try:
-        two_nums = self.get_pos(action)
-        self.newWindow.scroll(two_nums)
-        self.draw_tokens(selected_indices[0])
-        # print(selected_indices[0])
-        # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
-        self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
-        self.selected_indices = selected_indices[0]
-        # except:
-            # print(action)
+        try:
+            two_nums = self.get_pos(action)
+            self.newWindow.scroll(two_nums)
+            self.draw_tokens(selected_indices[0])
+            # print(selected_indices[0])
+            # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+            self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
+            self.selected_indices = selected_indices[0]
+        except:
+            print(action)
 
     def select_all(self):
         if(self.buttons_var[self.selected_indices][0].get() == 0):

@@ -68,6 +68,7 @@ class TagData():
         self.bar_buttom = bar_buttom
         self.bar_right  = bar_right
         self.save_nums = 0
+        self.now_button = -1
         if(not self.existOrNot()):
             self.run_base()
         else:
@@ -143,6 +144,7 @@ class TagData():
             if(not i in self.tags):
                 pos = i
                 break
+        # self.now_button = pos
         self.parent.open_windows(self.files[pos],pos)
     
     def getpos(self):

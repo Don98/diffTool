@@ -132,14 +132,48 @@ class Eva():
         # return self.text1
         
     def scroll(self, two_nums):
-        self.text.yview_scroll(two_nums[0] - self.pos, "units")
-        self.line_text0.yview_scroll(two_nums[0] - self.pos, "units")
-        self.text1.yview_scroll(two_nums[1] - self.pos0, "units")
-        self.line_text1.yview_scroll(two_nums[1] - self.pos0, "units")
-        self.pos += two_nums[0] - self.pos
-        self.pos0+= two_nums[1] - self.pos0    
+        move  = two_nums[0] - self.pos
+        move0 = two_nums[1] - self.pos0
+        
+        num = 40
+        if(self.pos + move >= self.maxPos - num):
+            move = self.maxPos - num - self.pos if self.maxPos - num - self.pos >= 0 else 0
+        if(self.pos0 + move0 >= self.maxPos1 - num):
+            move0 = self.maxPos1 - num - self.pos0 if self.maxPos1 - num - self.pos0 >= 0 else 0 
+        
+        # print(self.pos,self.pos0,two_nums[0],two_nums[1],move,move0)
+            
+        if(self.pos + move <= 20):
+            move = 20 - self.pos if 20 - self.pos >= 0 else 0
+        if(self.pos0 + move0 <= 20):
+            move0 = 20 - self.pos0 if 20 - self.pos0 >= 0 else 0
+            
+            
+        # self.text.yview_scroll(-10000, "units")
+        # self.line_text0.yview_scroll(-10000, "units")
+        # self.text1.yview_scroll(-10000, "units")
+        # self.line_text1.yview_scroll(-10000, "units")
+        # bias = 20
+        # self.text.yview_scroll(two_nums[0] - bias, "units")
+        # self.line_text0.yview_scroll(two_nums[0] - bias, "units")
+        # self.text1.yview_scroll(two_nums[1] - bias, "units")
+        # self.line_text1.yview_scroll(two_nums[1] - bias, "units")
+            
+        self.text.yview_scroll(move, "units")
+        self.line_text0.yview_scroll(move, "units")
+        self.text1.yview_scroll(move0, "units")
+        self.line_text1.yview_scroll(move0, "units")
+        self.pos += move
+        self.pos0+= move0
     
-    def set_text1(self):
+    # def set2Text(self,method):
+        # self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos[method])
+        # self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos[method])
+        # self.text_windows0.update()
+        # self.text_windows1.update()
+        
+    
+    def set_text1(self,method):
         
         self.windows2 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows2.place(x = 0, y = 0)
@@ -157,7 +191,8 @@ class Eva():
         
         self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10)
         self.text_windows0.update()
-        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos)
+        self.maxPos = self.mainBG.get_dict()[self.file_name + "/" + "Srcfile.java"][1]
+        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos[method])
         self.text.bind("<MouseWheel>", self.processWheel)
         self.text["state"] = "disabled"
         self.line_text0["state"] = "disabled"
@@ -165,7 +200,7 @@ class Eva():
         self.texts.append(self.text)
         self.texts.append(self.line_text0)    
         
-    def set_text2(self):
+    def set_text2(self,method):
         self.windows4 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
         self.windows4.place(x = self.all_positions[3][2] / 2, y = 0)
         self.windows4.config(bg = "white")
@@ -183,7 +218,8 @@ class Eva():
         
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 15)
         self.text_windows1.update()
-        self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos)
+        self.maxPos1 = self.mainBG.get_dict()[self.file_name + "/" + "Dstfile.java"][1]
+        self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos[method])
         self.text1.bind("<MouseWheel>", self.processWheel1)
         self.text1["state"] = "disabled"
         self.line_text1["state"] = "disabled"
@@ -199,12 +235,12 @@ class Eva():
         self.windows1.place(x = self.all_positions[3][0], y = self.all_positions[3][1])
         # first text window
         # self.set_text1()
-        thread.start_new_thread(self.set_text1,())
+        thread.start_new_thread(self.set_text1,(0,))
         
         
         # Second text window
         # self.set_text2()
-        thread.start_new_thread(self.set_text2,())
+        thread.start_new_thread(self.set_text2,(0,))
             
     
     def destroy(self):
@@ -286,12 +322,13 @@ class Eva():
         for method in methods:
             with open(self.file_name + "/" + method + ".txt") as f:
                 src , dst = self.getNums(f.read())
-            self.srcStmtPos.extend(src)
-            self.dstStmtPos.extend(dst)
-        self.srcStmtPos = list(set(self.srcStmtPos))
-        self.dstStmtPos = list(set(self.dstStmtPos))
-        self.srcStmtPos.sort()
-        self.dstStmtPos.sort()
+            self.srcStmtPos.append(src)
+            self.dstStmtPos.append(dst)
+        for i in range(len(self.srcStmtPos)):            
+            self.srcStmtPos[i] = list(set(self.srcStmtPos[i]))
+            self.dstStmtPos[i] = list(set(self.dstStmtPos[i]))
+            self.srcStmtPos[i].sort()
+            self.dstStmtPos[i].sort()
         
     def build(self):
         self.all_positions.append([self.root.winfo_screenwidth() - self.ws + 5 , 0 , self.ws,self.hs])

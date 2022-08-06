@@ -16,7 +16,7 @@ class _PointAPI(Structure): # 用于getpos()中API函数的调用
 class mainBG():
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title('数据标注工具V2.0')
+        self.root.title('数据标注工具V3.0')
         self.root.config(bg="white")
         # self.file = "../first_try/"
         self.file = "./data/"
@@ -25,6 +25,7 @@ class mainBG():
         self.root.resizable(width=True, height=True)    
         self.ws = self.root.winfo_screenwidth()
         self.hs = self.root.winfo_screenheight()
+        self.now_button = -1
         print(self.ws,self.hs)
         self.file_dict = {}
         thread.start_new_thread(self.readFiles,())
@@ -122,7 +123,12 @@ class mainBG():
         self.bar_buttom.bind("<B1-Motion>", self.resize_t)
 
     def open_windows(self,name,pos):
-        # self.tagData.files_button[pos].config(bg = "#AA72AE") # 关闭选中revision设置为紫色
+        if(self.now_button == -1):
+            self.now_button = pos
+        else:
+            self.tagData.files_button[self.now_button].config(bg = "white") # 上一个选中revision设置为白色
+            self.now_button = pos
+        self.tagData.files_button[pos].config(bg = "#AA72AE") # 选中revision设置为紫色
         self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,self.high - 5,self.bar_buttom,self.bar_right)
         self.newWindow.set_bar_place([0,self.high - 5,self.ws, 5],[self.ws / 8,0,5,self.high])
         self.set_eva(self.newWindow,self.newWindow.get_filename(),pos)
