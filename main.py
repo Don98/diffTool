@@ -8,6 +8,8 @@ from eva import Eva
 from EvaAction import EvaAction
 from ctypes import *
 from javaHighlighter import JavaSyntaxHighlighter
+from win32api import GetMonitorInfo
+from win32api import MonitorFromPoint
 import _thread as thread
 import os
 class _PointAPI(Structure): # 用于getpos()中API函数的调用
@@ -23,8 +25,13 @@ class mainBG():
         
         # self.root.resizable(width=False, height=False)    
         self.root.resizable(width=True, height=True)    
+
+        monitor_info = GetMonitorInfo(MonitorFromPoint((0, 0)))
+        monitor = monitor_info.get('Monitor')  # 屏幕分辨率
+        work = monitor_info.get('Work')
+        bias = monitor[3] - work[3]
         self.ws = self.root.winfo_screenwidth()
-        self.hs = self.root.winfo_screenheight()
+        self.hs = self.root.winfo_screenheight() - bias
         self.now_button = -1
         print(self.ws,self.hs)
         self.file_dict = {}
@@ -99,13 +106,13 @@ class mainBG():
         
     def resize_l(self,event):
         # print(self.bar_right_pos)
-        # dx = self.xpos() - self.bar_right_pos[0]
-        # self.bar_right_pos[0] += dx
-        # self.tagData.resize_l(event,dx)
-        # self.newWindow.resize_l(event,dx)
-        # self.eva_windows.resize_l(event,dx)
-        # self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
-        pass
+        dx = self.xpos() - self.bar_right_pos[0]
+        self.bar_right_pos[0] += dx
+        self.tagData.resize_l(event,dx)
+        self.newWindow.resize_l(event,dx)
+        self.eva_windows.resize_l(event,dx)
+        self.bar_right.place(x = self.bar_right_pos[0], y = self.bar_right_pos[1], width = self.bar_right_pos[2], height = self.bar_right_pos[3])
+        # pass
     
     def resize_t(self,event):
         # dy = self.ypos() - self.bar_buttom_pos[1]

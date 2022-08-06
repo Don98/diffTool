@@ -158,24 +158,33 @@ def split_classify(data):
     return res
 
 def translate(text,data="",blue_pos = []):
-    res = []
-    the_dict = {"[note]":"[note]1","[key]":"[key]1","[string]":"[string]1","[str]":"[str]1","[opr]":"[opr]1","[None]":"[None]1"}
+    # the_dict = {"[note]":"[note]1","[key]":"[key]1","[string]":"[string]1","[str]":"[str]1","[opr]":"[opr]1","[None]":"[None]1"}
+    
     nums = 1
-    pos = 0
+    pos = [0,0,0,0]
+    res = {0:{},1:{},2:{},3:{}}
     for i in data:    
-        # if(nums >= 70 and nums <= 80):
-            # print(nums,i)
-        # if(nums >= 70 and nums <= 80):
-            # print(nums,i)
         i = split_classify(i)
         # print(i[0])
         for j in i:
-            if(pos < len(blue_pos) and nums == blue_pos[pos]):
-                text.insert("end",j[1],the_dict[j[0].strip()])
-            else:
-                text.insert("end",j[1],j[0])               
-        if(pos < len(blue_pos) and nums == blue_pos[pos]):
-            pos += 1
+            flag = True
+            for k in range(4):
+                if(pos[k] < len(blue_pos[k]) and nums == blue_pos[k][pos[k]]):
+                    if(not nums in res[k].keys()):
+                        res[k][nums] = []
+                    tagName = j[0].strip() + str(nums)
+                    res[k][nums].append(tagName)
+                    if(flag):
+                        text.tag_config(tagName, foreground="black",background="white")
+                        text.insert("end",j[1],tagName)
+                        # print(nums)
+                        flag = False
+            if(flag):
+                # print(nums)
+                text.insert("end",j[1],j[0])         
+        for k in range(4):      
+            if(pos[k] < len(blue_pos[k]) and nums == blue_pos[k][pos[k]]):
+                pos[k] += 1
         nums += 1
         
     # for i in range(nums):
@@ -183,4 +192,4 @@ def translate(text,data="",blue_pos = []):
             # self.text.delete( i + 0.0 ,i + 0.2)
         # elif(self.text.get(i + 0.0 ,i + 0.1) == " "):
             # self.text.delete(i + 0.0,i + 0.1)
-    return text
+    return text,res

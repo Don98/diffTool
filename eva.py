@@ -31,8 +31,13 @@ class Eva():
         self.font = tkFont.Font(family="microsoft yahei", size=10, weight="normal")
         self.m_len = self.font.measure("n")
         self.all_positions = []
-        self.pos = 20
-        self.pos0= 20
+        self.pos = 0
+        self.pos0= 0
+        self.text_content  = []
+        self.text1_content = []
+        self.last2Nums = [-1,-1]
+        self.bias = 20
+        self.method = 0
         # self.root = tk.Toplevel(self.root)
         # self.root.title(file_name.split("/")[-1])
         # self.root = tk.Frame(self.root, width = self.ws,height = self.hs)
@@ -40,52 +45,20 @@ class Eva():
         self.build()
     def get_filename(self):
         return self.file_name
-    def set_line(self,num,pos):
-        text1 = self.line_text0
-        if(num == 1):
-            text1 = self.line_text1
-        for i in range(pos):
-            text1.insert("end",str(i+1) + "\n")
-            # pos += 1
-        # return text1
         
-    def get_content(self,file_name,text,num,blue_pos):
-        fileDict = self.mainBG.get_dict()
-        if(not file_name in fileDict):
-            self.mainBG.readFile(file_name)
-        content, pos = fileDict[file_name]
-        # self.tmp_text = text1
-        thread.start_new_thread(self.set_line,(num,pos,))
-        # text = thread.start_new_thread(jsh.translate,(content,))
-        blue = "#00BFFF"
-        text.tag_config("[note]", foreground="green")
-        text.tag_config("[key]", foreground="blue")
-        text.tag_config("[string]", foreground="grey")
-        text.tag_config("[str]", foreground="grey")
-        text.tag_config("[opr]", foreground="red")
-        text.tag_config("[None]", foreground="black")
-        text.tag_config("[note]1", foreground="green",background=blue)
-        text.tag_config("[key]1", foreground="blue",background=blue)
-        text.tag_config("[string]1", foreground="grey",background=blue)
-        text.tag_config("[str]1", foreground="grey",background=blue)
-        text.tag_config("[opr]1", foreground="red",background=blue)
-        text.tag_config("[None]1", foreground="black",background=blue)
-        text = translate(text,content,blue_pos)
-        # text1 = self.set_line(text1,pos)
-        
-        return text
-    
     def processWheel(self,event):
         a= int(-1*(event.delta/60))
         self.line_text0.yview_scroll(a,'units') 
         self.text.yview_scroll(a,'units')
-        self.pos += a
+        if(self.pos + a < self.maxPos - 50):
+            self.pos += a
         return "break" 
     def processWheel1(self,event):
         a= int(-1*(event.delta/60))
         self.line_text1.yview_scroll(a,'units') 
         self.text1.yview_scroll(a,'units')
-        self.pos0 += a
+        if(self.pos0 + a < self.maxPos1 - 50):
+            self.pos0 += a
         return "break" 
         
     def set_line_windows(self):
@@ -93,6 +66,11 @@ class Eva():
         self.line_text0 = tk.Text(self.line_windows0, font = self.font, bg = '#f5f5f5')  
         self.line_text0.pack(fill = BOTH, expand = True)
         self.line_windows0.place(x = 5, y = 5, width = 40, height = self.hs - 30)
+        
+        
+        thread.start_new_thread(self.set_line,(0,self.mainBG.get_dict()[self.file_name + "/" + "Srcfile.java"][1]+1,))
+        
+        
         self.line_windows0.update()
         self.line_text0.bind("<MouseWheel>", self.processWheel)
         
@@ -101,6 +79,7 @@ class Eva():
         self.line_text1 = tk.Text(self.line_windows1, font = self.font, bg = '#f5f5f5')  
         self.line_text1.pack(fill = BOTH, expand = True)
         self.line_windows1.place(x = 5, y = 5, width = 40, height = self.hs - 30)
+        thread.start_new_thread(self.set_line,(1,self.mainBG.get_dict()[self.file_name + "/" + "Dstfile.java"][1]+1,))
         self.line_windows1.update()
         self.line_text1.bind("<MouseWheel>", self.processWheel1)
     
@@ -130,57 +109,128 @@ class Eva():
     
     # def get_text1(self):
         # return self.text1
+
+    def set_line(self,num,pos):
+        text1 = self.line_text0
+        if(num == 1):
+            text1 = self.line_text1
+        for i in range(pos):
+            text1.insert("end",str(i+1) + "\n")
+            # pos += 1
+        # return text1
         
+    def get_content(self,file_name,text,num,blue_pos):
+        fileDict = self.mainBG.get_dict()
+        if(not file_name in fileDict):
+            self.mainBG.readFile(file_name)
+        content, pos = fileDict[file_name]
+        # self.tmp_text = text1
+        # thread.start_new_thread(self.set_line,(num,pos,))
+        # text = thread.start_new_thread(jsh.translate,(content,))
+        text.tag_config("[note]", foreground="green")
+        text.tag_config("[key]", foreground="blue")
+        text.tag_config("[string]", foreground="grey")
+        text.tag_config("[str]", foreground="grey")
+        text.tag_config("[opr]", foreground="red")
+        text.tag_config("[None]", foreground="black")
+        # print(blue_pos)
+        text, res = translate(text,content,blue_pos)
+        # text1 = self.set_line(text1,pos)
+        
+        return text,res
+    def rescroll(self):
+        self.scroll([0,0])
+        self.bias = 20
+    
     def scroll(self, two_nums):
-        move  = two_nums[0] - self.pos
-        move0 = two_nums[1] - self.pos0
-        
-        num = 40
-        if(self.pos + move >= self.maxPos - num):
-            move = self.maxPos - num - self.pos if self.maxPos - num - self.pos >= 0 else 0
-        if(self.pos0 + move0 >= self.maxPos1 - num):
-            move0 = self.maxPos1 - num - self.pos0 if self.maxPos1 - num - self.pos0 >= 0 else 0 
-        
-        # print(self.pos,self.pos0,two_nums[0],two_nums[1],move,move0)
+        # print("scroll ",two_nums)
+        page = 60
+        move  = two_nums[0] >= self.maxPos - page if 0 else two_nums[0] - self.pos
+        move0 = two_nums[1] >= self.maxPos1- page if 0 else two_nums[1] - self.pos0
+        # print("move",move,move0)
             
-        if(self.pos + move <= 20):
-            move = 20 - self.pos if 20 - self.pos >= 0 else 0
-        if(self.pos0 + move0 <= 20):
-            move0 = 20 - self.pos0 if 20 - self.pos0 >= 0 else 0
-            
-            
-        # self.text.yview_scroll(-10000, "units")
-        # self.line_text0.yview_scroll(-10000, "units")
-        # self.text1.yview_scroll(-10000, "units")
-        # self.line_text1.yview_scroll(-10000, "units")
-        # bias = 20
+        # self.text.yview_scroll(-self.maxPos - 200, "units")
+        # self.line_text0.yview_scroll(-self.maxPos - 200, "units")
+        # self.text1.yview_scroll(-self.maxPos1 - 200, "units")
+        # self.line_text1.yview_scroll(-self.maxPos1 - 200, "units")
+        # bias = 40
         # self.text.yview_scroll(two_nums[0] - bias, "units")
         # self.line_text0.yview_scroll(two_nums[0] - bias, "units")
         # self.text1.yview_scroll(two_nums[1] - bias, "units")
         # self.line_text1.yview_scroll(two_nums[1] - bias, "units")
             
-        self.text.yview_scroll(move, "units")
-        self.line_text0.yview_scroll(move, "units")
-        self.text1.yview_scroll(move0, "units")
-        self.line_text1.yview_scroll(move0, "units")
+        self.text.yview_scroll(move - self.bias, "units")
+        self.line_text0.yview_scroll(move - self.bias, "units")
+        self.text1.yview_scroll(move0 - self.bias, "units")
+        self.line_text1.yview_scroll(move0 - self.bias, "units")
+        if(self.bias != 0):
+            self.bias = 0
         self.pos += move
         self.pos0+= move0
+    def rewriteText(self,method):
+        # thread.start_new_thread(self.set_text1,(method,))
+        # thread.start_new_thread(self.set_text2,(method,))
+        # self.set_text1(method)
+        # self.set_text2(method)
+        self.cancelColor()
+        self.initLastNums()
+        self.method = method
     
-    # def set2Text(self,method):
-        # self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos[method])
-        # self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos[method])
-        # self.text_windows0.update()
-        # self.text_windows1.update()
+    def initLastNums(self):
+        self.last2Nums = [-1,-1]
+    
+    def cancelColor(self):
+        if(self.last2Nums[0] != -1 or self.last2Nums[1] != -1):
+            if(self.last2Nums[0] != -1):
+                tagNames = self.text_content[self.method][self.last2Nums[0]]
+                for tag in tagNames:
+                    self.text.tag_config(tag,background = "white")
+            if(self.last2Nums[1] != -1):
+                tagNames = self.text1_content[self.method][self.last2Nums[1]]
+                for tag in tagNames:
+                    self.text1.tag_config(tag,background = "white")
+    
+    def setColor(self,two_nums):  
+        blue = "#00BFFF"     
+        if(two_nums[0] != -1):
+            tagNames = self.text_content[self.method][two_nums[0]]
+            # print("left",tagNames)
+            for tag in tagNames:
+                self.text.tag_config(tag,background = blue)
+            self.last2Nums[0] = two_nums[0]
+        else:
+            two_nums[0] = two_nums[1]
+        if(two_nums[1] != -1):
+            tagNames = self.text1_content[self.method][two_nums[1]]
+            # print("right",tagNames)
+            for tag in tagNames:
+                self.text1.tag_config(tag,background = blue)
+            self.last2Nums[1] = two_nums[1]
+        else:
+            two_nums[1] = two_nums[0]
+        # print("setColor ",two_nums)
+        
+        self.scroll(two_nums)
+    
+    def setStmtColor(self,two_nums):
+        # self.set_text1(self.srcStmtPos[pos[0]][pos[1]])
+        # self.set_text2(self.dstStmtPos[pos[0]][pos[1]])
+        # print(two_nums)
+        if(two_nums[0] == self.last2Nums[0] and two_nums[1] == self.last2Nums[1]):
+            return;
+        # print(two_nums,self.last2Nums)
+        # thread.start_new_thread(self.cancelColor,())
+        # thread.start_new_thread(self.setColor,(two_nums,))
+        self.cancelColor()
+        self.setColor(two_nums)
+            
+
         
     
     def set_text1(self,method):
         
-        self.windows2 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
-        self.windows2.place(x = 0, y = 0)
-        self.windows2.config(bg = "white")
         self.text_windows0 = tk.Frame(self.windows2,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10,bg="white")
         
-        self.set_line_windows()
         self.hbar0 = tk.Scrollbar(self.windows2, orient = tk.HORIZONTAL)
         self.hbar0.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
         self.text = tk.Text(self.text_windows0, font = self.font,wrap = 'none',xscrollcommand = self.hbar0.set)   
@@ -192,7 +242,7 @@ class Eva():
         self.text_windows0.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10)
         self.text_windows0.update()
         self.maxPos = self.mainBG.get_dict()[self.file_name + "/" + "Srcfile.java"][1]
-        self.text = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos[method])
+        self.text, self.text_content = self.get_content(self.file_name + "/" + "Srcfile.java",self.text,0,self.srcStmtPos)
         self.text.bind("<MouseWheel>", self.processWheel)
         self.text["state"] = "disabled"
         self.line_text0["state"] = "disabled"
@@ -201,13 +251,9 @@ class Eva():
         self.texts.append(self.line_text0)    
         
     def set_text2(self,method):
-        self.windows4 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
-        self.windows4.place(x = self.all_positions[3][2] / 2, y = 0)
-        self.windows4.config(bg = "white")
         self.text_windows1 = tk.Frame(self.windows4,width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 10,bg="white")
         # self.text_windows1.place(x = 45, y = 5)
         
-        self.set_line_windows1()
         self.hbar1 = tk.Scrollbar(self.windows4, orient = tk.HORIZONTAL)
         self.hbar1.place(x = 45 , y = self.all_positions[3][3] - 10, width = self.all_positions[3][2] / 2 - 40, height =  15)
         self.text1 = tk.Text(self.text_windows1, font = self.font,wrap = 'none',xscrollcommand = self.hbar1.set)   
@@ -219,7 +265,7 @@ class Eva():
         self.text_windows1.place(x = 45, y = 5, width = self.all_positions[3][2] / 2 - 40, height = self.all_positions[3][3] - 15)
         self.text_windows1.update()
         self.maxPos1 = self.mainBG.get_dict()[self.file_name + "/" + "Dstfile.java"][1]
-        self.text1 = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos[method])
+        self.text1,self.text1_content = self.get_content(self.file_name + "/" + "Dstfile.java",self.text1,1,self.dstStmtPos)
         self.text1.bind("<MouseWheel>", self.processWheel1)
         self.text1["state"] = "disabled"
         self.line_text1["state"] = "disabled"
@@ -228,19 +274,31 @@ class Eva():
         self.texts.append(self.line_text1)
     
     def draw_layout(self):
-        
+        # print("here")
+        self.initLastNums()
         self.texts = []
         self.all_positions.append([0, 30, self.ws, self.hs - 35])
         self.windows1 = tk.Frame(self.root,width = self.all_positions[3][2], height = self.all_positions[3][3])
         self.windows1.place(x = self.all_positions[3][0], y = self.all_positions[3][1])
+        
+        
+        self.windows2 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
+        self.windows2.place(x = 0, y = 0)
+        self.windows2.config(bg = "white")
         # first text window
         # self.set_text1()
+        thread.start_new_thread(self.set_line_windows,())
         thread.start_new_thread(self.set_text1,(0,))
         
         
         # Second text window
         # self.set_text2()
+        self.windows4 = tk.Frame(self.windows1,width = self.all_positions[3][2] / 2, height = self.all_positions[3][3] + 5)
+        self.windows4.place(x = self.all_positions[3][2] / 2, y = 0)
+        self.windows4.config(bg = "white")
+        thread.start_new_thread(self.set_line_windows1,())
         thread.start_new_thread(self.set_text2,(0,))
+        # print("end")
             
     
     def destroy(self):
@@ -287,7 +345,8 @@ class Eva():
         two_nums = []
         if(len(parts) == 1):
             num = parts[0][parts[0].find("LINE:") + 6:-1]
-            if(action.startswith("**ADD**")):
+            # print(parts[0])
+            if(parts[0].startswith("**ADD**")):
                 two_nums.append(-1)
                 two_nums.append(num)
             else:
@@ -311,8 +370,6 @@ class Eva():
                 src.append(tmp[0])
             if(tmp[1] != -1):
                 dst.append(tmp[1])
-        # print(src)
-        # print(dst)
         return src,dst
     
     def read_stmt(self):
@@ -329,6 +386,8 @@ class Eva():
             self.dstStmtPos[i] = list(set(self.dstStmtPos[i]))
             self.srcStmtPos[i].sort()
             self.dstStmtPos[i].sort()
+        # print(len(self.srcStmtPos))
+        # print(len(self.dstStmtPos))
         
     def build(self):
         self.all_positions.append([self.root.winfo_screenwidth() - self.ws + 5 , 0 , self.ws,self.hs])

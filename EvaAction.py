@@ -83,7 +83,7 @@ class EvaAction():
         # self.Window.title(method)
         self.all_positions = [[0,hs * 3 , self.ws , hs]]
         # print(self.all_positions[0])
-        self.Window.config(bg="black")
+        self.Window.config(bg="white")
         self.Window.place(x = self.all_positions[0][0], y = self.all_positions[0][1], width = self.all_positions[0][2], height = self.all_positions[0][3])
         
         self.the_index = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
@@ -130,12 +130,12 @@ class EvaAction():
             self.to_savebuttons()
             self.selected_indices = -1
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
-            self.newWindow.scroll([20,20])
+            self.newWindow.rescroll()
             self.tmp_data[self.method] = self.Data
-            self.newWindow.text.destroy()
-            self.newWindow.text1.destroy()
-            thread.start_new_thread(self.newWindow.set_text1,(self.the_index[method],))
-            thread.start_new_thread(self.newWindow.set_text2,(self.the_index[method],))
+            # self.newWindow.text.destroy()
+            # self.newWindow.text1.destroy()
+            # thread.start_new_thread(self.newWindow.set_text1,(self.the_index[method],))
+            # thread.start_new_thread(self.newWindow.set_text2,(self.the_index[method],))
             try:
                 self.stmt_chose[0].destroy()
                 self.stmt_chose[1].destroy()
@@ -143,6 +143,7 @@ class EvaAction():
                 pass
             self.label.config(text='总共需要标注数量为: ')
         self.method = method
+        self.newWindow.rewriteText(self.the_index[self.method])
         self.Data = Data(self.file_name,self.method,self.the_index[self.method])
         self.set_label()
     # def print_value(self):
@@ -275,8 +276,12 @@ class EvaAction():
         two_nums = []
         if(len(parts) == 1):
             num = parts[0][parts[0].find("LINE:") + 6:-1]
-            two_nums.append(num)
-            two_nums.append(num)
+            if(parts[0].split(": ")[1].startswith("**ADD**")):
+                two_nums.append(-1)
+                two_nums.append(num)
+            else:
+                two_nums.append(num)
+                two_nums.append(-1)
         else:
             two_nums.append(parts[0][parts[0].find("LINE:") + 6:-1])
             two_nums.append(parts[1][parts[1].find("LINE:") + 6:-1])
@@ -288,11 +293,13 @@ class EvaAction():
         selected_indices = self.listbox.curselection()
         action = ",".join([self.listbox.get(i) for i in selected_indices])
         try:
+            # print(action)
             two_nums = self.get_pos(action)
-            self.newWindow.scroll(two_nums)
+            # self.newWindow.scroll(two_nums)
             self.draw_tokens(selected_indices[0])
             # print(selected_indices[0])
             # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+            self.newWindow.setStmtColor(two_nums)
             self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
             self.selected_indices = selected_indices[0]
         except:
@@ -390,13 +397,13 @@ class EvaAction():
         self.all_positions.append([0,30,self.ws,self.hs - 30])
         self.content_windows = tk.Frame(self.Window, width = self.all_positions[2][2], height = self.all_positions[2][3],bg="white")
         
-        self.all_positions.append([0,0,int(self.ws / 2),self.hs - 60])
+        self.all_positions.append([0,0,int(self.ws / 2),self.hs - 45])
         self.stmts_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
         self.token_windows = tk.Frame(self.content_windows, width = self.all_positions[3][2], height = self.all_positions[3][3],bg="white")
         
         self.all_stmts = tk.StringVar(value=self.stmts)
 
-        self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single',bg = "white",selectbackground = self.colors[0])
+        self.listbox = tk.Listbox(self.stmts_windows,listvariable=self.all_stmts,selectmode='single',bg = "white",selectbackground = self.colors[0],exportselection=False)
         self.listbox.pack(fill = BOTH, expand = True)
         self.set_content_windows()
         self.listbox.bind('<<ListboxSelect>>', self.items_selected)
@@ -427,7 +434,7 @@ class EvaAction():
         self.confirm()
         
     def destroy(self):
-        self.newWindow.scroll([0,0])
+        self.newWindow.scroll([20,20])
         self.Window.destroy();
         
     def reset(self):
@@ -468,7 +475,7 @@ class EvaAction():
         self.stmts, self.tokens, self.actionList = self.Data.read_file()
         # print(self.Data.get_stmts())
         for i , stmt in enumerate(self.stmts):
-            self.stmts[i] = str(i) + " : " + stmt
+            self.stmts[i] = str(i+1) + " : " + stmt
         self.Data.create_read_resultfile()
         self.Data.split_data()
         self.buttons_var, self.stmt_result = self.Data.create_buttonvar()
