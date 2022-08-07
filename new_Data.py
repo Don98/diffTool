@@ -1,6 +1,45 @@
 import tkinter as tk
 import os
 import copy
+from functools import cmp_to_key
+
+def tokenCompare(token1,token2):
+    # print("token " , token1,token2)
+    if(token1[0][0] == -1 or token2[0][0] == -1):
+        # print(token1,token2)
+        if(token1[0][1][0] == token2[0][1][0]):
+            # print(token1[0][1][1] , token2[0][1][1],token1[0][1][1] < token2[0][1][1])
+            # return token1[0][1][1] < token2[0][1][1]
+            if(token1[0][1][1] < token2[0][1][1]):
+                return -1
+            else:
+                return 1
+        else:
+            # return token1[0][1][0] < token2[0][1][0]
+            if(token1[0][1][0] < token2[0][1][0]):
+                return -1
+            else:
+                return 1
+    else:
+        # print(token1[0][0][0] , token2[0][0][0],token1[0][0][0] < token2[0][0][0],token1[0][0][1] < token2[0][0][1])
+        if(token1[0][0][0] == token2[0][0][0]):
+            # return token1[0][0][1] < token2[0][0][1]
+            if(token1[0][0][1] < token2[0][0][1]):
+                return -1
+            else:
+                return 1
+        else:
+            # return token1[0][0][0] < token2[0][0][0]
+            if(token1[0][0][0] < token2[0][0][0]):
+                return -1
+            else:
+                return 1
+    # return False
+
+# def mySort(L):
+    # print("123")
+    # return sorted(L,key = cmp_to_key(tokenCompare))
+    
 class Data():
     def __init__(self,file_name,method,the_pos):
         self.file_name = file_name
@@ -259,8 +298,53 @@ class Data():
             two_nums.append(parts[1][parts[1].find("LINE:") + 6:-1])
         return [int(i) for i in two_nums]
     
-    def sort_token(self):
-        pass
+    def get_token_pos(self,token):
+        parts = token.split(" => ")
+        two_nums = []
+        if(len(parts) == 1):
+            num = [int(parts[0][parts[0].find("LINE:") + 6:parts[0].find(", INDEX:")]),int(parts[0][parts[0].find("INDEX:") + 6 : -1])]
+            # print(parts)
+            if(parts[0].startswith("**ADD**")):
+                two_nums.append(-1)
+                two_nums.append(num)
+            else:
+                two_nums.append(num)
+                two_nums.append(-1)
+        else:
+            two_nums.append([int(parts[0][parts[0].find("LINE:") + 6:parts[0].find(", INDEX:")]),int(parts[0][parts[0].find("INDEX:") + 6 : -1])])
+            two_nums.append([int(parts[1][parts[1].find("LINE:") + 6:parts[1].find(", INDEX:")]),int(parts[1][parts[1].find("INDEX:") + 6 : -1])])
+        # print(token)
+        # print(two_nums)
+        return two_nums
+        
+    def sort_token(self,data):
+        res = []
+        for i in data:
+            tmp = i[2].strip().split("\n")
+            # print(tmp)
+            if(len(tmp) <= 3):
+                res.append(i)
+                continue
+            # newi = [tmp[0],tmp[1],tmp[2]]
+            newi = []
+            for j in tmp[3:]:
+                newi.append([self.get_token_pos(j),j])
+            # for j in newi:
+                # print(j)
+            # a = newi[0]
+            # newi[0] = newi[1]
+            # newi[1] = a
+            # newi = mySort(copy.deepcopy(newi))
+            newi = sorted(newi,key = cmp_to_key(tokenCompare))
+            # print("-"*50)
+            # for j in newi:
+                # print(j)
+            # print("="*50)
+            newi = [j[1] for j in newi]
+            newi = "\n".join(newi)
+            newi = "\n".join([tmp[0],tmp[1],tmp[2]]) + "\n" + newi
+            res.append([i[0],i[1],newi])
+        return res
     
     def sort_data(self,data):
         res = []
@@ -273,7 +357,10 @@ class Data():
                 two_nums[0] = two_nums[0]
             res.append([two_nums[0],two_nums[1],i])
         res = sorted(res,key = lambda e:e[0])
-        res = sort_token(res)
+        # res = sort_token(res)
+        res = self.sort_token(res)
+        # for i in res:
+            # print(i)
         return [i[2] for i in res]
         
     def read_file(self):
