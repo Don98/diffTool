@@ -242,11 +242,46 @@ class Data():
         # self.print_button()
         
         return self.buttons_var,self.stmt_result
+    def get_pos(self,action):
+        parts = action.split(" => ")
+        two_nums = []
+        if(len(parts) == 1):
+            num = parts[0][parts[0].find("LINE:") + 6:-1]
+            # print(parts)
+            if(parts[0].split(":")[1].startswith("**ADD**")):
+                two_nums.append(-1)
+                two_nums.append(num)
+            else:
+                two_nums.append(num)
+                two_nums.append(-1)
+        else:
+            two_nums.append(parts[0][parts[0].find("LINE:") + 6:-1])
+            two_nums.append(parts[1][parts[1].find("LINE:") + 6:-1])
+        return [int(i) for i in two_nums]
+    
+    def sort_token(self):
+        pass
+    
+    def sort_data(self,data):
+        res = []
+        for i in data:
+            # print("a ",i)
+            tmp = i.strip().split("\n")[0]
+            # print("b",tmp)
+            two_nums = self.get_pos(tmp)
+            if(two_nums[0] == -1):
+                two_nums[0] = two_nums[0]
+            res.append([two_nums[0],two_nums[1],i])
+        res = sorted(res,key = lambda e:e[0])
+        res = sort_token(res)
+        return [i[2] for i in res]
         
     def read_file(self):
         filepath = self.file_name + "/" + self.method + ".txt"
         with open(filepath, "r") as f:
             data = f.read().split("==================================================")
+        # data = self.sort_data(data)
+        data[1:] = self.sort_data(data[1:])
         self.stmts = []
         self.tokens= []
         self.stmt_tokens = {}
