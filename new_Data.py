@@ -4,45 +4,36 @@ import copy
 from functools import cmp_to_key
 
 def tokenCompare(token1,token2):
-    # print("token " , token1,token2)
     if(token1[0][0] == -1 and token2[0][1] == -1):
         return -1
     if(token1[0][1] == -1 and token2[1][0] == -1):
         return 1
-    if(token1[0][0] == -1 or token2[0][0] == -1):
-        # print(token1,token2)
-        if(token1[0][1][0] == token2[0][1][0]):
-            # print(token1[0][1][1] , token2[0][1][1],token1[0][1][1] < token2[0][1][1])
-            # return token1[0][1][1] < token2[0][1][1]
-            if(token1[0][1][1] < token2[0][1][1]):
-                return -1
-            else:
-                return 1
-        else:
-            # return token1[0][1][0] < token2[0][1][0]
-            if(token1[0][1][0] < token2[0][1][0]):
-                return -1
-            else:
-                return 1
-    else:
-        # print(token1[0][0][0] , token2[0][0][0],token1[0][0][0] < token2[0][0][0],token1[0][0][1] < token2[0][0][1])
+    if(token1[0][1] == -1 and token2[0][1] == -1):
         if(token1[0][0][0] == token2[0][0][0]):
-            # return token1[0][0][1] < token2[0][0][1]
-            if(token1[0][0][1] < token2[0][0][1]):
-                return -1
-            else:
-                return 1
+            return token1[0][0][1] - token2[0][0][1]
         else:
-            # return token1[0][0][0] < token2[0][0][0]
-            if(token1[0][0][0] < token2[0][0][0]):
-                return -1
+            return token1[0][0][0] - token2[0][0][0]
+    if(token1[0][1] == -1 or token2[0][1] == -1):
+        # if(token1[0][0][0] == token2[0][0][0]):
+            # return token1[0][0][1] - token2[0][0][1]
+        # else:
+            # return token1[0][0][0] - token2[0][0][0]
+        if(token1[0][1] == -1):
+            if(token1[0][0][0] == token2[0][1][0]):
+                return token1[0][0][1] - token2[0][1][1]
             else:
-                return 1
-    # return False
-
-# def mySort(L):
-    # print("123")
-    # return sorted(L,key = cmp_to_key(tokenCompare))
+                return token1[0][0][0] - token2[0][1][0]
+        else:
+            if(token1[0][1][0] == token2[0][0][0]):
+                return token1[0][1][1] - token2[0][0][1]
+            else:
+                return token1[0][1][0] - token2[0][0][0]
+        
+    else:
+        if(token1[0][1][0] == token2[0][1][0]):
+            return token1[0][1][1] - token2[0][1][1]
+        else:
+            return token1[0][1][0] - token2[0][1][0]
     
 class Data():
     def __init__(self,file_name,method,the_pos):
