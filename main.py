@@ -21,7 +21,7 @@ class mainBG():
         self.root.title('数据标注工具V3.0')
         self.root.config(bg="white")
         # self.file = "../first_try/"
-        self.file = "./data/"
+        self.file = "../data/"
         
         # self.root.resizable(width=False, height=False)    
         self.root.resizable(width=True, height=True)    
@@ -41,7 +41,10 @@ class mainBG():
         # first stage : build navigation bar
         self.high = int(6 * self.hs / 8)
         self.low_high = int(2 * self.hs / 8)
-        self.navigation = tk.Frame(self.root,width=self.ws/8,height=self.high)
+        self.left_width = self.ws / 8
+        if(self.left_width <= 240):
+            self.left_width = 230
+        self.navigation = tk.Frame(self.root,width=self.left_width,height=self.high)
         self.navigation.place(x = 0,y = 0)
         self.navigation.config(bg="white")
         
@@ -51,14 +54,14 @@ class mainBG():
         self.bar_buttom_pos = [0,self.high - 5,self.ws,5]
         # [self.ws - 2, 0, 5, self.hs]
         self.bar_right = tk.Frame(self.root, width = 5,height = self.high,cursor = 'sb_h_double_arrow')
-        self.bar_right.place(x = self.ws / 8,y = 0)
-        self.bar_right_pos = [self.ws / 8,0,5,self.high]
+        self.bar_right.place(x = self.left_width,y = 0)
+        self.bar_right_pos = [self.left_width,0,5,self.high]
         self.bar_right.config(bg = "black")
         
-        self.tagData = TagData(self,self.root,self.navigation,self.file,self.ws / 8 - 2,self.high-5,self.bar_buttom,self.bar_right)
+        self.tagData = TagData(self,self.root,self.navigation,self.file,self.left_width - 2,self.high-5,self.bar_buttom,self.bar_right)
         
-        self.text_place = tk.Frame(self.root,width=self.ws - self.ws / 8,height=self.high - 5)
-        self.text_place.place(x = self.ws / 8 + 5,y = 0)
+        self.text_place = tk.Frame(self.root,width=self.ws - self.left_width,height=self.high - 5)
+        self.text_place.place(x = self.left_width + 5,y = 0)
         self.text_place.config(bg="white")
         
         self.eva_place  = tk.Frame(self.root,width = self.ws, height = self.low_high)
@@ -136,8 +139,8 @@ class mainBG():
             self.tagData.files_button[self.now_button].config(bg = "white") # 上一个选中revision设置为白色
             self.now_button = pos
         self.tagData.files_button[pos].config(bg = "#AA72AE") # 选中revision设置为紫色
-        self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.ws / 8,self.high - 5,self.bar_buttom,self.bar_right)
-        self.newWindow.set_bar_place([0,self.high - 5,self.ws, 5],[self.ws / 8,0,5,self.high])
+        self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.left_width,self.high - 5,self.bar_buttom,self.bar_right)
+        self.newWindow.set_bar_place([0,self.high - 5,self.ws, 5],[self.left_width,0,5,self.high])
         self.set_eva(self.newWindow,self.newWindow.get_filename(),pos)
         self.set_bar()
         
