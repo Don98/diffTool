@@ -5,6 +5,10 @@ from functools import cmp_to_key
 
 def tokenCompare(token1,token2):
     # print("token " , token1,token2)
+    if(token1[0][0] == -1 and token2[0][1] == -1):
+        return -1
+    if(token1[0][1] == -1 and token2[1][0] == -1):
+        return 1
     if(token1[0][0] == -1 or token2[0][0] == -1):
         # print(token1,token2)
         if(token1[0][1][0] == token2[0][1][0]):
