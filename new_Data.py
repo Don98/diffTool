@@ -9,31 +9,15 @@ def tokenCompare(token1,token2):
     if(token1[0][1] == -1 and token2[1][0] == -1):
         return 1
     if(token1[0][1] == -1 and token2[0][1] == -1):
-        if(token1[0][0][0] == token2[0][0][0]):
-            return token1[0][0][1] - token2[0][0][1]
-        else:
-            return token1[0][0][0] - token2[0][0][0]
+        return token1[0][0][1] - token2[0][0][1]
     if(token1[0][1] == -1 or token2[0][1] == -1):
-        # if(token1[0][0][0] == token2[0][0][0]):
-            # return token1[0][0][1] - token2[0][0][1]
-        # else:
-            # return token1[0][0][0] - token2[0][0][0]
         if(token1[0][1] == -1):
-            if(token1[0][0][0] == token2[0][1][0]):
-                return token1[0][0][1] - token2[0][1][1]
-            else:
-                return token1[0][0][0] - token2[0][1][0]
+            return token1[0][0][1] - token2[0][1][1]
         else:
-            if(token1[0][1][0] == token2[0][0][0]):
-                return token1[0][1][1] - token2[0][0][1]
-            else:
-                return token1[0][1][0] - token2[0][0][0]
+            return token1[0][1][1] - token2[0][0][1]
         
     else:
-        if(token1[0][1][0] == token2[0][1][0]):
-            return token1[0][1][1] - token2[0][1][1]
-        else:
-            return token1[0][1][0] - token2[0][1][0]
+        return token1[0][1][1] - token2[0][1][1]
     
 class Data():
     def __init__(self,file_name,method,the_pos):

@@ -165,29 +165,37 @@ class EvaAction():
         # self.listbox['state'] = tk.DISABLED
         self.points.destroy()
     def validation(self):
-        if(len(self.tmp_data.keys()) < 4):
-            content = "你还有"
-            num = 0
-            rest = [i for i in self.the_index.keys() if not i in self.tmp_data.keys()]
-            for i in rest:
+        # if(len(self.tmp_data.keys()) < 4):
+            # content = "你还有"
+            # num = 0
+            # rest = [i for i in self.the_index.keys() if not i in self.tmp_data.keys()]
+            # for i in rest:
+                # if(num != 0):
+                    # content += "、"
+                # content += "算法" + str(self.the_index[i])
+                # num += 1
+            # content += "还未开始评估!\n请评估完成之后再进行打分！"
+            # tk.messagebox.showwarning('提示', content)
+            # return False
+        content = "你还有"
+        num = 0
+        # for i in self.tmp_data.keys():
+        for i in self.the_index.keys():
+            if(i in self.tmp_data[i].keys()):
+                stmts = self.tmp_data[i].get_stmtresult()
+                for stmt in stmts:
+                    if(stmt[0].get() + stmt[1].get() == 0):
+                        if(num != 0):
+                            content += "、"
+                        content += "算法" + str(self.the_index[i])
+                        num += 1
+                        break
+            else:
                 if(num != 0):
                     content += "、"
                 content += "算法" + str(self.the_index[i])
                 num += 1
-            content += "还未开始评估!\n请评估完成之后再进行打分！"
-            tk.messagebox.showwarning('提示', content)
-            return False
-        content = "你还有"
-        num = 0
-        for i in self.tmp_data.keys():
-            stmts = self.tmp_data[i].get_stmtresult()
-            for stmt in stmts:
-                if(stmt[0].get() + stmt[1].get() == 0):
-                    if(num != 0):
-                        content += "、"
-                    content += "算法" + str(self.the_index[i])
-                    num += 1
-                    break
+                
         if(num > 0):
             content += "没有评估完成!\n请评估完成之后再进行打分！"
             tk.messagebox.showwarning('提示', content)
@@ -355,7 +363,7 @@ class EvaAction():
         
         
         self.token_frame = ScrollFrame(self.token_windows)
-        self.token_frame.place(x = 0, y = 0, width = int(3 * self.all_positions[3][2] / 4), height = self.all_positions[3][3])
+        self.token_frame.place(x = 0, y = 0, width = self.all_positions[3][2] - 20, height = self.all_positions[3][3])
         self.token_frame.delete_all()
         for i in all_tokens:
             # self.checkbuttons.append(tk.Checkbutton(self.token_frame.viewPort, text = str(nums+1) + "/" + str(len(all_tokens)) + " " + i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = int(3 * self.all_positions[3][2] / 4),bg="white"))
