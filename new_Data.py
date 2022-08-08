@@ -5,17 +5,18 @@ from functools import cmp_to_key
 
 def tokenCompare(token1,token2):
     if(token1[0][0] == -1 and token2[0][1] == -1):
-        return -1
-    if(token1[0][1] == -1 and token2[1][0] == -1):
-        return 1
+        return token1[0][1][1] - token2[0][0][1]
+    if(token1[0][1] == -1 and token2[0][0] == -1):
+        return token1[0][0][1] - token2[0][1][1]
+        
     if(token1[0][1] == -1 and token2[0][1] == -1):
         return token1[0][0][1] - token2[0][0][1]
+        
     if(token1[0][1] == -1 or token2[0][1] == -1):
         if(token1[0][1] == -1):
             return token1[0][0][1] - token2[0][1][1]
         else:
             return token1[0][1][1] - token2[0][0][1]
-        
     else:
         return token1[0][1][1] - token2[0][1][1]
     
