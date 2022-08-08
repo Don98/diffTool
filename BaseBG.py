@@ -260,7 +260,7 @@ class TagData():
         
     def save_result(self):
         if(self.save_nums == 0):
-            tk.messagebox.showwarning('提示', "没有需要保存的文件！")
+            tk.messagebox.showwarning('提示', "评估任务尚未完成，无法保存!")
             return;
         tk.messagebox.showwarning('提示', "保存了" + str(self.save_nums) + "个文件！")
         self.save_nums = 0

@@ -296,6 +296,19 @@ class Data():
         # print(token)
         # print(two_nums)
         return two_nums
+    def leaveBlank(self,token,num):
+        res = []
+        tmp = num
+        flag = False
+        for i in range(len(token)-1):
+            if(token[i+1] == " " and token[i] == " "):
+                if(tmp == 0):
+                    continue
+                tmp -= 1
+            if(token[i] == "("):
+                tmp = num
+            res.append(token[i])
+        return "".join(res)
         
     def sort_token(self,data):
         res = []
@@ -309,18 +322,9 @@ class Data():
             newi = []
             for j in tmp[3:]:
                 newi.append([self.get_token_pos(j),j])
-            # for j in newi:
-                # print(j)
-            # a = newi[0]
-            # newi[0] = newi[1]
-            # newi[1] = a
-            # newi = mySort(copy.deepcopy(newi))
             newi = sorted(newi,key = cmp_to_key(tokenCompare))
-            # print("-"*50)
-            # for j in newi:
-                # print(j)
-            # print("="*50)
-            newi = [j[1] for j in newi]
+            newi = [self.leaveBlank(j[1],5) for j in newi]
+            # newi = [j[1] for j in newi]
             newi = "\n".join(newi)
             newi = "\n".join([tmp[0],tmp[1],tmp[2]]) + "\n" + newi
             res.append([i[0],i[1],newi])

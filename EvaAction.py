@@ -368,9 +368,9 @@ class EvaAction():
         for i in all_tokens:
             # self.checkbuttons.append(tk.Checkbutton(self.token_frame.viewPort, text = str(nums+1) + "/" + str(len(all_tokens)) + " " + i, variable = self.buttons_var[index][nums], onvalue = 1, offvalue = 0, height=1,width = int(3 * self.all_positions[3][2] / 4),bg="white"))
             if(nums == 0):
-                self.checkbuttons.append(tk.Label(self.token_frame.viewPort, text="   " + i, width = self.all_positions[0][3], fg='black',font=('Arial', 10),bg="white"))
+                self.checkbuttons.append(tk.Label(self.token_frame.viewPort, text="     " + i, width = self.all_positions[3][2] - 20, fg='black',font=('Arial', 10),bg="white"))
             else:
-                self.checkbuttons.append(tk.Label(self.token_frame.viewPort, text= str(nums) + "/" + str(len(all_tokens)-1) + " " + i,width = self.all_positions[0][3],fg='black',font=('Arial', 10),bg="white"))
+                self.checkbuttons.append(tk.Label(self.token_frame.viewPort, text= str(nums) + "/" + str(len(all_tokens)-1) + " " + i,width = self.all_positions[3][2] - 20,fg='black',font=('Arial', 10),bg="white"))
             # self.checkbuttons[-1].grid(column = 0, columnspan = 2)
             self.checkbuttons[-1].grid(column = 0, columnspan = 1)
             self.checkbuttons[-1].bind("<MouseWheel>", self.token_frame.processWheel)
