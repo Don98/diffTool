@@ -8,6 +8,7 @@ from new_Data import Data
 import _thread as thread
 import os
 from tkinter import *
+import atexit
 
 class ScrollFrame(tk.Frame):
 
@@ -67,6 +68,7 @@ class ScrollFrame(tk.Frame):
             child.grid_remove() 
 class EvaAction():
     def __init__(self,newWindow,parent,file_pos,true_root,root,file_name,ws,hs,bar_buttom,bar_right):
+        atexit.register(self.auto_save)
         self.newWindow = newWindow
         self.parent = parent
         self.file_pos = file_pos
@@ -426,12 +428,18 @@ class EvaAction():
         # self.Data.save_method_file()
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
         for method in methods:
-            self.tmp_data[method].save_file()
+            # self.tmp_data[method].save_file()
             self.tmp_data[method].save_method_file()
         # self.dest11roy()
     
-    def __destroy__(self):
-        self.auto_save()
+    # def __del__(self):
+        # print("here")
+        # try:
+        # self.auto_save()
+        # except Exception as e:
+            # print(e)
+        # finally:
+            # self.auto_save()
         
     def destroy(self):
         self.newWindow.scroll([20,20])

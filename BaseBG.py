@@ -94,8 +94,16 @@ class TagData():
     #需要增加判断是否已经标注过的方法
         paths = os.listdir(self.file)
         self.tags = []
+        methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
+        name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         for i in range(len(paths)):
-            if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt") and os.path.isfile(self.file + "/" + paths[i] + "/points.txt")):
+            # if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt") and os.path.isfile(self.file + "/" + paths[i] + "/points.txt")):
+            flag = False
+            for method in methods:
+                if(os.path.isfile(self.file + "/" + paths[i] + "/算法" + str(name[method]) + "_result.txt")):
+                    flag = True
+                    break
+            if(flag):
                 self.tags.append(i)
         return paths
             

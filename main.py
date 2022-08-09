@@ -152,7 +152,7 @@ class mainBG():
         # y = (hs/2) - (h/2)
         self.root.geometry('%dx%d+%d+%d' % (self.ws, self.hs, 0, 0))
     
-    # def __destroy__(self):
+    # def __del__(self):
         # self.eva_windows.destroy()
     
     def run(self):
