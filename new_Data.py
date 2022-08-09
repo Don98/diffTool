@@ -321,6 +321,7 @@ class Data():
             if(token[i] == "("):
                 tmp = num
             res.append(token[i])
+        res.append(token[-1])
         return "".join(res)
         
     def sort_token(self,data):
