@@ -21,7 +21,7 @@ class mainBG():
         self.root.title('数据标注工具V3.0')
         self.root.config(bg="white")
         # self.file = "../first_try/"
-        self.file = "./data/"
+        self.file = "../data/"
         
         # self.root.resizable(width=False, height=False)    
         self.root.resizable(width=True, height=True)    
@@ -151,6 +151,9 @@ class mainBG():
         # x = (ws/2) - (w/2)
         # y = (hs/2) - (h/2)
         self.root.geometry('%dx%d+%d+%d' % (self.ws, self.hs, 0, 0))
+    
+    # def __destroy__(self):
+        # self.eva_windows.destroy()
     
     def run(self):
         self.root.mainloop()

@@ -132,6 +132,7 @@ class EvaAction():
             self.buttons[self.the_index[self.method]].config(bg=self.colors[3])
             self.newWindow.rescroll()
             self.tmp_data[self.method] = self.Data
+            self.auto_save()
             # self.newWindow.text.destroy()
             # self.newWindow.text1.destroy()
             # thread.start_new_thread(self.newWindow.set_text1,(self.the_index[method],))
@@ -164,21 +165,14 @@ class EvaAction():
             # i.destroy()
         # self.listbox['state'] = tk.DISABLED
         self.points.destroy()
+    def auto_save(self):
+        self.tmp_data[self.method] = self.Data
+        if(not self.validation()):
+            return;
+        self.confirm()
+        
     def validation(self):
-        # if(len(self.tmp_data.keys()) < 4):
-            # content = "你还有"
-            # num = 0
-            # rest = [i for i in self.the_index.keys() if not i in self.tmp_data.keys()]
-            # for i in rest:
-                # if(num != 0):
-                    # content += "、"
-                # content += "算法" + str(self.the_index[i])
-                # num += 1
-            # content += "还未开始评估!\n请评估完成之后再进行打分！"
-            # tk.messagebox.showwarning('提示', content)
-            # return False
         num = 0
-        # for i in self.tmp_data.keys():
         for i in self.the_index.keys():
             if(i in self.tmp_data.keys()):
                 stmts = self.tmp_data[i].get_stmtresult()
@@ -189,13 +183,14 @@ class EvaAction():
                         flag = False
                         break
                 if(flag):
+                    print(i)
                     self.tmp_data[i].save_method_file()
             else:
                 num += 1
                 break
         if(num > 0):
-            content = "算法0-3中有尚未评估的编辑操作，不能开始打分!"
-            tk.messagebox.showwarning('提示', content)
+            # content = "算法0-3中有尚未评估的编辑操作，不能开始打分!"
+            # tk.messagebox.showwarning('提示', content)
             return False
         return True
         
@@ -268,13 +263,13 @@ class EvaAction():
         self.button2.place(x = 160, y = 2)
         self.button3 = tk.Button(self.windows0,width=10, height=1, text='算法3', bg=self.colors[4], command = partial(self.to_eva,"IJM_actionList"))
         self.button3.place(x = 240, y = 2)
-        self.button4 = tk.Button(self.windows0,width=10, height=1, text='打分', bg=self.colors[4], command = self.point_algorithm)
-        self.button4.place(x = 320, y = 2)
+        # self.button4 = tk.Button(self.windows0,width=10, height=1, text='打分', bg=self.colors[4], command = self.point_algorithm)
+        # self.button4.place(x = 320, y = 2)
         self.buttons.append(self.button0)
         self.buttons.append(self.button1)
         self.buttons.append(self.button2)
         self.buttons.append(self.button3)
-        self.buttons.append(self.button4)
+        # self.buttons.append(self.button4)
             
     def get_pos(self,action):
         parts = action.split(" => ")
@@ -436,7 +431,7 @@ class EvaAction():
         # self.dest11roy()
     
     def __destroy__(self):
-        self.confirm()
+        self.auto_save()
         
     def destroy(self):
         self.newWindow.scroll([20,20])
