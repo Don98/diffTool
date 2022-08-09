@@ -177,27 +177,20 @@ class EvaAction():
             # content += "还未开始评估!\n请评估完成之后再进行打分！"
             # tk.messagebox.showwarning('提示', content)
             # return False
-        content = "你还有"
         num = 0
         # for i in self.tmp_data.keys():
         for i in self.the_index.keys():
-            if(i in self.tmp_data[i].keys()):
+            if(self.tmp_data == {} and i in self.tmp_data[i].keys()):
                 stmts = self.tmp_data[i].get_stmtresult()
                 for stmt in stmts:
-                    if(stmt[0].get() + stmt[1].get() == 0):
-                        if(num != 0):
-                            content += "、"
-                        content += "算法" + str(self.the_index[i])
+                    if(stmt[0].get() + stmt[1].get() == 0): 
                         num += 1
                         break
             else:
-                if(num != 0):
-                    content += "、"
-                content += "算法" + str(self.the_index[i])
                 num += 1
                 
         if(num > 0):
-            content += "没有评估完成!\n请评估完成之后再进行打分！"
+            content = "算法0-3中有尚未评估的编辑操作，不能开始打分!"
             tk.messagebox.showwarning('提示', content)
             return False
         return True
