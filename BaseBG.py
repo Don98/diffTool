@@ -92,6 +92,15 @@ class TagData():
     def get_file():
         return self.file
     
+    def validate(self,name):
+        with open(name,"r") as f:
+            data = f.readlines()
+        for i in data:
+            i = i.strip().split(",")
+            if(int(i[1]) < 0):
+                return False
+        return True
+    
     def get_tag_files(self):
     #需要增加判断是否已经标注过的方法
         paths = os.listdir(self.file)
@@ -101,11 +110,14 @@ class TagData():
         for i in range(len(paths)):
             # if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt") and os.path.isfile(self.file + "/" + paths[i] + "/points.txt")):
             flag = True
+            flag1= True
             for method in methods:
                 if(not os.path.isfile(self.file + "/" + paths[i] + "/算法" + str(name[method]) + "_result.txt")):
                     flag = False
-                    break
-            if(flag):
+                else:
+                    if(not self.validate(self.file + "/" + paths[i] + "/算法" + str(name[method]) + "_result.txt")):
+                        flag1 =False
+            if(flag and flag1):
                 self.tags.append(i)
         return paths
             

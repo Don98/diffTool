@@ -185,12 +185,11 @@ class EvaAction():
                 stmts = self.tmp_data[i].get_stmtresult()
                 flag = True
                 for stmt in stmts:
-                    if(stmt[0].get() + stmt[1].get() == 0): 
+                    if(stmt[0].get() + stmt[1].get() <= 0): 
                         num += 1
                         flag = False
                         break
-                if(flag):
-                    self.tmp_data[i].save_method_file()
+                self.tmp_data[i].save_method_file()
             else:
                 num += 1
                 break
@@ -298,18 +297,18 @@ class EvaAction():
     def items_selected(self,event):
         selected_indices = self.listbox.curselection()
         action = ",".join([self.listbox.get(i) for i in selected_indices])
-        try:
+        # try:
+        # print(action)
+        two_nums = self.get_pos(action)
+        # self.newWindow.scroll(two_nums)
+        self.draw_tokens(selected_indices[0])
+        # print(selected_indices[0])
+        # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
+        self.newWindow.setStmtColor(two_nums)
+        self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
+        self.selected_indices = selected_indices[0]
+        # except:
             # print(action)
-            two_nums = self.get_pos(action)
-            # self.newWindow.scroll(two_nums)
-            self.draw_tokens(selected_indices[0])
-            # print(selected_indices[0])
-            # self.listbox.itemconfig(selected_indices[0],bg="#5395a4")
-            self.newWindow.setStmtColor(two_nums)
-            self.listbox.itemconfig(selected_indices[0],bg=self.colors[0])
-            self.selected_indices = selected_indices[0]
-        except:
-            print(action)
 
     def select_all(self):
         if(self.buttons_var[self.selected_indices][0].get() == 0):
@@ -319,6 +318,7 @@ class EvaAction():
             for i in range(len(self.buttons_var[self.selected_indices][1:])):
                 self.buttons_var[self.selected_indices][1 + i].set(1)
         self.Data.updated_buttonvar(self.buttons_var)
+        
     def to_savebuttons(self):
         tmp = []
         for i in self.buttons_var[self.selected_indices]:
@@ -349,6 +349,8 @@ class EvaAction():
             self.to_savebuttons()
             
         self.now_index_stmt = index
+        # print(len(self.stmt_result))
+        # print(len(self.stmt_result[index]))
         self.stmt_chose = [tk.Checkbutton(self.windows0,width=10, height=1, text='正确', variable = self.stmt_result[index][0],bg="white",command = self.dechoseOne)]
         self.stmt_chose.append(tk.Checkbutton(self.windows0,width=10, height=1, text='错误', variable = self.stmt_result[index][1],bg="white",command = self.dechoseTwo))
         self.stmt_chose[0].place(x = self.all_positions[3][2], y = 0)
@@ -416,7 +418,8 @@ class EvaAction():
         # if(self.the_index[self.method] != 0):
         # stmt 染色
         for i in range(len(self.stmtNums)):
-            self.set_buttons_color(self.stmtNums[len(self.stmtNums) - i - 1],self.colors[len(self.stmtNums) - i - 1])
+            # self.set_buttons_color(self.stmtNums[len(self.stmtNums) - i - 1],self.colors[len(self.stmtNums) - i - 1])
+            self.set_buttons_color(self.stmtNums[len(self.stmtNums) - i - 1],self.colors[0])
         
         self.all_positions.append([0 , self.true_hs * 3 - 5 , self.ws , 5])
         self.all_positions.append([self.ws / 8 , 0 , 5 , self.true_hs * 3])
@@ -479,10 +482,11 @@ class EvaAction():
                 StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
                 self.stmtNums.append(StmtsNums)
                 self.tokenNums.append(TokenNums)
-        if(len(self.tmp_data.keys()) == 0):
-            StmtsNums, TokenNums = self.Data.getInitData()
-            self.stmtNums.append(StmtsNums)
-            self.tokenNums.append(TokenNums)
+        # if(len(self.tmp_data.keys()) == 0):
+        StmtsNums, TokenNums = self.Data.getInitData()
+        # print(StmtsNums)
+        self.stmtNums.append(StmtsNums)
+        self.tokenNums.append(TokenNums)
             # if(i in self.tmp_data.keys() and self.the_index[i] == self.the_index[self.method]):
                 # StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
     

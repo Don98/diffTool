@@ -85,10 +85,13 @@ class Data():
                     # f.write("-"*50 + "\n")
         content = ""
         for i in range(len(self.stmt_result)):
-            num = 1
-            if(self.stmt_result[i][1].get() == 1):
-                num = 0
-            content += self.stmts[i].replace(","," ") + "," + str(num) + "\n"
+            if(self.stmt_result[i][0].get() == 0 and self.stmt_result[i][1].get() == 0):
+                content += self.stmts[i].replace(","," ") + ",-1\n"
+            elif(self.stmt_result[i][0].get() == 0):
+                content += self.stmts[i].replace(","," ") + ",0\n"
+            else:
+                content += self.stmts[i].replace(","," ") + ",1\n"
+                
         name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         path = self.file_name + "/算法" + str(name[self.method]) + "_result.txt"
         with open(path,"w") as f:
@@ -248,8 +251,12 @@ class Data():
                 liststmts = [i.strip().split(",") for i in f.readlines()]
                 for stmt in liststmts:
                     buton_var1 = [tk.IntVar(),tk.IntVar()]
-                    buton_var1[0].set(int(stmt[1]))
-                    buton_var1[1].set(1 - int(stmt[1]))
+                    if(int(stmt[1]) != -1):
+                        buton_var1[0].set(int(stmt[1]))
+                        buton_var1[1].set(1 - int(stmt[1]))
+                    else:
+                        buton_var1[0].set(0)
+                        buton_var1[1].set(0)
                     self.stmt_result.append(buton_var1)
                 
     def create_buttonvar(self):
