@@ -297,11 +297,13 @@ class TagData():
             os.mkdir("result")
         result_list = []
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
+        name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
+        # path = self.file_name + "/算法" + str(name[self.method]) + "_result.txt"
         for i in self.tags:
             if(not os.path.isdir("./result/" + self.files[i])):
                 os.mkdir("./result/" + self.files[i])
             for method in methods:
-                copyfile(self.file + self.files[i] + "/" + method + "_result.txt","./result/" + self.files[i] + "/" + method + "_result.txt")
+                copyfile(self.file + self.files[i] + "/算法" + str(name[method]) +  "_result.txt","./result/" + self.files[i] + "/算法" + str(name[method]) +  "_result.txt")
             copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "/result.txt")
             copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "/points.txt")
             copyfile(self.file + self.files[i] + "/readme.md","./result/" + self.files[i] + "/readme.md")
@@ -310,6 +312,9 @@ class TagData():
             result_list.append("./result/" + self.files[i] + "/points.txt")
         self.zipDir("./result","./result.zip")
         shutil.rmtree("./result")
+        if(int(len(result_list)) == 0):
+            tk.messagebox.showwarning('打包结果', "没有需要打包的结果，请开始评估！")
+            return;
         tk.messagebox.showwarning('打包结果', str(int(len(result_list) / 3)) + "份结果已打包完成")
 
     def to_main(self):

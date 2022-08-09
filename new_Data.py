@@ -73,13 +73,26 @@ class Data():
         with open(self.file_name + "/" + "result.txt","w") as f:
             f.write(content)
     def save_method_file(self):
+    
+        path = self.file_name + "/result.txt"
+        if(not os.path.isfile(path)):
+            with open(path, "w") as f:            
+                f.write(self.methods[0]+"\n")
+                f.write("-"*50 + "\n")
+                for i in self.methods[1:]:
+                    f.write("="*50 + "\n")
+                    f.write(i+"\n")
+                    f.write("-"*50 + "\n")
+    
+    
         content = ""
         for i in range(len(self.stmt_result)):
             num = 1
             if(self.stmt_result[i][1].get() == 1):
                 num = 0
             content += self.stmts[i].replace(","," ") + "," + str(num) + "\n"
-        path = self.file_name + "/" + self.method + "_result.txt"
+        name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
+        path = self.file_name + "/算法" + str(name[self.method]) + "_result.txt"
         with open(path,"w") as f:
             f.write(content)
     

@@ -186,9 +186,9 @@ class EvaAction():
                     if(stmt[0].get() + stmt[1].get() == 0): 
                         num += 1
                         break
-            else:
+            elif(self.tmp_data == {}):
                 num += 1
-                
+                break
         if(num > 0):
             content = "算法0-3中有尚未评估的编辑操作，不能开始打分!"
             tk.messagebox.showwarning('提示', content)
