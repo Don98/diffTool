@@ -182,11 +182,14 @@ class EvaAction():
         for i in self.the_index.keys():
             if(i in self.tmp_data.keys()):
                 stmts = self.tmp_data[i].get_stmtresult()
+                flag = True
                 for stmt in stmts:
                     if(stmt[0].get() + stmt[1].get() == 0): 
                         num += 1
+                        flag = False
                         break
-                self.tmp_data[i].save_method_file()
+                if(flag):
+                    self.tmp_data[i].save_method_file()
             else:
                 num += 1
                 break
