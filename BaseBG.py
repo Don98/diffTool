@@ -248,9 +248,11 @@ class TagData():
         all_nums =  [0,0,0,0]
         
         methods = ["Se_actionList","GT_actionList","MTD_actionList","IJM_actionList"]
+        name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
+        # path = self.file_name + "/算法" + str(name[self.method]) + "_result.txt"
         num = 0
         for method in methods:
-            with open(path + "/" + method + "_result.txt","r") as f:
+            with open(path + "/" + "/算法" + str(name[method]) + "_result.txt","r") as f:
                 data = f.readlines()
                 for i in data:
                     right[num] += int(i.split(",")[-1])

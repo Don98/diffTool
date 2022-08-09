@@ -74,17 +74,15 @@ class Data():
             f.write(content)
     def save_method_file(self):
     
-        path = self.file_name + "/result.txt"
-        if(not os.path.isfile(path)):
-            with open(path, "w") as f:            
-                f.write(self.methods[0]+"\n")
-                f.write("-"*50 + "\n")
-                for i in self.methods[1:]:
-                    f.write("="*50 + "\n")
-                    f.write(i+"\n")
-                    f.write("-"*50 + "\n")
-    
-    
+        # path = self.file_name + "/result.txt"
+        # if(not os.path.isfile(path)):
+            # with open(path, "w") as f:            
+                # f.write(self.methods[0]+"\n")
+                # f.write("-"*50 + "\n")
+                # for i in self.methods[1:]:
+                    # f.write("="*50 + "\n")
+                    # f.write(i+"\n")
+                    # f.write("-"*50 + "\n")
         content = ""
         for i in range(len(self.stmt_result)):
             num = 1
@@ -223,7 +221,9 @@ class Data():
         
     def build_stmt_result(self):
         self.stmt_result = []
-        path = self.file_name + "/" + self.method + "_result.txt"
+        name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
+        path = self.file_name + "/算法" + str(name[self.method]) + "_result.txt"
+        # path = self.file_name + "/" + self.method + "_result.txt"
         if(not os.path.isfile(path)):
             for i in range(len(self.tokens)):
                 buton_var1 = [tk.IntVar(),tk.IntVar()]

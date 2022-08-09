@@ -180,13 +180,14 @@ class EvaAction():
         num = 0
         # for i in self.tmp_data.keys():
         for i in self.the_index.keys():
-            if(self.tmp_data == {} and i in self.tmp_data[i].keys()):
+            if(i in self.tmp_data.keys()):
                 stmts = self.tmp_data[i].get_stmtresult()
                 for stmt in stmts:
                     if(stmt[0].get() + stmt[1].get() == 0): 
                         num += 1
                         break
-            elif(self.tmp_data == {}):
+                self.tmp_data[i].save_method_file()
+            else:
                 num += 1
                 break
         if(num > 0):
