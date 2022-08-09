@@ -7,6 +7,7 @@ from ctypes import *
 from shutil import copyfile
 import shutil
 import zipfile
+import atexit
 
 class BaseBG():
     def __init__(self,root):
@@ -57,6 +58,7 @@ class _PointAPI(Structure): # 用于getpos()中API函数的调用
     _fields_ = [("x", c_ulong), ("y", c_ulong)]
 class TagData():
     def __init__(self,parent,true_root,root,file,ws,hs,bar_buttom,bar_right):
+        atexit.register(self.finalSave)
         self.parent = parent
         self.true_root = true_root
         self.root = root
@@ -98,10 +100,10 @@ class TagData():
         name = {"Se_actionList":0,"GT_actionList":1,"MTD_actionList":2,"IJM_actionList":3}
         for i in range(len(paths)):
             # if(os.path.isfile(self.file + "/" + paths[i] + "/result.txt") and os.path.isfile(self.file + "/" + paths[i] + "/points.txt")):
-            flag = False
+            flag = True
             for method in methods:
-                if(os.path.isfile(self.file + "/" + paths[i] + "/算法" + str(name[method]) + "_result.txt")):
-                    flag = True
+                if(not os.path.isfile(self.file + "/" + paths[i] + "/算法" + str(name[method]) + "_result.txt")):
+                    flag = False
                     break
             if(flag):
                 self.tags.append(i)
@@ -222,8 +224,8 @@ class TagData():
     def set_button(self):
         self.button0 = tk.Button(self.window1,width=10, height=1, text='保存结果', bg='#00BFFF', command=self.save_result)
         self.button0.place(x = 0, y = 2)
-        self.button1 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result)
-        self.button1.place(x = 120, y = 2)
+        # self.button1 = tk.Button(self.window1,width=10, height=1, text='打包结果', bg='#00BFFF', command=self.pack_result)
+        # self.button1.place(x = 120, y = 2)
         # self.button2 = tk.Button(self.window1,width=10, height=1, text='查看结果', bg='#00BFFF', command=self.query_result)
         # self.button2.place(x = 240, y = 2)
         
@@ -241,6 +243,8 @@ class TagData():
         self.set_label()
     
     def set_buttonDiabled(self,pos):
+        if(pos in self.tags):
+            return;
         self.tags.append(pos)
         self.save_nums += 1
         # self.set_file_button()
@@ -268,11 +272,23 @@ class TagData():
                 num += 1
         return right,all_nums
         
+    def finalSave(self):
+        if(self.save_nums <= 0):
+            return;
+        else:
+            tk.messagebox.showwarning('提示', "结果保存成功!")
+            
+    def set_evaAction(self,evaAction):
+        self.evaAction = evaAction
+        
     def save_result(self):
+        self.evaAction.auto_save()
+        # print(self.save_nums)
         if(self.save_nums == 0):
             tk.messagebox.showwarning('提示', "评估任务尚未完成，无法保存!")
             return;
-        tk.messagebox.showwarning('提示', "保存了" + str(self.save_nums) + "个文件！")
+        self.evaAction.lock()
+        tk.messagebox.showwarning('提示', "结果保存成功!")
         self.save_nums = 0
         for i in range(len(self.files)):
             self.files_button[i].destroy()
@@ -314,22 +330,22 @@ class TagData():
                 os.mkdir("./result/" + self.files[i])
             for method in methods:
                 copyfile(self.file + self.files[i] + "/算法" + str(name[method]) +  "_result.txt","./result/" + self.files[i] + "/算法" + str(name[method]) +  "_result.txt")
-            copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "/result.txt")
-            copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "/points.txt")
+            # copyfile(self.file + self.files[i] + "/result.txt","./result/" + self.files[i] + "/result.txt")
+            # copyfile(self.file + self.files[i] + "/points.txt","./result/" + self.files[i] + "/points.txt")
             copyfile(self.file + self.files[i] + "/readme.md","./result/" + self.files[i] + "/readme.md")
             result_list.append("./result/" + self.files[i] + "/readme.md")
-            result_list.append("./result/" + self.files[i] + "/result.txt")
-            result_list.append("./result/" + self.files[i] + "/points.txt")
+            # result_list.append("./result/" + self.files[i] + "/result.txt")
+            # result_list.append("./result/" + self.files[i] + "/points.txt")
         self.zipDir("./result","./result.zip")
         shutil.rmtree("./result")
         if(int(len(result_list)) == 0):
             tk.messagebox.showwarning('打包结果', "没有需要打包的结果，请开始评估！")
             return;
-        tk.messagebox.showwarning('打包结果', str(int(len(result_list) / 3)) + "份结果已打包完成")
+        tk.messagebox.showwarning('打包结果', str(len(result_list)) + "份结果已打包完成")
 
     def to_main(self):
         self.window.destroy()
         self.base = BaseBG(self.root)
 
     def destroy(self):
-        self.root.destroy()
+        self.root.destroy() 

@@ -92,7 +92,7 @@ class EvaAction():
         
         # self.colors = ["#FB7299","#5EBA7D","#0074CC","#E8E8ED","#00BFFF","#FDF7E2"]
         self.colors = ["#FB7299","#FB7299","#FB7299","#E8E8ED","#00BFFF","#FDF7E2"]
-        
+        self.stmt_chose = []
         self.tmp_data = {}
         
         self.set_buttons()
@@ -152,7 +152,16 @@ class EvaAction():
     # def print_value(self):
         # for i in self.all_points:
             # print(i.get())
-            
+         
+    def lock(self):
+        for i in self.buttons:
+            i["state"] = tk.DISABLED
+        for i in self.checkbuttons:
+            i.destroy()
+        self.listbox['state'] = tk.DISABLED
+        for i in self.stmt_chose:
+            i.destroy()
+         
     def save_points(self):
         methods = ["SE","GT","MTD","IJM"]
         with open(self.file_name + "/points.txt","w") as f: 
@@ -161,17 +170,13 @@ class EvaAction():
         self.buttons[-1].config(bg=self.colors[3])
         tk.messagebox.showwarning('打分', "本份数据打分完毕，已保存")
         self.parent.set_buttonDiabled(self.file_pos)
-        # for i in self.buttons:
-            # i["state"] = tk.DISABLED
-        # for i in self.checkbuttons:
-            # i.destroy()
-        # self.listbox['state'] = tk.DISABLED
         self.points.destroy()
     def auto_save(self):
         self.tmp_data[self.method] = self.Data
         if(not self.validation()):
             return;
         self.confirm()
+        self.parent.set_buttonDiabled(self.file_pos)
         
     def validation(self):
         num = 0
@@ -185,7 +190,6 @@ class EvaAction():
                         flag = False
                         break
                 if(flag):
-                    print(i)
                     self.tmp_data[i].save_method_file()
             else:
                 num += 1
@@ -471,11 +475,14 @@ class EvaAction():
         self.stmtNums = []
         self.tokenNums = []
         for i in self.the_index.keys():
-            # print(self.tmp_data)
-            if(i in self.tmp_data.keys() and self.the_index[i] <= self.the_index[self.method]):
+            if(i in self.tmp_data.keys()):
                 StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
                 self.stmtNums.append(StmtsNums)
                 self.tokenNums.append(TokenNums)
+        if(len(self.tmp_data.keys()) == 0):
+            StmtsNums, TokenNums = self.Data.getInitData()
+            self.stmtNums.append(StmtsNums)
+            self.tokenNums.append(TokenNums)
             # if(i in self.tmp_data.keys() and self.the_index[i] == self.the_index[self.method]):
                 # StmtsNums, TokenNums = self.Data.updateUsingData(self.tmp_data[i])
     

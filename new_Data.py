@@ -192,6 +192,19 @@ class Data():
         if(self.stmt_result[index][0].get() == 0 and self.stmt_result[index][1].get() == 0):
             return False;
         return True
+    def getInitData(self):
+        StmtsNums = []
+        TokenNums = []
+        index = 0
+        for stmt in self.stmt_result:
+            if(stmt[0].get() == 0 and stmt[1].get() == 0):
+                index += 1
+                continue;
+            StmtsNums.append(index)
+            index += 1
+        return StmtsNums, TokenNums
+        
+            
         
     def updateUsingData(self,updatedData):
         # print(updatedData.stmt_tokens)

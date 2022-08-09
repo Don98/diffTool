@@ -137,6 +137,7 @@ class mainBG():
             self.now_button = pos
         else:
             self.tagData.files_button[self.now_button].config(bg = "white") # 上一个选中revision设置为白色
+            self.eva_windows.auto_save() # 保存上一个的结果
             self.now_button = pos
         self.tagData.files_button[pos].config(bg = "#AA72AE") # 选中revision设置为紫色
         self.newWindow = Eva(self,self.root,self.text_place,self.file + "/" + name,pos,self.ws - self.left_width,self.high - 5,self.bar_buttom,self.bar_right)
@@ -146,6 +147,7 @@ class mainBG():
         
     def set_eva(self,newWindow,file_name,pos):
         self.eva_windows = EvaAction(newWindow,self.tagData,pos,self.root, self.eva_place,file_name, self.ws, self.low_high,self.bar_buttom,self.bar_right)
+        self.tagData.set_evaAction(self.eva_windows)
 
     def set_size(self,x = 0,y = 0):
         # x = (ws/2) - (w/2)
